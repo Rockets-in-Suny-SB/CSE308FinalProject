@@ -9,6 +9,7 @@ import java.util.Map;
 public class Precinct {
 
     @Id
+    @GeneratedValue()
     @Column(name = "precinct_id")
     private Integer id;
     private String name;
@@ -50,4 +51,100 @@ public class Precinct {
     @Column(name = "area")
     private Map<Integer, Float> CountyAreas;
 
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getPopulation() {
+        return population;
+    }
+
+    public void setPopulation(Integer population) {
+        this.population = population;
+    }
+
+    public String getParty() {
+        return party;
+    }
+
+    public void setParty(String party) {
+        this.party = party;
+    }
+
+    public Integer getDistrictId() {
+        return districtId;
+    }
+
+    public void setDistrictId(Integer districtId) {
+        this.districtId = districtId;
+    }
+
+    public Integer getCountyId() {
+        return countyId;
+    }
+
+    public void setCountyId(Integer countyId) {
+        this.countyId = countyId;
+    }
+
+    public List<Votes> getVotes() {
+        return votes;
+    }
+
+    public void setVotes(List<Votes> votes) {
+        this.votes = votes;
+    }
+
+    public List<PrecinctEdge> getPrecinctEdges() {
+        return precinctEdges;
+    }
+
+    public void setPrecinctEdges(List<PrecinctEdge> precinctEdges) {
+        this.precinctEdges = precinctEdges;
+    }
+
+    public Map<String, Integer> getDemographicGroups() {
+        return demographicGroups;
+    }
+
+    public void setDemographicGroups(Map<String, Integer> demographicGroups) {
+        this.demographicGroups = demographicGroups;
+    }
+
+    public String getGeoJson() {
+        return geoJson;
+    }
+
+    public void setGeoJson(String geoJson) {
+        this.geoJson = geoJson;
+    }
+
+    public Map<String, Integer> getMinorityGroupPopulation() {
+        return minorityGroupPopulation;
+    }
+
+    public void setMinorityGroupPopulation(Map<String, Integer> minorityGroupPopulation) {
+        this.minorityGroupPopulation = minorityGroupPopulation;
+    }
+
+    public Map<Integer, Float> getCountyAreas() {
+        return CountyAreas;
+    }
+
+    public void setCountyAreas(Map<Integer, Float> countyAreas) {
+        CountyAreas = countyAreas;
+    }
 }
