@@ -1,4 +1,4 @@
-package com.example.cseproject.model;
+package com.example.cseproject.Model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

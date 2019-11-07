@@ -1,7 +1,7 @@
-package com.example.cseproject.service;
+package com.example.cseproject.Service;
 
-import com.example.cseproject.model.User;
-import com.example.cseproject.repository.UserRepository;
+import com.example.cseproject.Model.User;
+import com.example.cseproject.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 @Service

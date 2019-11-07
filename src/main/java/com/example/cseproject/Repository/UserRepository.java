@@ -1,8 +1,8 @@
-package com.example.cseproject.repository;
+package com.example.cseproject.Repository;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.example.cseproject.model.User;
+import com.example.cseproject.Model.User;
 
 // This will be AUTO IMPLEMENTED by Spring into a Bean called userRepository
 // CRUD refers Create, Read, Update, Delete
