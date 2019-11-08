@@ -1,5 +1,7 @@
 package com.example.cseproject.Model;
 
+import com.example.cseproject.Enum.DemograpicGroup;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.Map;
@@ -22,18 +24,18 @@ public class Precinct {
     //private DemographicAnalysisData dad;
 
     @JoinColumn(name = "precinct_id", referencedColumnName = "precinct_id")
-    private List<Votes> votes;
+    private List<Vote> votes;
 
     @OneToMany
     @JoinColumn(name = "precinct_id", referencedColumnName = "precinct_id")
-    private List<PrecinctEdge> precinctEdges;
+    private List<Edge> precinctEdges;
 
     @ElementCollection
     @CollectionTable(name = "groupName_groupPopulation",
                         joinColumns = @JoinColumn(name = "precinct_id"))
     @MapKeyColumn(name = "groupName")
     @Column(name = "groupPopulation")
-    private Map<String, Integer> demographicGroups;
+    private Map<DemograpicGroup, Integer> demographicGroups;
 
     private String geoJson;
 
@@ -100,27 +102,27 @@ public class Precinct {
         this.countyId = countyId;
     }
 
-    public List<Votes> getVotes() {
+    public List<Vote> getVotes() {
         return votes;
     }
 
-    public void setVotes(List<Votes> votes) {
+    public void setVotes(List<Vote> votes) {
         this.votes = votes;
     }
 
-    public List<PrecinctEdge> getPrecinctEdges() {
+    public List<Edge> getPrecinctEdges() {
         return precinctEdges;
     }
 
-    public void setPrecinctEdges(List<PrecinctEdge> precinctEdges) {
-        this.precinctEdges = precinctEdges;
+    public void setEdges(List<Edge> edges) {
+        this.precinctEdges = edges;
     }
 
-    public Map<String, Integer> getDemographicGroups() {
+    public Map<DemograpicGroup, Integer> getDemographicGroups() {
         return demographicGroups;
     }
 
-    public void setDemographicGroups(Map<String, Integer> demographicGroups) {
+    public void setDemographicGroups(Map<DemograpicGroup, Integer> demographicGroups) {
         this.demographicGroups = demographicGroups;
     }
 

@@ -2,7 +2,7 @@ package com.example.cseproject.Model;
 
 import javax.persistence.*;
 
-public class PrecinctEdge {
+public class Edge {
     @Id
     @Column(name = "edge_id")
     private Integer id;
@@ -13,8 +13,21 @@ public class PrecinctEdge {
     private Integer precinct_id;
 
 
+    public Precinct getAdjacentPrecinct1() {
+        return adjacentPrecinct1;
+    }
 
+    public void setAdjacentPrecinct1(Precinct adjacentPrecinct1) {
+        this.adjacentPrecinct1 = adjacentPrecinct1;
+    }
 
+    public Precinct getAdjacentPrecinct2() {
+        return adjacentPrecinct2;
+    }
+
+    public void setAdjacentPrecinct2(Precinct adjacentPrecinct2) {
+        this.adjacentPrecinct2 = adjacentPrecinct2;
+    }
 
     public Integer getId() {
         return id;

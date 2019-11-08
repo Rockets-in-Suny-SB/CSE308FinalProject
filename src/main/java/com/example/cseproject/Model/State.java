@@ -1,6 +1,6 @@
 package com.example.cseproject.Model;
 
-import com.example.cseproject.Enum.StateName;
+import com.example.cseproject.Model.CompositeKeys.StateId;
 
 import javax.persistence.*;
 import java.util.List;
@@ -8,20 +8,18 @@ import java.util.List;
 @Entity
 public class State {
     @Id
-    @Enumerated(EnumType.STRING)
-    private StateName name;
+    private StateId id;
 
     @OneToMany
     private List<District> districts;
 
 
-
-    public StateName getName() {
-        return name;
+    public StateId getId() {
+        return id;
     }
 
-    public void setName(StateName name) {
-        this.name = name;
+    public void setId(StateId id) {
+        this.id = id;
     }
 
     public List<District> getDistricts() {
@@ -32,3 +30,5 @@ public class State {
         this.districts = districts;
     }
 }
+
+

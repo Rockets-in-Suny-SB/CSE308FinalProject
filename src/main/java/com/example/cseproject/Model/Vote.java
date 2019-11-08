@@ -1,31 +1,34 @@
 package com.example.cseproject.Model;
 
 import com.example.cseproject.Enum.Election;
+import com.example.cseproject.Model.CompositeKeys.VoteId;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
-public class Votes {
+public class Vote {
     @Id
-    @JoinColumn(name = "election")
-    @Enumerated
-    private Election election;
+    @Column(name = "id")
+    private VoteId id;
     private Integer totalVotes;
     private Integer winningPartyId;
-    private Integer precinct_id;
 
     @OneToMany
-    @JoinColumn(name = "election", referencedColumnName = "election")
+    @JoinColumn(name = "id", referencedColumnName = "election")
     private List<Party> parties;
 
 
     public Election getElection() {
-        return election;
+        return id.getElection();
     }
 
-    public void setElection(Election election) {
-        this.election = election;
+    public VoteId getId() {
+        return id;
+    }
+
+    public void setId(VoteId id) {
+        this.id = id;
     }
 
     public Integer getTotalVotes() {
@@ -45,11 +48,7 @@ public class Votes {
     }
 
     public Integer getPrecinct_id() {
-        return precinct_id;
-    }
-
-    public void setPrecinct_id(Integer precinct_id) {
-        this.precinct_id = precinct_id;
+        return id.getPrecinct_id();
     }
 
     public List<Party> getParties() {
