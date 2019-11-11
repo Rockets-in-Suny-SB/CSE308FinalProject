@@ -23,11 +23,10 @@ public class Precinct {
     // This object should be created during phase I, so it may probably in service
     //private DemographicAnalysisData dad;
 
-    @JoinColumn(name = "precinct_id", referencedColumnName = "precinct_id")
+    @OneToMany(targetEntity = Vote.class)
     private List<Vote> votes;
 
-    @OneToMany
-    @JoinColumn(name = "precinct_id", referencedColumnName = "precinct_id")
+    @OneToMany(targetEntity = Edge.class)
     private List<Edge> precinctEdges;
 
     @ElementCollection

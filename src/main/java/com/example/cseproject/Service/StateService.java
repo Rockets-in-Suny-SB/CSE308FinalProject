@@ -24,7 +24,8 @@ public class StateService {
     public String addState(StateName name, State_Status status, List<District> districts){
         State  state = new State();
         state.setDistricts(districts);
-        state.setId(new StateId(name, status));
+        state.setName(name);
+        state.setStatus(status);
         stateRepository.save(state);
         return "Saved";
     }

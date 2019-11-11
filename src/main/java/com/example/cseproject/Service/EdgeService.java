@@ -15,15 +15,16 @@ public class EdgeService {
 
     public Optional<Edge> getEdge(Integer id){return edgeRepository.findById(id);}
 
-    public String addEdge(Integer id, Precinct adjacentPrecinct1, Precinct adjacentPrecinct2,
+    public String addEdge(Integer id, Integer adjacentPrecinct1_id, Integer adjacentPrecinct2_id,
                           Boolean sameCounty, Float demographicSimilarity, Integer precinct_id){
         Edge edge = new Edge();
         edge.setId(id);
         edge.setDemographicSimilarity(demographicSimilarity);
         edge.setPrecinct_id(precinct_id);
+        edge.setAdjacentPrecinct1_id(adjacentPrecinct1_id);
+        edge.setAdjacentPrecinct2_id(adjacentPrecinct2_id);
         edge.setSameCounty(sameCounty);
-        edge.setAdjacentPrecinct1(adjacentPrecinct1);
-        edge.setAdjacentPrecinct2(adjacentPrecinct2);
+//
         edgeRepository.save(edge);
         return "Saved";
     }

@@ -7,28 +7,28 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@IdClass(VoteId.class)
 public class Vote {
     @Id
-    @Column(name = "id")
-    private VoteId id;
+    private Election election;
+    @Id
+    private Integer precinct_id;
     private Integer totalVotes;
     private Integer winningPartyId;
 
     @OneToMany
-    @JoinColumn(name = "id", referencedColumnName = "election")
     private List<Party> parties;
 
-
     public Election getElection() {
-        return id.getElection();
+        return election;
     }
 
-    public VoteId getId() {
-        return id;
+    public void setElection(Election election) {
+        this.election = election;
     }
 
-    public void setId(VoteId id) {
-        this.id = id;
+    public void setPrecinct_id(Integer precinct_id) {
+        this.precinct_id = precinct_id;
     }
 
     public Integer getTotalVotes() {
@@ -45,10 +45,6 @@ public class Vote {
 
     public void setWinningPartyId(Integer winningPartyId) {
         this.winningPartyId = winningPartyId;
-    }
-
-    public Integer getPrecinct_id() {
-        return id.getPrecinct_id();
     }
 
     public List<Party> getParties() {

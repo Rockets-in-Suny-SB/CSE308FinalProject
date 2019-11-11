@@ -23,7 +23,8 @@ public class VotesService {
     public String addVote(Election election, Integer precinct_id, Integer totalVotes,
                           Integer winningPartyId, List<Party> parties){
         Vote vote = new Vote();
-        vote.setId(new VoteId(election, precinct_id));
+        vote.setElection(election);
+        vote.setPrecinct_id(precinct_id);
         vote.setTotalVotes(totalVotes);
         vote.setWinningPartyId(winningPartyId);
         vote.setParties(parties);

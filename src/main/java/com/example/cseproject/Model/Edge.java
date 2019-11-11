@@ -2,31 +2,31 @@ package com.example.cseproject.Model;
 
 import javax.persistence.*;
 
+@Entity
 public class Edge {
     @Id
     @Column(name = "edge_id")
     private Integer id;
-    private Precinct adjacentPrecinct1;
-    private Precinct adjacentPrecinct2;
+    private Integer adjacentPrecinct1_id;
+    private Integer adjacentPrecinct2_id;
     private Boolean sameCounty;
     private Float demographicSimilarity;
     private Integer precinct_id;
 
-
-    public Precinct getAdjacentPrecinct1() {
-        return adjacentPrecinct1;
+    public Integer getAdjacentPrecinct1_id() {
+        return adjacentPrecinct1_id;
     }
 
-    public void setAdjacentPrecinct1(Precinct adjacentPrecinct1) {
-        this.adjacentPrecinct1 = adjacentPrecinct1;
+    public void setAdjacentPrecinct1_id(Integer adjacentPrecinct1_id) {
+        this.adjacentPrecinct1_id = adjacentPrecinct1_id;
     }
 
-    public Precinct getAdjacentPrecinct2() {
-        return adjacentPrecinct2;
+    public Integer getAdjacentPrecinct2_id() {
+        return adjacentPrecinct2_id;
     }
 
-    public void setAdjacentPrecinct2(Precinct adjacentPrecinct2) {
-        this.adjacentPrecinct2 = adjacentPrecinct2;
+    public void setAdjacentPrecinct2_id(Integer adjacentPrecinct2_id) {
+        this.adjacentPrecinct2_id = adjacentPrecinct2_id;
     }
 
     public Integer getId() {
