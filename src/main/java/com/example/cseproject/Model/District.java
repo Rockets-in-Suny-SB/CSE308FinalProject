@@ -10,6 +10,7 @@ public class District {
     private Integer id;
     private String color;
     private String name;
+    private Integer population;
 
     @OneToMany
     private List<Precinct> precincts;
@@ -46,5 +47,13 @@ public class District {
 
     public void setPrecincts(List<Precinct> precincts) {
         this.precincts = precincts;
+    }
+
+    public Integer getPopulation() {
+        return population;
+    }
+
+    public void setPopulation(Integer population) {
+        this.population = population;
     }
 }

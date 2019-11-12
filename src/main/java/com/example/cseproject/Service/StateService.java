@@ -5,7 +5,9 @@ import com.example.cseproject.Enum.State_Status;
 import com.example.cseproject.Model.District;
 import com.example.cseproject.Model.State;
 import com.example.cseproject.Model.CompositeKeys.StateId;
+import com.example.cseproject.Repository.DistrictRepository;
 import com.example.cseproject.Repository.StateRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +15,11 @@ import java.util.Optional;
 
 @Service
 public class StateService {
+    @Autowired
     private StateRepository stateRepository;
+
+    @Autowired
+    private DistrictRepository districtRepository;
 
     private Iterable<State> getAllState(){ return stateRepository.findAll(); }
 
@@ -34,4 +40,5 @@ public class StateService {
         stateRepository.delete(state);
         return "Deleted";
     }
+
 }

@@ -1,8 +1,12 @@
 package com.example.cseproject.Model;
 
+import com.example.cseproject.DataClasses.Threshold;
 import com.example.cseproject.Enum.DemograpicGroup;
+import com.example.cseproject.Enum.PartyName;
+
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +27,7 @@ public class Precinct {
     // This object should be created during phase I, so it may probably in service
     //private DemographicAnalysisData dad;
 
-    @OneToMany(targetEntity = Vote.class)
-    private List<Vote> votes;
+    private Vote vote;
 
     @OneToMany(targetEntity = Edge.class)
     private List<Edge> precinctEdges;
@@ -43,7 +46,7 @@ public class Precinct {
             joinColumns = @JoinColumn(name = "precinct_id"))
     @MapKeyColumn(name = "minorityName")
     @Column(name = "groupPopulation")
-    private Map<String, Integer> minorityGroupPopulation;
+    private Map<DemograpicGroup, Integer> minorityGroupPopulation;
 
     @ElementCollection
     @CollectionTable(name = "countyName_area",
@@ -101,12 +104,12 @@ public class Precinct {
         this.countyId = countyId;
     }
 
-    public List<Vote> getVotes() {
-        return votes;
+    public Vote getVotes() {
+        return vote;
     }
 
-    public void setVotes(List<Vote> votes) {
-        this.votes = votes;
+    public void setVotes(Vote vote) {
+        this.vote = vote;
     }
 
     public List<Edge> getPrecinctEdges() {
@@ -133,11 +136,11 @@ public class Precinct {
         this.geoJson = geoJson;
     }
 
-    public Map<String, Integer> getMinorityGroupPopulation() {
+    public Map<DemograpicGroup, Integer> getMinorityGroupPopulation() {
         return minorityGroupPopulation;
     }
 
-    public void setMinorityGroupPopulation(Map<String, Integer> minorityGroupPopulation) {
+    public void setMinorityGroupPopulation(Map<DemograpicGroup, Integer> minorityGroupPopulation) {
         this.minorityGroupPopulation = minorityGroupPopulation;
     }
 
@@ -148,4 +151,54 @@ public class Precinct {
     public void setCountyAreas(Map<Integer, Float> countyAreas) {
         CountyAreas = countyAreas;
     }
+
+
+    public List<Object> doBlocAnalysis(Threshold threshold){
+        List<Object> populationResult = this.findLargestDemographicGroup(threshold);
+        if (populationResult.get(0) == Boolean.FALSE){
+            return null;
+        }
+        return this.checkBlocThreshold(threshold);
+    }
+
+    public List<Object> findLargestDemographicGroup(Threshold threshold){
+        DemograpicGroup dominate = DemograpicGroup.WHITE;
+        Float maxPercent = (float) 0;
+        Float populationThreshold = threshold.getPopulationThreshold();
+        for(Map.Entry<DemograpicGroup,Integer> entry : this.minorityGroupPopulation.entrySet()){
+            Float percentage = (float) entry.getValue()/this.population;
+            if (percentage > populationThreshold && percentage > maxPercent){
+                dominate = entry.getKey();
+                maxPercent = percentage;
+            }
+        }
+        List<Object> result = new ArrayList<>();
+        if (dominate != DemograpicGroup.WHITE)
+            result.add(Boolean.FALSE);
+        else
+            result.add(Boolean.TRUE);
+        result.add(dominate);
+        result.add(maxPercent);
+        return result;
+
+
+    }
+
+    public List<Object> checkBlocThreshold(Threshold threshold){
+        Integer totalVotes = this.vote.getTotalVotes();
+        Integer winningVotes = this.vote.getWinningVotes();
+        PartyName winningPartyName = this.vote.getWinningPartyName();
+        Float percentage = (float) winningVotes / totalVotes;
+        if (percentage < threshold.getBlocThreshold()){
+            return null;
+        }
+        List<Object> result = new ArrayList<>();
+        result.add(this.name);
+        result.add(this.population);
+        result.add(winningVotes);
+        result.add(totalVotes);
+        result.add(percentage);
+        return result;
+    }
+
 }

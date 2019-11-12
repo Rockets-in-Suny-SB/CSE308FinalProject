@@ -1,11 +1,16 @@
 package com.example.cseproject.Model;
 
+import com.example.cseproject.DataClasses.Threshold;
+import com.example.cseproject.Enum.DemograpicGroup;
 import com.example.cseproject.Enum.StateName;
 import com.example.cseproject.Enum.State_Status;
 import com.example.cseproject.Model.CompositeKeys.StateId;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @IdClass(StateId.class)
@@ -18,6 +23,19 @@ public class State {
     @OneToMany
     private List<District> districts;
 
+    @Transient
+    private Threshold threshold;
+
+    @Transient
+    private List<String> EligibleBlocs;
+
+    public Threshold getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(Threshold threshold) {
+        this.threshold = threshold;
+    }
 
     public StateName getName() {
         return name;
@@ -41,6 +59,64 @@ public class State {
 
     public void setDistricts(List<District> districts) {
         this.districts = districts;
+    }
+
+    public List<Precinct> getPrecinct(){
+        List<Precinct> precincts = new ArrayList<>();
+        for (District district:districts){
+            precincts.addAll(district.getPrecincts());
+        }
+        return precincts;
+    }
+
+    public List<List<Object>> findEligibleBlocs(){
+        List<List<Object>> result = new ArrayList<>();
+
+        for (Precinct precinct:this.getPrecinct()){
+            List<Object> eligibleBloc = precinct.findLargestDemographicGroup(this.threshold);
+            if (eligibleBloc != null)
+                result.add(eligibleBloc);
+        }
+        return result;
+    }
+
+    public List<List<Object>> getPopulationDistribution(Integer districtId, List<DemograpicGroup> demograpicGroups){
+        District district = null;
+        for (District d : this.districts){
+            if (d.getId().equals(districtId)){
+                district = d;
+                break;
+            }
+        }
+        if (district == null){
+            System.out.println("District do not exist");
+            return null;
+        }
+        Map<DemograpicGroup,Integer> distributionResult =new HashMap<>();
+        Integer districtPopulation = district.getPopulation();
+        for (Precinct precinct : district.getPrecincts()){
+            Map<DemograpicGroup, Integer> demographicGroupMap = precinct.getDemographicGroups();
+            for (DemograpicGroup dp : demograpicGroups){
+                Integer dpPopulation = demographicGroupMap.get(dp);
+                if (dpPopulation != null){
+                    Integer ddp = distributionResult.get(dp);
+                    if (ddp == null)
+                        distributionResult.put(dp,dpPopulation);
+                    else
+                        distributionResult.put(dp,ddp+dpPopulation);
+                }
+            }
+        }
+        List<List<Object>> result = new ArrayList<>();
+        for (Map.Entry<DemograpicGroup,Integer> entry : distributionResult.entrySet()){
+            List<Object> demographicData = new ArrayList<>();
+            demographicData.add(entry.getKey());
+            demographicData.add(entry.getValue());
+            demographicData.add((float)entry.getValue()/districtPopulation);
+            result.add(demographicData);
+        }
+        return result;
+
     }
 }
 

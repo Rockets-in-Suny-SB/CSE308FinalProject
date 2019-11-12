@@ -1,6 +1,7 @@
 package com.example.cseproject.Model;
 
 import com.example.cseproject.Enum.Election;
+import com.example.cseproject.Enum.PartyName;
 import com.example.cseproject.Model.CompositeKeys.VoteId;
 
 import javax.persistence.*;
@@ -14,9 +15,10 @@ public class Vote {
     @Id
     private Integer precinct_id;
     private Integer totalVotes;
-    private Integer winningPartyId;
+    private PartyName winningPartyName;
+    private Integer winningVotes;
 
-    @OneToMany
+    @OneToMany(targetEntity = Party.class)
     private List<Party> parties;
 
     public Election getElection() {
@@ -39,12 +41,24 @@ public class Vote {
         this.totalVotes = totalVotes;
     }
 
-    public Integer getWinningPartyId() {
-        return winningPartyId;
+    public Integer getPrecinct_id() {
+        return precinct_id;
     }
 
-    public void setWinningPartyId(Integer winningPartyId) {
-        this.winningPartyId = winningPartyId;
+    public PartyName getWinningPartyName() {
+        return winningPartyName;
+    }
+
+    public void setWinningPartyName(PartyName winningPartyName) {
+        this.winningPartyName = winningPartyName;
+    }
+
+    public Integer getWinningVotes() {
+        return winningVotes;
+    }
+
+    public void setWinningVotes(Integer winningVotes) {
+        this.winningVotes = winningVotes;
     }
 
     public List<Party> getParties() {
