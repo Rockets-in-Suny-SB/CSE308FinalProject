@@ -20,7 +20,7 @@ public class PrecinctService {
     public String addPrecinct(Integer id, String name, Integer population, String party,
                               Integer districtId, Integer countyId, List<Vote> votes,
                               List<Edge> edges, Map<DemograpicGroup,Integer> demographicGroups,
-                              Map<String, Integer> minorityGroupPopulation, Map<Integer, Float> countyAreas){
+                              Map<DemograpicGroup, Integer> minorityGroupPopulation, Map<Integer, Float> countyAreas){
         Precinct precinct = new Precinct();
         precinct.setId(id);
         precinct.setName(name);

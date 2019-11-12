@@ -2,6 +2,7 @@ package com.example.cseproject.Model;
 
 import com.example.cseproject.DataClasses.Threshold;
 import com.example.cseproject.Enum.DemograpicGroup;
+import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.PartyName;
 
 
@@ -24,10 +25,8 @@ public class Precinct {
     private Integer districtId;
     private Integer countyId;
 
-    // This object should be created during phase I, so it may probably in service
-    //private DemographicAnalysisData dad;
-
-    private Vote vote;
+    @OneToMany(targetEntity = Vote.class)
+    private List<Vote> votes;
 
     @OneToMany(targetEntity = Edge.class)
     private List<Edge> precinctEdges;
@@ -104,12 +103,20 @@ public class Precinct {
         this.countyId = countyId;
     }
 
-    public Vote getVotes() {
-        return vote;
+    public List<Vote> getVotes() {
+        return votes;
     }
 
-    public void setVotes(Vote vote) {
-        this.vote = vote;
+    public void setVotes(List<Vote> votes) {
+        this.votes = votes;
+    }
+
+    public Vote getVote(Election election){
+        for (Vote vote : this.votes){
+            if (vote.getElection() == election)
+                return vote;
+        }
+        return null;
     }
 
     public List<Edge> getPrecinctEdges() {
@@ -153,12 +160,12 @@ public class Precinct {
     }
 
 
-    public List<Object> doBlocAnalysis(Threshold threshold){
+    public List<Object> doBlocAnalysis(Threshold threshold, Election election){
         List<Object> populationResult = this.findLargestDemographicGroup(threshold);
         if (populationResult.get(0) == Boolean.FALSE){
             return null;
         }
-        return this.checkBlocThreshold(threshold);
+        return this.checkBlocThreshold(threshold, election);
     }
 
     public List<Object> findLargestDemographicGroup(Threshold threshold){
@@ -184,10 +191,11 @@ public class Precinct {
 
     }
 
-    public List<Object> checkBlocThreshold(Threshold threshold){
-        Integer totalVotes = this.vote.getTotalVotes();
-        Integer winningVotes = this.vote.getWinningVotes();
-        PartyName winningPartyName = this.vote.getWinningPartyName();
+    public List<Object> checkBlocThreshold(Threshold threshold, Election election){
+        Vote targetVote = this.getVote(election);
+        Integer totalVotes = targetVote.getTotalVotes();
+        Integer winningVotes = targetVote.getWinningVotes();
+        PartyName winningPartyName = targetVote.getWinningPartyName();
         Float percentage = (float) winningVotes / totalVotes;
         if (percentage < threshold.getBlocThreshold()){
             return null;

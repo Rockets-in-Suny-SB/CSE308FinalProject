@@ -1,6 +1,7 @@
 package com.example.cseproject.Model;
 
 import com.example.cseproject.Enum.Election;
+import com.example.cseproject.Enum.PartyName;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +14,7 @@ public class Party {
     @GeneratedValue
     @Column(name = "party_id")
     private Integer id;
-    private String name;
+    private PartyName name;
     private Integer votes;
 
     @Column(name = "election")
@@ -27,11 +28,11 @@ public class Party {
         this.id = id;
     }
 
-    public String getName() {
+    public PartyName getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(PartyName name) {
         this.name = name;
     }
 

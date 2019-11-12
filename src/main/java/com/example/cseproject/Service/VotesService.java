@@ -3,6 +3,7 @@ package com.example.cseproject.Service;
 import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Model.CompositeKeys.VoteId;
 import com.example.cseproject.Model.Party;
+import com.example.cseproject.Model.Precinct;
 import com.example.cseproject.Model.Vote;
 import com.example.cseproject.Repository.VotesRepository;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,20 @@ public class VotesService {
         return votesRepository.findById(new VoteId(election,precinct_id));
     }
 
-    public String addVote(Election election, Integer precinct_id, Integer totalVotes,
-                          Integer winningPartyId, List<Party> parties){
+    public String addVote(Election election, Integer precinct_id, List<Party> parties){
         Vote vote = new Vote();
         vote.setElection(election);
         vote.setPrecinct_id(precinct_id);
+        Party winningParty = parties.get(0);
+        Integer totalVotes = 0;
+        for (Party party : parties){
+            totalVotes += party.getVotes();
+            if (party.getVotes() > winningParty.getVotes())
+                winningParty = party;
+        }
+        vote.setWinningPartyName(winningParty.getName());
         vote.setTotalVotes(totalVotes);
-        vote.setWinningPartyId(winningPartyId);
+        vote.setWinningVotes(winningParty.getVotes());
         vote.setParties(parties);
         votesRepository.save(vote);
         return "Saved";

@@ -1,6 +1,7 @@
 package com.example.cseproject.Service;
 
 import com.example.cseproject.Enum.Election;
+import com.example.cseproject.Enum.PartyName;
 import com.example.cseproject.Model.Party;
 import com.example.cseproject.Repository.PartyRepository;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class PartyService {
         return partyRepository.findById(id);
     }
 
-    public String addParty(Integer id, String name, Integer votes, Election election){
+    public String addParty(Integer id, PartyName name, Integer votes, Election election){
         Party party = new Party();
         party.setId(id);
         party.setElection(election);
