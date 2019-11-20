@@ -24,7 +24,7 @@ public class Precinct {
     private String party;
     private Integer districtId;
     private Integer countyId;
-
+    @OneToOne(targetEntity = Vote.class)
     private Vote vote;
 
     @OneToMany(targetEntity = Edge.class)

@@ -9,6 +9,7 @@ import java.util.List;
 @Entity
 public class Vote {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private Integer totalVotes;
     private PartyName winningPartyName;
