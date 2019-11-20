@@ -1,8 +1,10 @@
 package com.example.cseproject.Model;
 
 import com.example.cseproject.DataClasses.Cluster;
+import com.example.cseproject.DataClasses.Parameter;
 import com.example.cseproject.DataClasses.Threshold;
 import com.example.cseproject.Enum.DemograpicGroup;
+import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.StateName;
 import com.example.cseproject.Enum.State_Status;
 import com.example.cseproject.Model.CompositeKeys.StateId;
@@ -20,6 +22,8 @@ public class State {
     private StateName name;
     @Id
     private State_Status status;
+    @Id
+    private Election election;
 
     @OneToMany
     private List<District> districts;
@@ -83,40 +87,36 @@ public class State {
         return result;
     }
 
-    public List<List<Object>> getPopulationDistribution(Integer districtId, List<DemograpicGroup> demograpicGroups){
-        District district = null;
-        for (District d : this.districts){
-            if (d.getId().equals(districtId)){
-                district = d;
-                break;
-            }
-        }
-        if (district == null){
-            System.out.println("District do not exist");
-            return null;
-        }
-        Map<DemograpicGroup,Integer> distributionResult =new HashMap<>();
-        Integer districtPopulation = district.getPopulation();
-        for (Precinct precinct : district.getPrecincts()){
-            Map<DemograpicGroup, Integer> demographicGroupMap = precinct.getDemographicGroups();
-            for (DemograpicGroup dp : demograpicGroups){
-                Integer dpPopulation = demographicGroupMap.get(dp);
-                if (dpPopulation != null){
-                    Integer ddp = distributionResult.get(dp);
-                    if (ddp == null)
-                        distributionResult.put(dp,dpPopulation);
-                    else
-                        distributionResult.put(dp,ddp+dpPopulation);
+    public List<List<Object>> getPopulationDistribution(Parameter parameter){
+        List<DemograpicGroup> demograpicGroups = parameter.getMinorityPopulations();
+        Map<DemograpicGroup,Integer> demographicResult =new HashMap<>();
+        Integer statePopulation = 0;
+        for(District district : this.districts){
+            statePopulation += district.getPopulation();
+            for (Precinct precinct : district.getPrecincts()){
+                Map<DemograpicGroup, Integer> demographicGroupMap = precinct.getDemographicGroups();
+                for (DemograpicGroup dp : demograpicGroups){
+                    Integer dpPopulation = demographicGroupMap.get(dp);
+                    if (dpPopulation != null){
+                        Integer ddp = demographicResult.get(dp);
+                        if (ddp == null)
+                            demographicResult.put(dp,dpPopulation);
+                        else
+                            demographicResult.put(dp,ddp+dpPopulation);
+                    }
                 }
             }
         }
         List<List<Object>> result = new ArrayList<>();
-        for (Map.Entry<DemograpicGroup,Integer> entry : distributionResult.entrySet()){
-            List<Object> demographicData = new ArrayList<>();
-            demographicData.add(entry.getKey());
-            demographicData.add(entry.getValue());
-            demographicData.add((float)entry.getValue()/districtPopulation);
-            result.add(demographicData);
+        for (Map.Entry<DemograpicGroup,Integer> entry : demographicResult.entrySet()){
+            Float percentage = (float) entry.getValue()/statePopulation;
+            if ( percentage <= parameter.getMaximumPercentage() && percentage >= parameter.getMinimumPercentage()){
+                List<Object> demographicData = new ArrayList<>();
+                demographicData.add(entry.getKey());
+                demographicData.add(entry.getValue());
+                demographicData.add(percentage);
+                result.add(demographicData);
+            }
         }
         return result;
 

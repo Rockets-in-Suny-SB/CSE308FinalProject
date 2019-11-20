@@ -1,8 +1,10 @@
 package com.example.cseproject.DataClasses;
 
 import com.example.cseproject.Enum.DemograpicGroup;
+import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.Weights;
 
+import java.util.List;
 import java.util.Map;
 
 public class Parameter {
@@ -11,10 +13,19 @@ public class Parameter {
     private int targetDistricts;
     private Map<Weights, Float> weights;
     private Boolean updateDiscrete;
-    private DemograpicGroup minorityPopulation;
+    private List<DemograpicGroup> minorityPopulations;
     private float maximumPercentage;
     private float minimumPercentage;
     private Boolean isCombined;
+    private Election election;
+
+    public Election getElection() {
+        return election;
+    }
+
+    public void setElection(Election election) {
+        this.election = election;
+    }
 
     public String getStateName() {
         return stateName;
@@ -48,12 +59,12 @@ public class Parameter {
         this.updateDiscrete = updateDiscrete;
     }
 
-    public DemograpicGroup getMinorityPopulation() {
-        return minorityPopulation;
+    public List<DemograpicGroup> getMinorityPopulations() {
+        return minorityPopulations;
     }
 
-    public void setMinorityPopulation(DemograpicGroup minorityPopulation) {
-        this.minorityPopulation = minorityPopulation;
+    public void setMinorityPopulations(List<DemograpicGroup> minorityPopulations) {
+        this.minorityPopulations = minorityPopulations;
     }
 
     public float getMaximumPercentage() {

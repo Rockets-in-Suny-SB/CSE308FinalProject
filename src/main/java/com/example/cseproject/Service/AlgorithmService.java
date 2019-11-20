@@ -1,15 +1,67 @@
 package com.example.cseproject.Service;
 
+import com.example.cseproject.Algorithm.Algorithm;
+import com.example.cseproject.DataClasses.Parameter;
+import com.example.cseproject.DataClasses.Result;
+import com.example.cseproject.DataClasses.Threshold;
+import com.example.cseproject.Enum.DemograpicGroup;
+import com.example.cseproject.Enum.StateName;
+import com.example.cseproject.Enum.State_Status;
+import com.example.cseproject.Model.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class AlgorithmService {
     @Autowired
     StateService stateService;
+    Algorithm algorithm;
+    public String setThreshold(Float populationThreshold, Float blocThreshold){
+        Parameter parameter = algorithm.getParameter();
+        State targetState=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()),
+                State_Status.NEW, parameter.getElection()).get();
+        Threshold threshold = new Threshold();
+        threshold.setBlocThreshold(blocThreshold);
+        threshold.setPopulationThreshold(populationThreshold);
+        targetState.setThreshold(threshold);
+        return "Successfully set thresholds";
+    }
+    public Result runPhase0(){
+        Parameter parameter = algorithm.getParameter();
+        State targetState=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()),
+                State_Status.NEW, parameter.getElection()).get();
+        Result phase0Result = algorithm.phase0(targetState.getThreshold());
+        return phase0Result;
+    }
+    public String specifyMinorityPopulation( @RequestParam float maximumPercentage,
+                                             @RequestParam float minimumPercentage,
+                                             @RequestParam List<String> minorityPopulations,
+                                             @RequestParam Boolean isCombined){
 
+        Parameter parameter = algorithm.getParameter();
+        parameter.setCombined(isCombined);
+        parameter.setMaximumPercentage(maximumPercentage);
+        parameter.setMinimumPercentage(minimumPercentage);
+        List<DemograpicGroup> demograpicGroups = new ArrayList<>();
+        for (String minority : minorityPopulations){
+            demograpicGroups.add(DemograpicGroup.valueOf(minority.toUpperCase()));
+        }
+        parameter.setMinorityPopulations(demograpicGroups);
+        algorithm.setParameter(parameter);
+        return "successfully specify minority population";
+    }
+    public Result getMinorityPopulation(){
+        Parameter parameter = algorithm.getParameter();
+        State targetState=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()),
+                State_Status.NEW, parameter.getElection()).get();
+        List<List<Object>> minorityPopulationResult = targetState.getPopulationDistribution(parameter);
+        // minorityPopulationResult need to be converted to result type and then return
+        return null;
+    }
 
 
 
