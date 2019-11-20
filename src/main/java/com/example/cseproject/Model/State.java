@@ -1,5 +1,6 @@
 package com.example.cseproject.Model;
 
+import com.example.cseproject.DataClasses.Cluster;
 import com.example.cseproject.DataClasses.Threshold;
 import com.example.cseproject.Enum.DemograpicGroup;
 import com.example.cseproject.Enum.StateName;
@@ -28,6 +29,8 @@ public class State {
 
     @Transient
     private List<String> EligibleBlocs;
+    @Transient
+    private List<Cluster> clusters;
 
     public Threshold getThreshold() {
         return threshold;
@@ -117,6 +120,15 @@ public class State {
         }
         return result;
 
+    }
+    public void initializeClusters(){
+
+    }
+    public List<Cluster> getClusters(){
+        return this.clusters;
+    }
+    public void setClusters(List<Cluster> clusters){
+        this.clusters=clusters;
     }
 }
 

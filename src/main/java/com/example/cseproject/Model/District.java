@@ -11,11 +11,13 @@ public class District {
     private String color;
     private String name;
     private Integer population;
-
+    private String geoJson;
     @OneToMany
     private List<Precinct> precincts;
 
 
+    public String getGeoJson(){return geoJson;}
+    public void setGeoJson(String geoJson){this.geoJson=geoJson;}
 
     public Integer getId() {
         return id;
