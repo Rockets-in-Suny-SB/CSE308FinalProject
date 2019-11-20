@@ -11,30 +11,94 @@ import com.example.cseproject.Service.StateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 
-import java.util.List;
+import java.util.*;
 
 public class Algorithm {
-    private List<Pair<Cluster, Cluster>> resultPairs;
+    private Set<Pair<Cluster, Cluster>> resultPairs;
     private JoinFactor joinFactor;
     private Parameter parameter;
+    private State targetState;
     @Autowired
     private StateService stateService;
 //  public Result phase0(Parameter parameter){}
     public Result phase1(Parameter parameter){
+        this.parameter=parameter;
         State targetState=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW).get();
-        targetState.initializeClusters();
-        List<Cluster> clusters=targetState.getClusters();
-        //compare cluster with it's neighbor and determine if it should be combine
-        //combine pair of clusters
+        this.targetState=targetState;
+        Set<Cluster> clusters=targetState.getClusters();
+
+        boolean isFinalIteration=false;
+        if(parameter.getUpdateDiscrete()){
+            isFinalIteration=combineIteration(clusters);
+        }else{
+            while(clusters.size()>parameter.getTargetDistricts()&&!isFinalIteration) {
+                isFinalIteration=combineIteration(clusters);
+            }
+        }
+        if(isFinalIteration&&clusters.size()>parameter.getTargetDistricts()){
+            finalCombineIteration(clusters);
+        }
+        //Return result
         return null;
     }
-//
+    public boolean combineIteration(Set<Cluster> clusters){
+        boolean isFinalIteration=false;
+        combineBasedOnMajorityMinority(clusters);
+        combineBasedOnJoinFactor(clusters);
+        if(resultPairs.size()>0) {
+            combinePairs(resultPairs);
+            resultPairs.removeAll(resultPairs);
+        }else{
+            isFinalIteration=true;
+        }
+        clearPaired(clusters);
+        return isFinalIteration;
+    }
+    public void finalCombineIteration(Set<Cluster> clusters){
+        PriorityQueue<Cluster> minPriorityQueue=new PriorityQueue<>((o1, o2) -> -(o1.getPopulation()-o2.getPopulation()));
+        int targetDistricts=parameter.getTargetDistricts();
+        while(minPriorityQueue.size()>targetDistricts){
+            Cluster c1=minPriorityQueue.poll();
+            Cluster c2=minPriorityQueue.poll();
+            targetState.combine(c1,c2);
+            minPriorityQueue.add(c1);
+        }
+    }
 //    public Result phase2(Parameter parameter){}
 //
 //    public Cluster findPair(Cluster c){}
-//
-//    public Cluster combine(Cluster c){}
-//
+      public void combineBasedOnJoinFactor(Set<Cluster> clusters){
+          for(JoinFactor j:JoinFactor.values()) {
+              for (Cluster c : clusters) {
+                  if (!c.paired) {
+                      Pair<Cluster, Cluster> p = c.findBestPairBasedOnFactor(j);
+                      if (p != null) {
+                          resultPairs.add(p);
+                      }
+                  }
+              }
+          }
+      }
+      public void combineBasedOnMajorityMinority(Set<Cluster> clusters){
+          for(Cluster c:clusters){
+              if(!c.paired) {
+                  Pair<Cluster, Cluster> p = c.findBestMajorityMinorityPair();
+                  if (p != null) {
+                      resultPairs.add(p);
+                  }
+              }
+          }
+      }
+      public void combinePairs(Set<Pair<Cluster,Cluster>> pairs){
+          for(Pair<Cluster,Cluster> p:pairs){
+              targetState.combine(p.getFirst(),p.getSecond());
+          }
+      }
+      public void clearPaired(Set<Cluster> clusters){
+        for (Cluster c:clusters){
+            c.paired=false;
+        }
+      }
 //    public void move(Cluster c){}
 //
 //    public List<Precinct> findEligibleBlocs(Threshold threshold){}

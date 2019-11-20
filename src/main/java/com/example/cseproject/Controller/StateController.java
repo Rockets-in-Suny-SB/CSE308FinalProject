@@ -21,7 +21,8 @@ public class StateController {
     StateService stateService;
 
     @RequestMapping(value="/getDistrictGeoJSON",method = RequestMethod.GET)
-    public String getDistrictsGeoJSON(@RequestParam String state){
+    public String getDistrictsGeoJSON(@RequestParam String state, @RequestParam String election){
+        
         return "DistrictsGeoJSON";
     }
     @MessageMapping(value="/getPrecinctsData")

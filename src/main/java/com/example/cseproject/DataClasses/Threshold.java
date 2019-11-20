@@ -7,8 +7,16 @@ import java.util.Map;
 public class Threshold {
     private float populationThreshold;
     private float blocThreshold;
+    private double majorityMinorityThreshold;
     private Map<JoinFactor, Float> joinFactorThreshold;
 
+    public double getMajorityMinorityThreshold() {
+        return majorityMinorityThreshold;
+    }
+
+    public void setMajorityMinorityThreshold(double majorityMinorityThreshold) {
+        this.majorityMinorityThreshold = majorityMinorityThreshold;
+    }
 
     public float getPopulationThreshold() {
         return populationThreshold;

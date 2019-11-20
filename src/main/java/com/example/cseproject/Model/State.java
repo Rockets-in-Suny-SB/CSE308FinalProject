@@ -1,5 +1,6 @@
 package com.example.cseproject.Model;
 
+import com.example.cseproject.Algorithm.SetLib;
 import com.example.cseproject.DataClasses.Cluster;
 import com.example.cseproject.DataClasses.Threshold;
 import com.example.cseproject.Enum.DemograpicGroup;
@@ -8,10 +9,7 @@ import com.example.cseproject.Enum.State_Status;
 import com.example.cseproject.Model.CompositeKeys.StateId;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Entity
 @IdClass(StateId.class)
@@ -30,7 +28,7 @@ public class State {
     @Transient
     private List<String> EligibleBlocs;
     @Transient
-    private List<Cluster> clusters;
+    private Set<Cluster> clusters;
 
     public Threshold getThreshold() {
         return threshold;
@@ -121,14 +119,20 @@ public class State {
         return result;
 
     }
-    public void initializeClusters(){
-
-    }
-    public List<Cluster> getClusters(){
+    public Set<Cluster> getClusters(){
         return this.clusters;
     }
-    public void setClusters(List<Cluster> clusters){
+    public void setClusters(Set<Cluster> clusters){
         this.clusters=clusters;
+    }
+
+    public void combine(Cluster c1, Cluster c2){
+        c1.updateClusterData(c2);
+        Set<Cluster> c1Neighbors=c1.getNeighbors();
+        Set<Cluster> c2Neighbors=c2.getNeighbors();
+        Set<Cluster> intersectingClusters= SetLib.intersection(c1Neighbors,c2Neighbors);
+        c1.combine(intersectingClusters,c2);
+        clusters.remove(c2);
     }
 }
 
