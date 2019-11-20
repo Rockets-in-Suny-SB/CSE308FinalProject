@@ -25,8 +25,7 @@ public class Precinct {
     private Integer districtId;
     private Integer countyId;
 
-    @OneToMany(targetEntity = Vote.class)
-    private List<Vote> votes;
+    private Vote vote;
 
     @OneToMany(targetEntity = Edge.class)
     private List<Edge> precinctEdges;
@@ -103,20 +102,16 @@ public class Precinct {
         this.countyId = countyId;
     }
 
-    public List<Vote> getVotes() {
-        return votes;
+    public Vote getVote() {
+        return vote;
     }
 
-    public void setVotes(List<Vote> votes) {
-        this.votes = votes;
+    public void setVote(Vote vote) {
+        this.vote = vote;
     }
 
-    public Vote getVote(Election election){
-        for (Vote vote : this.votes){
-            if (vote.getElection() == election)
-                return vote;
-        }
-        return null;
+    public void setPrecinctEdges(List<Edge> precinctEdges) {
+        this.precinctEdges = precinctEdges;
     }
 
     public List<Edge> getPrecinctEdges() {
@@ -165,7 +160,7 @@ public class Precinct {
         if (populationResult.get(0) == Boolean.FALSE){
             return null;
         }
-        return this.checkBlocThreshold(threshold, election);
+        return this.checkBlocThreshold(threshold);
     }
 
     public List<Object> findLargestDemographicGroup(Threshold threshold){
@@ -191,8 +186,8 @@ public class Precinct {
 
     }
 
-    public List<Object> checkBlocThreshold(Threshold threshold, Election election){
-        Vote targetVote = this.getVote(election);
+    public List<Object> checkBlocThreshold(Threshold threshold){
+        Vote targetVote = this.getVote();
         Integer totalVotes = targetVote.getTotalVotes();
         Integer winningVotes = targetVote.getWinningVotes();
         PartyName winningPartyName = targetVote.getWinningPartyName();

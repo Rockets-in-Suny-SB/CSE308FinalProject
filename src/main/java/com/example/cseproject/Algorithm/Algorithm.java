@@ -3,6 +3,8 @@ package com.example.cseproject.Algorithm;
 import com.example.cseproject.DataClasses.Cluster;
 import com.example.cseproject.DataClasses.Parameter;
 import com.example.cseproject.DataClasses.Result;
+import com.example.cseproject.DataClasses.Threshold;
+import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.JoinFactor;
 import com.example.cseproject.Enum.StateName;
 import com.example.cseproject.Enum.State_Status;
@@ -20,10 +22,16 @@ public class Algorithm {
     private State targetState;
     @Autowired
     private StateService stateService;
-//  public Result phase0(Parameter parameter){}
+    public Result phase0(Threshold threshold){
+        State targetState=stateService.getState(StateName.valueOf(this.parameter.getStateName().toUpperCase()),
+                State_Status.NEW, this.parameter.getElection()).get();
+        List<List<Object>> eligibleBlocs = targetState.findEligibleBlocs();
+        return null;
+    }
     public Result phase1(Parameter parameter){
+
         this.parameter=parameter;
-        State targetState=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW).get();
+        State targetState=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW,parameter.getElection()).get();
         this.targetState=targetState;
         Set<Cluster> clusters=targetState.getClusters();
 
@@ -64,6 +72,19 @@ public class Algorithm {
             minPriorityQueue.add(c1);
         }
     }
+
+
+    public Parameter getParameter() {
+        return parameter;
+    }
+
+    public void setParameter(Parameter parameter) {
+        this.parameter = parameter;
+    }
+
+
+    //
+
 //    public Result phase2(Parameter parameter){}
 //
 //    public Cluster findPair(Cluster c){}
@@ -100,6 +121,4 @@ public class Algorithm {
         }
       }
 //    public void move(Cluster c){}
-//
-//    public List<Precinct> findEligibleBlocs(Threshold threshold){}
 }

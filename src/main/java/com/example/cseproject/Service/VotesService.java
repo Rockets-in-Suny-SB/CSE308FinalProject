@@ -1,9 +1,7 @@
 package com.example.cseproject.Service;
 
 import com.example.cseproject.Enum.Election;
-import com.example.cseproject.Model.CompositeKeys.VoteId;
 import com.example.cseproject.Model.Party;
-import com.example.cseproject.Model.Precinct;
 import com.example.cseproject.Model.Vote;
 import com.example.cseproject.Repository.VotesRepository;
 import org.springframework.stereotype.Service;
@@ -17,14 +15,13 @@ public class VotesService {
 
     private Iterable<Vote> getAllVotes(){ return votesRepository.findAll(); }
 
-    public Optional<Vote> getVote(Election election, Integer precinct_id){
-        return votesRepository.findById(new VoteId(election,precinct_id));
+    public Optional<Vote> getVote(Integer id){
+        return votesRepository.findById(id);
     }
 
-    public String addVote(Election election, Integer precinct_id, List<Party> parties){
+    public String addVote(Integer id, List<Party> parties){
         Vote vote = new Vote();
-        vote.setElection(election);
-        vote.setPrecinct_id(precinct_id);
+        vote.setId(id);
         Party winningParty = parties.get(0);
         Integer totalVotes = 0;
         for (Party party : parties){

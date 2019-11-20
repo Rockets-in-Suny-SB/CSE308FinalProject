@@ -18,7 +18,7 @@ public class PrecinctService {
     public Optional<Precinct> getPrecinct(Integer id){return precinctRepository.findById(id);}
 
     public String addPrecinct(Integer id, String name, Integer population, String party,
-                              Integer districtId, Integer countyId, List<Vote> votes,
+                              Integer districtId, Integer countyId,Vote vote,
                               List<Edge> edges, Map<DemograpicGroup,Integer> demographicGroups,
                               Map<DemograpicGroup, Integer> minorityGroupPopulation, Map<Integer, Float> countyAreas){
         Precinct precinct = new Precinct();
@@ -28,7 +28,7 @@ public class PrecinctService {
         precinct.setParty(party);
         precinct.setDistrictId(districtId);
         precinct.setCountyId(countyId);
-        precinct.setVotes(votes);
+        precinct.setVote(vote);
         precinct.setEdges(edges);
         precinct.setDemographicGroups(demographicGroups);
         precinct.setMinorityGroupPopulation(minorityGroupPopulation);
