@@ -1,13 +1,20 @@
 package com.example.cseproject.Controller;
 
+import com.example.cseproject.DataClasses.Result;
+import com.example.cseproject.Enum.Election;
+import com.example.cseproject.Enum.PartyName;
 import com.example.cseproject.Enum.StateName;
 import com.example.cseproject.Enum.State_Status;
+import com.example.cseproject.Model.District;
+import com.example.cseproject.Model.State;
 import com.example.cseproject.Service.StateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController    // This means that this class is a Controller
 @RequestMapping(path="/state") // This means URL's start with /state (after Application path)
@@ -22,7 +29,13 @@ public class StateController {
 
     @RequestMapping(value="/getDistrictData",method = RequestMethod.GET)
     public String getDistrictsGeoJSON(@RequestParam String state, @RequestParam String election){
-        
+        State targetState=stateService.getState(StateName.valueOf(state.toUpperCase()), State_Status.OLD,Election.valueOf(election.toUpperCase())).get();
+        Result r=new Result();
+
+        for(District d:targetState.getDistricts()){
+            int population=d.getPopulation();
+            Map<PartyName,Integer> partyVotes=d.getPartyVotes();
+        }
         return "DistrictsGeoJSON";
     }
 
