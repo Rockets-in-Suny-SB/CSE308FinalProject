@@ -33,6 +33,7 @@ public class Algorithm {
         this.parameter=parameter;
         State targetState=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW,parameter.getElection()).get();
         this.targetState=targetState;
+        this.resultPairs=new HashSet<>();
         Set<Cluster> clusters=targetState.getClusters();
 
         boolean isFinalIteration=false;
@@ -103,7 +104,7 @@ public class Algorithm {
       public void combineBasedOnMajorityMinority(Set<Cluster> clusters){
           for(Cluster c:clusters){
               if(!c.paired) {
-                  Pair<Cluster, Cluster> p = c.findBestMajorityMinorityPair();
+                  Pair<Cluster, Cluster> p = c.findBestMajorityMinorityPair(parameter.getTargetMinorityPopulation());
                   if (p != null) {
                       resultPairs.add(p);
                   }

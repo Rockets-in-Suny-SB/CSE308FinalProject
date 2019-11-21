@@ -37,6 +37,17 @@ public class AlgorithmService {
         Result phase0Result = algorithm.phase0(targetState.getThreshold());
         return phase0Result;
     }
+    public Result runPhase1(){
+        Parameter parameter = algorithm.getParameter();
+        Result phase1Result =algorithm.phase1(parameter);
+        return  phase1Result;
+    }
+    public Result setPhase1(Parameter parameter){
+        algorithm.setParameter(parameter);
+        Result r=new Result();
+        r.addResult("Status","OK");
+        return r;
+    }
     public String specifyMinorityPopulation( @RequestParam float maximumPercentage,
                                              @RequestParam float minimumPercentage,
                                              @RequestParam List<String> minorityPopulations,

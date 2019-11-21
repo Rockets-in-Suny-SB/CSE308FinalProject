@@ -8,8 +8,10 @@ import com.example.cseproject.Model.Precinct;
 import com.example.cseproject.Model.Vote;
 import org.springframework.data.util.Pair;
 
+import java.security.Key;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 public class Cluster {
@@ -22,6 +24,7 @@ public class Cluster {
     private Map<DemograpicGroup,Integer> minorityGroupPopulation;
     private Map<String,Integer> countyCount;
     public boolean paired;
+
     //constructor
     public Cluster(Integer id, Vote vote, List<Edge> edges, Set<Cluster> clusters,
                    Set<Cluster> neighbors, Map<DemograpicGroup, Integer> minorityGroupPopulation,
@@ -51,36 +54,29 @@ public class Cluster {
     public void setPopulation(int population) {
         this.population = population;
     }
-    // Methods need to be implemented
-//    private void init(Precinct p){}
-//
-//    private Pair<Cluster,Cluster> findBestPairBasedOnFactor(Cluster c, JoinFactor j){}
 
-//    private Pair<Cluster,Cluster> findBestMajorityMinorityPair(Cluster c){}
-//
-//    private float calculateFactorScore(Cluster c, JoinFactor j){}
     public Set<Cluster> getNeighbors(){return this.neighbors;}
 
-    public void updateClusterData(Cluster c){}
+    public void updateClusterData(Cluster c){
+        addAllPopulation(c);
+        addAllMinorityPopulation(c);
+    }
 
     public void combine(Set<Cluster> intersectingClusters, Cluster c2){
-        Set<Cluster> c2Clusters=c2.getNeighbors();
+        Set<Cluster> c2Clusters=c2.getClusters();
         Set<Cluster> c2OnlyClusters= SetLib.setDifference(c2Clusters,intersectingClusters);
         addClusters(c2OnlyClusters);
-        Set<Edge> c2OnlyEdges=getEdges(c2Clusters);
-        addEdges(c2OnlyEdges);
-        removeEdgeAndCluster(c2);
     }
 
 
 
     private void addEdges(List<Edge> edges){}
-    public Pair<Cluster,Cluster> findBestMajorityMinorityPair(){
+    public Pair<Cluster,Cluster> findBestMajorityMinorityPair(DemograpicGroup d){
         double bestScore=0;
         Cluster bestNeighbor=null;
         double candidateScore=0;
         for(Cluster n:getNeighbors()){
-            candidateScore=n.calculateMajorityMinorityScore(n);
+            candidateScore=n.calculateMajorityMinorityScore(n,d);
             if(candidateScore>bestScore){
                 bestScore=candidateScore;
                 bestNeighbor=n;
@@ -124,25 +120,46 @@ public class Cluster {
         return this.edges;
     }
 
-    public double calculateFactorScore(Cluster c,JoinFactor factor){
 
-        return 0;
+    public double calculateMajorityMinorityScore(Cluster c,DemograpicGroup d){
+        double score= (c.getMinorityGroupPopulation().get(d)+this.getMinorityGroupPopulation().get(d))
+                /(c.getPopulation()+this.getPopulation());
+        return new Random().nextDouble();
     }
-    public double calculateMajorityMinorityScore(Cluster c){
 
-        return 0;
+    public Map<DemograpicGroup, Integer> getMinorityGroupPopulation() {
+        return minorityGroupPopulation;
+    }
+
+    public void setMinorityGroupPopulation(Map<DemograpicGroup, Integer> minorityGroupPopulation) {
+        this.minorityGroupPopulation = minorityGroupPopulation;
     }
 
     private void addClusters(Set<Cluster> clusters){
+        for(Cluster c:clusters){
+            this.clusters.add(c);
+        }
+    }
 
+    public void addAllPopulation(Cluster c){
+        for(Cluster innerCluster:c.getClusters()){
+            this.population+=innerCluster.population;
+        }
+    }
+    public void addAllMinorityPopulation(Cluster c){
+        for(Cluster innerCluster:c.getClusters()){
+            for(DemograpicGroup k:this.minorityGroupPopulation.keySet()){
+                this.minorityGroupPopulation.put(k,
+                        innerCluster.minorityGroupPopulation.get(k)
+                        + this.minorityGroupPopulation.get(k));
+            }
+        }
+    };
+    public double calculateFactorScore(Cluster c,JoinFactor factor){
+        //Todo:Calculate the combine score based on factor
+        return new Random().nextDouble();
     }
     public Set<Edge> getEdges(Set<Cluster> clusters){
         return null;
-    }
-    public void addEdges(Set<Edge> edges){
-
-    }
-    public void removeEdgeAndCluster(Cluster c){
-
     }
 }

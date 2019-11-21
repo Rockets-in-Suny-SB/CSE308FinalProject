@@ -20,7 +20,7 @@ public class StateController {
     @Autowired
     StateService stateService;
 
-    @RequestMapping(value="/getDistrictGeoJSON",method = RequestMethod.GET)
+    @RequestMapping(value="/getDistrictData",method = RequestMethod.GET)
     public String getDistrictsGeoJSON(@RequestParam String state, @RequestParam String election){
         
         return "DistrictsGeoJSON";

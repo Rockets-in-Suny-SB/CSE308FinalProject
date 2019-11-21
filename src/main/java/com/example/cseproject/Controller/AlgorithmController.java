@@ -1,6 +1,7 @@
 package com.example.cseproject.Controller;
 
 
+import com.example.cseproject.DataClasses.Parameter;
 import com.example.cseproject.DataClasses.Result;
 import com.example.cseproject.Service.AlgorithmService;
 import com.example.cseproject.Service.StateService;
@@ -25,7 +26,15 @@ public class AlgorithmController {
         algorithmService.runPhase0();
         return "Thresholds have been set";
     }
-
+    @RequestMapping(value = "/phase1Param",method = RequestMethod.POST)
+    public String setPhase1(@RequestParam Parameter parameter){
+        algorithmService.setPhase1(parameter);
+        return "Parameters have been set";
+    }
+    @RequestMapping(value = "/phase1", method = RequestMethod.POST)
+    public Result runPhase1(@RequestParam Parameter parameter){
+        return algorithmService.runPhase1();
+    }
     @RequestMapping(value="/specifyMinorityPopulation",method = RequestMethod.POST)
     public String specifyMinorityPopulation( @RequestParam float maximumPercentage,
                                              @RequestParam float minimumPercentage,
@@ -36,6 +45,7 @@ public class AlgorithmController {
         Result minorityPopulationResult = algorithmService.getMinorityPopulation();
         return "successfully specify minority population";
     }
+
 
 
 }

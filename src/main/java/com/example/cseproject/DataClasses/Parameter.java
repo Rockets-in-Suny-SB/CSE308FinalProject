@@ -14,10 +14,19 @@ public class Parameter {
     private Map<Weights, Float> weights;
     private Boolean updateDiscrete;
     private List<DemograpicGroup> minorityPopulations;
+    private DemograpicGroup targetMinorityPopulation;
     private float maximumPercentage;
     private float minimumPercentage;
     private Boolean isCombined;
     private Election election;
+
+    public DemograpicGroup getTargetMinorityPopulation(){
+        return targetMinorityPopulation;
+    }
+
+    public void setTargetMinorityPopulation(DemograpicGroup targetMinorityPopulation){
+        this.targetMinorityPopulation=targetMinorityPopulation;
+    }
 
     public Election getElection() {
         return election;
