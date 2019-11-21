@@ -73,8 +73,9 @@ public class AlgorithmService {
         State targetState=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()),
                 State_Status.NEW, parameter.getElection()).get();
         Set<Set<Object>> minorityPopulationResult = targetState.getPopulationDistribution(parameter);
-        // minorityPopulationResult need to be converted to result type and then return
-        return null;
+        Result result = new Result();
+        result.addResult("Minority Population Distribution Table", minorityPopulationResult);
+        return result;
     }
 
 

@@ -6,10 +6,7 @@ import com.example.cseproject.DataClasses.Result;
 import com.example.cseproject.Service.AlgorithmService;
 import com.example.cseproject.Service.StateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
@@ -21,10 +18,10 @@ public class AlgorithmController {
     @Autowired
     StateService stateService;
     @RequestMapping(value = "/phase0", method = RequestMethod.POST)
-    public String getThresholds(@RequestParam Float populationThreshold, @RequestParam Float blocThreshold){
+    public @ResponseBody Result runPhase0(@RequestParam Float populationThreshold, @RequestParam Float blocThreshold){
         algorithmService.setThreshold(populationThreshold, blocThreshold);
-        algorithmService.runPhase0();
-        return "Thresholds have been set";
+        Result result = algorithmService.runPhase0();
+        return result;
     }
     @RequestMapping(value = "/phase1Param",method = RequestMethod.POST)
     public String setPhase1(@RequestParam Parameter parameter){
@@ -32,18 +29,19 @@ public class AlgorithmController {
         return "Parameters have been set";
     }
     @RequestMapping(value = "/phase1", method = RequestMethod.POST)
-    public Result runPhase1(@RequestParam Parameter parameter){
-        return algorithmService.runPhase1();
+    public @ResponseBody Result runPhase1(@RequestParam Parameter parameter){
+        Result result = algorithmService.runPhase1();
+        return result;
     }
     @RequestMapping(value="/specifyMinorityPopulation",method = RequestMethod.POST)
-    public String specifyMinorityPopulation( @RequestParam float maximumPercentage,
+    public @ResponseBody Result specifyMinorityPopulation( @RequestParam float maximumPercentage,
                                              @RequestParam float minimumPercentage,
                                              @RequestParam Set<String> minorityPopulations,
                                              @RequestParam Boolean isCombined){
         algorithmService.specifyMinorityPopulation(maximumPercentage, minimumPercentage,
                                                         minorityPopulations, isCombined);
         Result minorityPopulationResult = algorithmService.getMinorityPopulation();
-        return "successfully specify minority population";
+        return minorityPopulationResult;
     }
 
 

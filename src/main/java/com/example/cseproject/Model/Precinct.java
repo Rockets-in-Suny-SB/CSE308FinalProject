@@ -196,6 +196,7 @@ public class Precinct {
         Set<Object> result = new HashSet<>();
         result.add(this.name);
         result.add(this.population);
+        result.add(winningPartyName);
         result.add(winningVotes);
         result.add(totalVotes);
         result.add(percentage);

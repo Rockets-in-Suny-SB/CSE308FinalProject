@@ -30,8 +30,10 @@ public class StateController {
     StateService stateService;
 
     @RequestMapping(value="/getDistrictData",method = RequestMethod.GET)
+
     public Result getDistrictsGeoJSON(@RequestParam String state, @RequestParam String year){
         return stateService.getDistrictsData(state,year);
+
     }
 
 
