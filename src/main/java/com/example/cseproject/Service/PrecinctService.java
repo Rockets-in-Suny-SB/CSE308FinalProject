@@ -7,7 +7,7 @@ import com.example.cseproject.Model.Vote;
 import com.example.cseproject.Repository.PrecinctRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Set;
 import java.util.Map;
 import java.util.Optional;
 @Service
@@ -19,7 +19,7 @@ public class PrecinctService {
 
     public String addPrecinct(Integer id, String name, Integer population, String party,
                               Integer districtId, Integer countyId,Vote vote,
-                              List<Edge> edges, Map<DemograpicGroup,Integer> demographicGroups,
+                              Set<Edge> edges, Map<DemograpicGroup,Integer> demographicGroups,
                               Map<DemograpicGroup, Integer> minorityGroupPopulation, Map<Integer, Float> countyAreas){
         Precinct precinct = new Precinct();
         precinct.setId(id);

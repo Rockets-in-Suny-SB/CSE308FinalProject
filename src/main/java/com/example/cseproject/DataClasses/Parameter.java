@@ -4,7 +4,7 @@ import com.example.cseproject.Enum.DemograpicGroup;
 import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.Weights;
 
-import java.util.List;
+import java.util.Set;
 import java.util.Map;
 
 public class Parameter {
@@ -13,8 +13,12 @@ public class Parameter {
     private int targetDistricts;
     private Map<Weights, Float> weights;
     private Boolean updateDiscrete;
-    private List<DemograpicGroup> minorityPopulations;
+
+
     private DemograpicGroup targetMinorityPopulation;
+
+    private Set<DemograpicGroup> minorityPopulations;
+
     private float maximumPercentage;
     private float minimumPercentage;
     private Boolean isCombined;
@@ -68,11 +72,11 @@ public class Parameter {
         this.updateDiscrete = updateDiscrete;
     }
 
-    public List<DemograpicGroup> getMinorityPopulations() {
+    public Set<DemograpicGroup> getMinorityPopulations() {
         return minorityPopulations;
     }
 
-    public void setMinorityPopulations(List<DemograpicGroup> minorityPopulations) {
+    public void setMinorityPopulations(Set<DemograpicGroup> minorityPopulations) {
         this.minorityPopulations = minorityPopulations;
     }
 

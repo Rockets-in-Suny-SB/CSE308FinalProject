@@ -6,10 +6,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.persistence.*;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Entity
 public class District {
@@ -30,7 +28,7 @@ public class District {
     private String geoJson;
 
     @Transient
-    private List<Precinct> precincts;
+    private Set<Precinct> precincts;
 
 //    private String districtAttributeJSON;
 //
@@ -82,11 +80,11 @@ public class District {
         this.name = name;
     }
 
-    public List<Precinct> getPrecincts() {
+    public Set<Precinct> getPrecincts() {
         return precincts;
     }
 
-    public void setPrecincts(List<Precinct> precincts) {
+    public void setPrecincts(Set<Precinct> precincts) {
         this.precincts = precincts;
     }
 
