@@ -1,5 +1,6 @@
 package com.example.cseproject.Model;
 
+import com.example.cseproject.Enum.DemograpicGroup;
 import com.example.cseproject.Enum.PartyName;
 import com.example.cseproject.untilities.HashMapConverter;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,6 +25,12 @@ public class District {
     @CollectionTable(name = "district_partyVotes",
                     joinColumns = @JoinColumn(name = "district_id"))
     private Map<PartyName, Integer> partyVotes;
+
+   /* @ElementCollection
+    @CollectionTable(name = "district_minority_group_population",
+            joinColumns = @JoinColumn(name = "district_id"))*/
+   @Transient
+    private Map<DemograpicGroup, Integer> minorityGroupPopulation;
 
     private String geoJson;
 
@@ -95,5 +102,15 @@ public class District {
     public void setPopulation(Integer population) {
         this.population = population;
     }
+
+    public Map<DemograpicGroup, Integer> getMinorityGroupPopulation() {
+        return minorityGroupPopulation;
+    }
+
+    public void setMinorityGroupPopulation(Map<DemograpicGroup, Integer> minorityGroupPopulation) {
+        this.minorityGroupPopulation = minorityGroupPopulation;
+    }
+
+
 
 }
