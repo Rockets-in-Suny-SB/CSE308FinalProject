@@ -7,9 +7,7 @@ import com.example.cseproject.Enum.PartyName;
 
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Entity
@@ -28,7 +26,7 @@ public class Precinct {
     private Vote vote;
 
     @OneToMany(targetEntity = Edge.class)
-    private List<Edge> precinctEdges;
+    private Set<Edge> precinctEdges;
 
     @ElementCollection
     @CollectionTable(name = "groupName_groupPopulation",
@@ -110,15 +108,15 @@ public class Precinct {
         this.vote = vote;
     }
 
-    public void setPrecinctEdges(List<Edge> precinctEdges) {
+    public void setPrecinctEdges(Set<Edge> precinctEdges) {
         this.precinctEdges = precinctEdges;
     }
 
-    public List<Edge> getPrecinctEdges() {
+    public Set<Edge> getPrecinctEdges() {
         return precinctEdges;
     }
 
-    public void setEdges(List<Edge> edges) {
+    public void setEdges(Set<Edge> edges) {
         this.precinctEdges = edges;
     }
 
@@ -155,7 +153,7 @@ public class Precinct {
     }
 
 
-    public List<Object> doBlocAnalysis(Threshold threshold, Election election){
+    public Set<Object> doBlocAnalysis(Threshold threshold){
         List<Object> populationResult = this.findLargestDemographicGroup(threshold);
         if (populationResult.get(0) == Boolean.FALSE){
             return null;
@@ -186,7 +184,7 @@ public class Precinct {
 
     }
 
-    public List<Object> checkBlocThreshold(Threshold threshold){
+    public Set<Object> checkBlocThreshold(Threshold threshold){
         Vote targetVote = this.getVote();
         Integer totalVotes = targetVote.getTotalVotes();
         Integer winningVotes = targetVote.getWinningVotes();
@@ -195,7 +193,7 @@ public class Precinct {
         if (percentage < threshold.getBlocThreshold()){
             return null;
         }
-        List<Object> result = new ArrayList<>();
+        Set<Object> result = new HashSet<>();
         result.add(this.name);
         result.add(this.population);
         result.add(winningVotes);

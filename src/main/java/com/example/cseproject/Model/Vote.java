@@ -5,6 +5,7 @@ import com.example.cseproject.Enum.PartyName;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Vote {
@@ -16,7 +17,7 @@ public class Vote {
     private Integer winningVotes;
 
     @OneToMany(targetEntity = Party.class)
-    private List<Party> parties;
+    private Set<Party> parties;
 
     public Integer getId() {
         return id;
@@ -50,11 +51,11 @@ public class Vote {
         this.winningVotes = winningVotes;
     }
 
-    public List<Party> getParties() {
+    public Set<Party> getParties() {
         return parties;
     }
 
-    public void setParties(List<Party> parties) {
+    public void setParties(Set<Party> parties) {
         this.parties = parties;
     }
 }

@@ -6,7 +6,7 @@ import com.example.cseproject.Model.Vote;
 import com.example.cseproject.Repository.VotesRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Set;
 import java.util.Optional;
 
 @Service
@@ -19,10 +19,10 @@ public class VotesService {
         return votesRepository.findById(id);
     }
 
-    public String addVote(Integer id, List<Party> parties){
+    public String addVote(Integer id, Set<Party> parties){
         Vote vote = new Vote();
         vote.setId(id);
-        Party winningParty = parties.get(0);
+        Party winningParty = null;
         Integer totalVotes = 0;
         for (Party party : parties){
             totalVotes += party.getVotes();

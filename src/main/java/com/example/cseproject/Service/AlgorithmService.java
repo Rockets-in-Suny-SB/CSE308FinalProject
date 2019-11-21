@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class AlgorithmService {
@@ -39,14 +39,14 @@ public class AlgorithmService {
     }
     public String specifyMinorityPopulation( float maximumPercentage,
                                              float minimumPercentage,
-                                             List<String> minorityPopulations,
+                                             Set<String> minorityPopulations,
                                              Boolean isCombined){
 
         Parameter parameter = algorithm.getParameter();
         parameter.setCombined(isCombined);
         parameter.setMaximumPercentage(maximumPercentage);
         parameter.setMinimumPercentage(minimumPercentage);
-        List<DemograpicGroup> demograpicGroups = new ArrayList<>();
+        Set<DemograpicGroup> demograpicGroups = new HashSet<>();
         for (String minority : minorityPopulations){
             demograpicGroups.add(DemograpicGroup.valueOf(minority.toUpperCase()));
         }
@@ -58,7 +58,7 @@ public class AlgorithmService {
         Parameter parameter = algorithm.getParameter();
         State targetState=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()),
                 State_Status.NEW, parameter.getElection()).get();
-        List<List<Object>> minorityPopulationResult = targetState.getPopulationDistribution(parameter);
+        Set<Set<Object>> minorityPopulationResult = targetState.getPopulationDistribution(parameter);
         // minorityPopulationResult need to be converted to result type and then return
         return null;
     }

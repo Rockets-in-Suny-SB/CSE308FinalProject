@@ -25,7 +25,7 @@ public class Algorithm {
     public Result phase0(Threshold threshold){
         State targetState=stateService.getState(StateName.valueOf(this.parameter.getStateName().toUpperCase()),
                 State_Status.NEW, this.parameter.getElection()).get();
-        List<List<Object>> eligibleBlocs = targetState.findEligibleBlocs();
+        Set<Set<Object>> eligibleBlocs = targetState.findEligibleBlocs();
         return null;
     }
     public Result phase1(Parameter parameter){

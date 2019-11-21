@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/setting")
@@ -29,7 +29,7 @@ public class AlgorithmController {
     @RequestMapping(value="/specifyMinorityPopulation",method = RequestMethod.POST)
     public String specifyMinorityPopulation( @RequestParam float maximumPercentage,
                                              @RequestParam float minimumPercentage,
-                                             @RequestParam List<String> minorityPopulations,
+                                             @RequestParam Set<String> minorityPopulations,
                                              @RequestParam Boolean isCombined){
         algorithmService.specifyMinorityPopulation(maximumPercentage, minimumPercentage,
                                                         minorityPopulations, isCombined);

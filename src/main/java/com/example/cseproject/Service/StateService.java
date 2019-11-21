@@ -11,7 +11,7 @@ import com.example.cseproject.Repository.StateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Set;
 import java.util.Optional;
 
 @Service
@@ -28,7 +28,7 @@ public class StateService {
         StateId id = new StateId(name, status, election);
         return stateRepository.findById(id);}
 
-    public String addState(StateName name, State_Status status, List<District> districts){
+    public String addState(StateName name, State_Status status, Set<District> districts){
         State  state = new State();
         state.setDistricts(districts);
         state.setName(name);

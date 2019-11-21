@@ -24,13 +24,13 @@ public class State {
     private Election election;
 
     @OneToMany
-    private List<District> districts;
+    private Set<District> districts;
 
     @Transient
     private Threshold threshold;
 
     @Transient
-    private List<String> EligibleBlocs;
+    private Set<String> EligibleBlocs;
     @Transient
     private Set<Cluster> clusters;
 
@@ -58,35 +58,35 @@ public class State {
         this.status = status;
     }
 
-    public List<District> getDistricts() {
+    public Set<District> getDistricts() {
         return districts;
     }
 
-    public void setDistricts(List<District> districts) {
+    public void setDistricts(Set<District> districts) {
         this.districts = districts;
     }
 
-    public List<Precinct> getPrecinct(){
-        List<Precinct> precincts = new ArrayList<>();
+    public Set<Precinct> getPrecinct(){
+        Set<Precinct> precincts = new HashSet<>();
         for (District district:districts){
             precincts.addAll(district.getPrecincts());
         }
         return precincts;
     }
 
-    public List<List<Object>> findEligibleBlocs(){
-        List<List<Object>> result = new ArrayList<>();
+    public Set<Set<Object>> findEligibleBlocs(){
+        Set<Set<Object>> result = new HashSet<>();
 
         for (Precinct precinct:this.getPrecinct()){
-            List<Object> eligibleBloc = precinct.findLargestDemographicGroup(this.threshold);
+            Set<Object> eligibleBloc = precinct.doBlocAnalysis(this.threshold);
             if (eligibleBloc != null)
                 result.add(eligibleBloc);
         }
         return result;
     }
 
-    public List<List<Object>> getPopulationDistribution(Parameter parameter){
-        List<DemograpicGroup> demograpicGroups = parameter.getMinorityPopulations();
+    public Set<Set<Object>> getPopulationDistribution(Parameter parameter){
+        Set<DemograpicGroup> demograpicGroups = parameter.getMinorityPopulations();
         Map<DemograpicGroup,Integer> demographicResult =new HashMap<>();
         Integer statePopulation = 0;
         for(District district : this.districts){
@@ -105,11 +105,11 @@ public class State {
                 }
             }
         }
-        List<List<Object>> result = new ArrayList<>();
+        Set<Set<Object>> result = new HashSet<>();
         for (Map.Entry<DemograpicGroup,Integer> entry : demographicResult.entrySet()){
             Float percentage = (float) entry.getValue()/statePopulation;
             if ( percentage <= parameter.getMaximumPercentage() && percentage >= parameter.getMinimumPercentage()){
-                List<Object> demographicData = new ArrayList<>();
+                Set<Object> demographicData = new HashSet<>();
                 demographicData.add(entry.getKey());
                 demographicData.add(entry.getValue());
                 demographicData.add(percentage);
