@@ -37,6 +37,7 @@ public class AlgorithmService {
         Result phase0Result = algorithm.phase0(targetState.getThreshold());
         return phase0Result;
     }
+
     public Result runPhase1(){
         Parameter parameter = algorithm.getParameter();
         Result phase1Result =algorithm.phase1(parameter);
@@ -48,10 +49,12 @@ public class AlgorithmService {
         r.addResult("Status","OK");
         return r;
     }
-    public String specifyMinorityPopulation( @RequestParam float maximumPercentage,
-                                             @RequestParam float minimumPercentage,
-                                             @RequestParam List<String> minorityPopulations,
-                                             @RequestParam Boolean isCombined){
+
+    public String specifyMinorityPopulation( float maximumPercentage,
+                                             float minimumPercentage,
+                                             List<String> minorityPopulations,
+                                             Boolean isCombined){
+
 
         Parameter parameter = algorithm.getParameter();
         parameter.setCombined(isCombined);

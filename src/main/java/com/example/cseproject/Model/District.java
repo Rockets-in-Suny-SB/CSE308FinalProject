@@ -1,20 +1,60 @@
 package com.example.cseproject.Model;
 
+import com.example.cseproject.Enum.PartyName;
+import com.example.cseproject.untilities.HashMapConverter;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import javax.persistence.*;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 public class District {
     @Id
     @GeneratedValue
+    @Column(name = "district_id")
     private Integer id;
+    @Transient
     private String color;
     private String name;
     private Integer population;
+
+    @ElementCollection
+    @CollectionTable(name = "district_partyVotes",
+                    joinColumns = @JoinColumn(name = "district_id"))
+    private Map<PartyName, Integer> partyVotes;
+
+
+
     private String geoJson;
     @OneToMany
     private List<Precinct> precincts;
 
+    private String districtAttributeJSON;
+
+    @Convert(converter = HashMapConverter.class)
+    private Map<String, Object> districtAttributes;
+
+//    public void serializeDistrictAttributes() throws JsonProcessingException{
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        this.districtAttributeJSON = objectMapper.writeValueAsString(this.districtAttributes);
+//    }
+//
+//    public void deserializeCustomerAttributes() throws IOException{
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        this.districtAttributes = objectMapper.readValue(this.districtAttributeJSON, HashMap.class);
+//    }
+
+    public Map<PartyName, Integer> getPartyVotes() {
+        return partyVotes;
+    }
+
+    public void setPartyVotes(Map<PartyName, Integer> partyVotes) {
+        this.partyVotes = partyVotes;
+    }
 
     public String getGeoJson(){return geoJson;}
     public void setGeoJson(String geoJson){this.geoJson=geoJson;}
@@ -58,4 +98,20 @@ public class District {
     public void setPopulation(Integer population) {
         this.population = population;
     }
+
+//    public String getDistrictAttributeJSON() {
+//        return districtAttributeJSON;
+//    }
+//
+//    public void setDistrictAttributeJSON(String districtAttributeJSON) {
+//        this.districtAttributeJSON = districtAttributeJSON;
+//    }
+//
+//    public Map<String, Object> getDistrictAttributes() {
+//        return districtAttributes;
+//    }
+//
+//    public void setDistrictAttributes(Map<String, Object> districtAttributes) {
+//        this.districtAttributes = districtAttributes;
+//    }
 }
