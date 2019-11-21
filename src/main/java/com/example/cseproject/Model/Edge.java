@@ -4,14 +4,23 @@ import javax.persistence.*;
 
 @Entity
 public class Edge {
-    @Id
-    @Column(name = "edge_id")
+
     private Integer id;
     private Integer adjacentPrecinct1_id;
     private Integer adjacentPrecinct2_id;
     private Boolean sameCounty;
     private Float demographicSimilarity;
     private Integer precinct_id;
+
+    @Id
+    @Column(name = "edge_id")
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Integer getAdjacentPrecinct1_id() {
         return adjacentPrecinct1_id;
@@ -27,14 +36,6 @@ public class Edge {
 
     public void setAdjacentPrecinct2_id(Integer adjacentPrecinct2_id) {
         this.adjacentPrecinct2_id = adjacentPrecinct2_id;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Boolean getSameCounty() {

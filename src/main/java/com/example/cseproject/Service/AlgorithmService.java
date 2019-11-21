@@ -1,16 +1,16 @@
 package com.example.cseproject.Service;
 
 import com.example.cseproject.Algorithm.Algorithm;
+import com.example.cseproject.DataClasses.MinorityPopulation;
 import com.example.cseproject.DataClasses.Parameter;
 import com.example.cseproject.DataClasses.Result;
 import com.example.cseproject.DataClasses.Threshold;
-import com.example.cseproject.Enum.DemograpicGroup;
+import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Enum.StateName;
 import com.example.cseproject.Enum.State_Status;
 import com.example.cseproject.Model.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -60,11 +60,11 @@ public class AlgorithmService {
         parameter.setCombined(isCombined);
         parameter.setMaximumPercentage(maximumPercentage);
         parameter.setMinimumPercentage(minimumPercentage);
-        Set<DemograpicGroup> demograpicGroups = new HashSet<>();
+        Set<DemographicGroup> demographicGroups = new HashSet<>();
         for (String minority : minorityPopulations){
-            demograpicGroups.add(DemograpicGroup.valueOf(minority.toUpperCase()));
+            demographicGroups.add(DemographicGroup.valueOf(minority.toUpperCase()));
         }
-        parameter.setMinorityPopulations(demograpicGroups);
+        parameter.setMinorityPopulations(demographicGroups);
         algorithm.setParameter(parameter);
         return "successfully specify minority population";
     }
@@ -72,7 +72,7 @@ public class AlgorithmService {
         Parameter parameter = algorithm.getParameter();
         State targetState=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()),
                 State_Status.NEW).get();
-        Set<Set<Object>> minorityPopulationResult = targetState.getPopulationDistribution(parameter);
+        Set<MinorityPopulation> minorityPopulationResult = targetState.getPopulationDistribution(parameter);
         Result result = new Result();
         result.addResult("Minority Population Distribution Table", minorityPopulationResult);
         return result;

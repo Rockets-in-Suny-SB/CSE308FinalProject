@@ -1,6 +1,6 @@
 package com.example.cseproject.DataClasses;
 
-import com.example.cseproject.Enum.DemograpicGroup;
+import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Enum.PartyName;
 import com.example.cseproject.Model.District;
 
@@ -11,7 +11,7 @@ public class DistrictData {
     private Integer population;
 
     private Map<PartyName, Integer> partyVotes;
-    private Map<DemograpicGroup, Integer> minorityGroupPopulation;
+    private Map<DemographicGroup, Integer> minorityGroupPopulation;
 
     public String getName() {
         return name;

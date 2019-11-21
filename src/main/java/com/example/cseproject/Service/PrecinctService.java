@@ -1,6 +1,6 @@
 package com.example.cseproject.Service;
 
-import com.example.cseproject.Enum.DemograpicGroup;
+import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Model.Edge;
 import com.example.cseproject.Model.Precinct;
 import com.example.cseproject.Model.Vote;
@@ -17,25 +17,6 @@ public class PrecinctService {
 
     public Optional<Precinct> getPrecinct(Integer id){return precinctRepository.findById(id);}
 
-    public String addPrecinct(Integer id, String name, Integer population, String party,
-                              Integer districtId, Integer countyId,Vote vote,
-                              Set<Edge> edges, Map<DemograpicGroup,Integer> demographicGroups,
-                              Map<DemograpicGroup, Integer> minorityGroupPopulation, Map<Integer, Float> countyAreas){
-        Precinct precinct = new Precinct();
-        precinct.setId(id);
-        precinct.setName(name);
-        precinct.setPopulation(population);
-        precinct.setParty(party);
-        precinct.setDistrictId(districtId);
-        precinct.setCountyId(countyId);
-        precinct.setVote(vote);
-        precinct.setEdges(edges);
-        precinct.setDemographicGroups(demographicGroups);
-        precinct.setMinorityGroupPopulation(minorityGroupPopulation);
-        precinct.setCountyAreas(countyAreas);
-        precinctRepository.save(precinct);
-        return "Saved";
-    }
 
     public String deletePrecinct(Precinct precinct){
         precinctRepository.delete(precinct);

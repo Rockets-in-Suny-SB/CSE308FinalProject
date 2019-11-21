@@ -2,10 +2,9 @@ package com.example.cseproject.Model;
 
 import com.example.cseproject.DataClasses.EligibleBloc;
 import com.example.cseproject.DataClasses.Threshold;
-import com.example.cseproject.Enum.DemograpicGroup;
+import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.PartyName;
-import org.springframework.data.util.Pair;
 
 
 import javax.persistence.*;
@@ -16,27 +15,16 @@ import java.util.*;
 public class Precinct {
 
     private Integer id;
-
     private String name;
-
     private Integer population;
-
     private String party;
-
     private Integer districtId;
-
     private Integer countyId;
-
     private Set<Vote> votes;
-
     private Set<Edge> precinctEdges;
-
-    private Map<DemograpicGroup, Integer> demographicGroups;
-
+    private Map<DemographicGroup, Integer> demographicGroups;
     private String geoJson;
-
-    private Map<DemograpicGroup, Integer> minorityGroupPopulation;
-
+    private Map<DemographicGroup, Integer> minorityGroupPopulation;
     private Map<Integer, Float> CountyAreas;
 
     @Id
@@ -113,11 +101,11 @@ public class Precinct {
             joinColumns = @JoinColumn(name = "precinct_id"))
     @MapKeyColumn(name = "groupName")
     @Column(name = "groupPopulation")
-    public Map<DemograpicGroup, Integer> getDemographicGroups() {
+    public Map<DemographicGroup, Integer> getDemographicGroups() {
         return demographicGroups;
     }
 
-    public void setDemographicGroups(Map<DemograpicGroup, Integer> demographicGroups) {
+    public void setDemographicGroups(Map<DemographicGroup, Integer> demographicGroups) {
         this.demographicGroups = demographicGroups;
     }
 
@@ -134,11 +122,11 @@ public class Precinct {
             joinColumns = @JoinColumn(name = "precinct_id"))
     @MapKeyColumn(name = "minorityName")
     @Column(name = "groupPopulation")
-    public Map<DemograpicGroup, Integer> getMinorityGroupPopulation() {
+    public Map<DemographicGroup, Integer> getMinorityGroupPopulation() {
         return minorityGroupPopulation;
     }
 
-    public void setMinorityGroupPopulation(Map<DemograpicGroup, Integer> minorityGroupPopulation) {
+    public void setMinorityGroupPopulation(Map<DemographicGroup, Integer> minorityGroupPopulation) {
         this.minorityGroupPopulation = minorityGroupPopulation;
     }
 
@@ -157,7 +145,7 @@ public class Precinct {
 
 
     public EligibleBloc doBlocAnalysis(Threshold threshold, Election election){
-        DemograpicGroup populationResult = findLargestDemographicGroup(threshold);
+        DemographicGroup populationResult = findLargestDemographicGroup(threshold);
         if (populationResult == null){
             return null;
         }
@@ -167,18 +155,18 @@ public class Precinct {
     }
 
     /* Use case 23: check whether it meets populution threshold or not*/
-    public DemograpicGroup findLargestDemographicGroup(Threshold threshold){
-        DemograpicGroup dominate = DemograpicGroup.WHITE;
+    public DemographicGroup findLargestDemographicGroup(Threshold threshold){
+        DemographicGroup dominate = DemographicGroup.WHITE;
         Float maxPercent = (float) 0;
         Float populationThreshold = threshold.getPopulationThreshold();
-        for(Map.Entry<DemograpicGroup,Integer> entry : this.minorityGroupPopulation.entrySet()){
+        for(Map.Entry<DemographicGroup,Integer> entry : this.minorityGroupPopulation.entrySet()){
             Float percentage = (float) entry.getValue()/this.population;
             if (percentage > populationThreshold && percentage > maxPercent){
                 dominate = entry.getKey();
                 maxPercent = percentage;
             }
         }
-        if (dominate != DemograpicGroup.WHITE){
+        if (dominate != DemographicGroup.WHITE){
             return null;
         }
         return dominate;

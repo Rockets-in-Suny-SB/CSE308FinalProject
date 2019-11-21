@@ -1,12 +1,11 @@
 package com.example.cseproject.DataClasses;
 
-import com.example.cseproject.Enum.DemograpicGroup;
+import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Enum.PartyName;
-import com.example.cseproject.Model.Precinct;
 
 public class EligibleBloc {
     private String precinctName;
-    private DemograpicGroup demographicGroup;
+    private DemographicGroup demographicGroup;
     private Integer population;
     private Integer winningVotes;
     private Integer totalVotes;
@@ -24,11 +23,11 @@ public class EligibleBloc {
         this.precinctName = precinctName;
     }
 
-    public DemograpicGroup getDemographicGroup() {
+    public DemographicGroup getDemographicGroup() {
         return demographicGroup;
     }
 
-    public void setDemographicGroup(DemograpicGroup demographicGroup) {
+    public void setDemographicGroup(DemographicGroup demographicGroup) {
         this.demographicGroup = demographicGroup;
     }
 

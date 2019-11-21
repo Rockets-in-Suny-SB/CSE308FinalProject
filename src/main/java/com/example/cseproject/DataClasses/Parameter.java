@@ -1,6 +1,6 @@
 package com.example.cseproject.DataClasses;
 
-import com.example.cseproject.Enum.DemograpicGroup;
+import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.Weights;
 
@@ -15,20 +15,20 @@ public class Parameter {
     private Boolean updateDiscrete;
 
 
-    private DemograpicGroup targetMinorityPopulation;
+    private DemographicGroup targetMinorityPopulation;
 
-    private Set<DemograpicGroup> minorityPopulations;
+    private Set<DemographicGroup> minorityPopulations;
 
     private float maximumPercentage;
     private float minimumPercentage;
     private Boolean isCombined;
     private Election election;
 
-    public DemograpicGroup getTargetMinorityPopulation(){
+    public DemographicGroup getTargetMinorityPopulation(){
         return targetMinorityPopulation;
     }
 
-    public void setTargetMinorityPopulation(DemograpicGroup targetMinorityPopulation){
+    public void setTargetMinorityPopulation(DemographicGroup targetMinorityPopulation){
         this.targetMinorityPopulation=targetMinorityPopulation;
     }
 
@@ -72,11 +72,11 @@ public class Parameter {
         this.updateDiscrete = updateDiscrete;
     }
 
-    public Set<DemograpicGroup> getMinorityPopulations() {
+    public Set<DemographicGroup> getMinorityPopulations() {
         return minorityPopulations;
     }
 
-    public void setMinorityPopulations(Set<DemograpicGroup> minorityPopulations) {
+    public void setMinorityPopulations(Set<DemographicGroup> minorityPopulations) {
         this.minorityPopulations = minorityPopulations;
     }
 

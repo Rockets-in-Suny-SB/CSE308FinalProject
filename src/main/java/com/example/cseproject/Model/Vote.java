@@ -5,26 +5,28 @@ import com.example.cseproject.Enum.PartyName;
 import com.example.cseproject.Model.CompositeKeys.VoteId;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.Map;
 
 @Entity
 @IdClass(VoteId.class)
 public class Vote {
 
-    private Integer id;
-
-    private Election election;
-
-    private Integer totalVotes;
-
-    private PartyName winningPartyName;
-
-    private Integer winningVotes;
-
-    private Set<Party> parties;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
+    @Id
+    private Election election;
+    private Integer totalVotes;
+    private PartyName winningPartyName;
+    private Integer winningVotes;
+    @ElementCollection
+    @CollectionTable(name = "vote_partyVotes",
+            joinColumns ={@JoinColumn(name = "vote_id"),
+                          @JoinColumn(name = "election")})
+    @MapKeyColumn(name = "partyName")
+    @Column(name = "partyVotes")
+    private Map<PartyName, Integer> partyVotes;
+
     public Integer getId() {
         return id;
     }
@@ -33,7 +35,6 @@ public class Vote {
         this.id = id;
     }
 
-    @Id
     public Election getElection() {
         return election;
     }
@@ -66,13 +67,13 @@ public class Vote {
         this.winningVotes = winningVotes;
     }
 
-    @OneToMany(targetEntity = Party.class)
-    public Set<Party> getParties() {
-        return parties;
+
+    public Map<PartyName, Integer> getPartyVotes() {
+        return partyVotes;
     }
 
-    public void setParties(Set<Party> parties) {
-        this.parties = parties;
+    public void setPartyVotes(Map<PartyName, Integer> partyVotes) {
+        this.partyVotes = partyVotes;
     }
 }
 

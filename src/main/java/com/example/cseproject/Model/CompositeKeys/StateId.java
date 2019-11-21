@@ -1,6 +1,5 @@
 package com.example.cseproject.Model.CompositeKeys;
 
-import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.StateName;
 import com.example.cseproject.Enum.State_Status;
 

@@ -1,14 +1,12 @@
 package com.example.cseproject.DataClasses;
 
 import com.example.cseproject.Algorithm.SetLib;
-import com.example.cseproject.Enum.DemograpicGroup;
+import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Enum.JoinFactor;
 import com.example.cseproject.Model.Edge;
-import com.example.cseproject.Model.Precinct;
 import com.example.cseproject.Model.Vote;
 import org.springframework.data.util.Pair;
 
-import java.security.Key;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -21,13 +19,13 @@ public class Cluster {
     private Set<Cluster> clusters;
     private Set<Cluster> neighbors;
     private int population;
-    private Map<DemograpicGroup,Integer> minorityGroupPopulation;
+    private Map<DemographicGroup,Integer> minorityGroupPopulation;
     private Map<String,Integer> countyCount;
     public boolean paired;
 
     //constructor
     public Cluster(Integer id, Vote vote, List<Edge> edges, Set<Cluster> clusters,
-                   Set<Cluster> neighbors, Map<DemograpicGroup, Integer> minorityGroupPopulation,
+                   Set<Cluster> neighbors, Map<DemographicGroup, Integer> minorityGroupPopulation,
                    Map<String, Integer> countyCount) {
         this.id = id;
         this.vote = vote;
@@ -71,7 +69,7 @@ public class Cluster {
 
 
     private void addEdges(List<Edge> edges){}
-    public Pair<Cluster,Cluster> findBestMajorityMinorityPair(DemograpicGroup d){
+    public Pair<Cluster,Cluster> findBestMajorityMinorityPair(DemographicGroup d){
         double bestScore=0;
         Cluster bestNeighbor=null;
         double candidateScore=0;
@@ -121,17 +119,17 @@ public class Cluster {
     }
 
 
-    public double calculateMajorityMinorityScore(Cluster c,DemograpicGroup d){
+    public double calculateMajorityMinorityScore(Cluster c, DemographicGroup d){
         double score= (c.getMinorityGroupPopulation().get(d)+this.getMinorityGroupPopulation().get(d))
                 /(c.getPopulation()+this.getPopulation());
         return new Random().nextDouble();
     }
 
-    public Map<DemograpicGroup, Integer> getMinorityGroupPopulation() {
+    public Map<DemographicGroup, Integer> getMinorityGroupPopulation() {
         return minorityGroupPopulation;
     }
 
-    public void setMinorityGroupPopulation(Map<DemograpicGroup, Integer> minorityGroupPopulation) {
+    public void setMinorityGroupPopulation(Map<DemographicGroup, Integer> minorityGroupPopulation) {
         this.minorityGroupPopulation = minorityGroupPopulation;
     }
 
@@ -148,7 +146,7 @@ public class Cluster {
     }
     public void addAllMinorityPopulation(Cluster c){
         for(Cluster innerCluster:c.getClusters()){
-            for(DemograpicGroup k:this.minorityGroupPopulation.keySet()){
+            for(DemographicGroup k:this.minorityGroupPopulation.keySet()){
                 this.minorityGroupPopulation.put(k,
                         innerCluster.minorityGroupPopulation.get(k)
                         + this.minorityGroupPopulation.get(k));

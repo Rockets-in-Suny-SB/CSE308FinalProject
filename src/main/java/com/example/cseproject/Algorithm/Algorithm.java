@@ -1,9 +1,6 @@
 package com.example.cseproject.Algorithm;
 
-import com.example.cseproject.DataClasses.Cluster;
-import com.example.cseproject.DataClasses.Parameter;
-import com.example.cseproject.DataClasses.Result;
-import com.example.cseproject.DataClasses.Threshold;
+import com.example.cseproject.DataClasses.*;
 import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.JoinFactor;
 import com.example.cseproject.Enum.StateName;
@@ -24,8 +21,8 @@ public class Algorithm {
     private StateService stateService;
     public Result phase0(Threshold threshold){
         State targetState=stateService.getState(StateName.valueOf(this.parameter.getStateName().toUpperCase()),
-                State_Status.NEW, this.parameter.getElection()).get();
-        Set<Set<Object>> eligibleBlocs = targetState.findEligibleBlocs();
+                State_Status.NEW).get();
+        Set<EligibleBloc> eligibleBlocs = targetState.findEligibleBlocs();
         Result result = new Result();
         result.addResult("Eligible Blocs", eligibleBlocs);
         return result;
@@ -33,7 +30,7 @@ public class Algorithm {
     public Result phase1(Parameter parameter){
 
         this.parameter=parameter;
-        State targetState=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW,parameter.getElection()).get();
+        State targetState=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW).get();
         this.targetState=targetState;
         this.resultPairs=new HashSet<>();
         Set<Cluster> clusters=targetState.getClusters();

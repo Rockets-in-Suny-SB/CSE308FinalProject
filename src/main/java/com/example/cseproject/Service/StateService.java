@@ -43,7 +43,7 @@ public class StateService {
         return "Deleted";
     }
     public Result getDistrictsData(String state, String year) {
-        State targetState=getState(StateName.valueOf(state), State_Status.OLD,Election.valueOf(year)).get();
+        State targetState=getState(StateName.valueOf(state), State_Status.OLD).get();
         Result districtDataList=new Result();
         for (District d : targetState.getDistricts()) {
             districtDataList.addResult(d.getId().toString(),new DistrictData(d));
