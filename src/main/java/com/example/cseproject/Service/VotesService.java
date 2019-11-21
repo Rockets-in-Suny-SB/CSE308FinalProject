@@ -1,6 +1,7 @@
 package com.example.cseproject.Service;
 
 import com.example.cseproject.Enum.Election;
+import com.example.cseproject.Model.CompositeKeys.VoteId;
 import com.example.cseproject.Model.Party;
 import com.example.cseproject.Model.Vote;
 import com.example.cseproject.Repository.VotesRepository;
@@ -15,8 +16,8 @@ public class VotesService {
 
     private Iterable<Vote> getAllVotes(){ return votesRepository.findAll(); }
 
-    public Optional<Vote> getVote(Integer id){
-        return votesRepository.findById(id);
+    public Optional<Vote> getVote(Integer id, Election election){
+        return votesRepository.findById(new VoteId(id, election));
     }
 
     public String addVote(Integer id, Set<Party> parties){

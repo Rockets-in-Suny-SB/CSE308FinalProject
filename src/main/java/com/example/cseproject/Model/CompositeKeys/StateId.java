@@ -10,11 +10,9 @@ public class StateId implements Serializable {
 
     private StateName name;
     private State_Status status;
-    private Election election;
     public StateId(){}
-    public StateId(StateName name, State_Status status, Election election) {
+    public StateId(StateName name, State_Status status) {
         this.name = name;
         this.status = status;
-        this.election = election;
     }
 }

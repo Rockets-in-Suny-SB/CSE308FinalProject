@@ -29,22 +29,22 @@ public class District {
 
     @Transient
     private Set<Precinct> precincts;
+    /*
+    private String districtAttributeJSON;
 
-//    private String districtAttributeJSON;
-//
-//    @Convert(converter = HashMapConverter.class)
-//    private Map<String, Object> districtAttributes;
+    @Convert(converter = HashMapConverter.class)
+    private Map<String, Object> districtAttributes;
 
-//    public void serializeDistrictAttributes() throws JsonProcessingException{
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        this.districtAttributeJSON = objectMapper.writeValueAsString(this.districtAttributes);
-//    }
-//
-//    public void deserializeCustomerAttributes() throws IOException{
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        this.districtAttributes = objectMapper.readValue(this.districtAttributeJSON, HashMap.class);
-//    }
+    public void serializeDistrictAttributes() throws JsonProcessingException{
+        ObjectMapper objectMapper = new ObjectMapper();
+        this.districtAttributeJSON = objectMapper.writeValueAsString(this.districtAttributes);
+    }
 
+    public void deserializeCustomerAttributes() throws IOException{
+        ObjectMapper objectMapper = new ObjectMapper();
+        this.districtAttributes = objectMapper.readValue(this.districtAttributeJSON, HashMap.class);
+    }
+    */
     public Map<PartyName, Integer> getPartyVotes() {
         return partyVotes;
     }

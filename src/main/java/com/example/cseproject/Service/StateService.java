@@ -24,8 +24,8 @@ public class StateService {
 
     private Iterable<State> getAllState(){ return stateRepository.findAll(); }
 
-    public Optional<State> getState(StateName name, State_Status status, Election election){
-        StateId id = new StateId(name, status, election);
+    public Optional<State> getState(StateName name, State_Status status){
+        StateId id = new StateId(name, status);
         return stateRepository.findById(id);}
 
     public String addState(StateName name, State_Status status, Set<District> districts){

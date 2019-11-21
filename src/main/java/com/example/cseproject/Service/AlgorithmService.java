@@ -23,7 +23,7 @@ public class AlgorithmService {
     public String setThreshold(Float populationThreshold, Float blocThreshold){
         Parameter parameter = algorithm.getParameter();
         State targetState=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()),
-                State_Status.NEW, parameter.getElection()).get();
+                State_Status.NEW).get();
         Threshold threshold = new Threshold();
         threshold.setBlocThreshold(blocThreshold);
         threshold.setPopulationThreshold(populationThreshold);
@@ -33,7 +33,7 @@ public class AlgorithmService {
     public Result runPhase0(){
         Parameter parameter = algorithm.getParameter();
         State targetState=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()),
-                State_Status.NEW, parameter.getElection()).get();
+                State_Status.NEW).get();
         Result phase0Result = algorithm.phase0(targetState.getThreshold());
         return phase0Result;
     }
@@ -71,7 +71,7 @@ public class AlgorithmService {
     public Result getMinorityPopulation(){
         Parameter parameter = algorithm.getParameter();
         State targetState=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()),
-                State_Status.NEW, parameter.getElection()).get();
+                State_Status.NEW).get();
         Set<Set<Object>> minorityPopulationResult = targetState.getPopulationDistribution(parameter);
         Result result = new Result();
         result.addResult("Minority Population Distribution Table", minorityPopulationResult);

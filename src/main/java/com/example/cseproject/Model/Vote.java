@@ -2,29 +2,44 @@ package com.example.cseproject.Model;
 
 import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.PartyName;
+import com.example.cseproject.Model.CompositeKeys.VoteId;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Set;
 
 @Entity
+@IdClass(VoteId.class)
 public class Vote {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
     private Integer id;
+
+    private Election election;
+
     private Integer totalVotes;
+
     private PartyName winningPartyName;
+
     private Integer winningVotes;
 
-    @OneToMany(targetEntity = Party.class)
     private Set<Party> parties;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @Id
+    public Election getElection() {
+        return election;
+    }
+
+    public void setElection(Election election) {
+        this.election = election;
     }
 
     public Integer getTotalVotes() {
@@ -51,6 +66,7 @@ public class Vote {
         this.winningVotes = winningVotes;
     }
 
+    @OneToMany(targetEntity = Party.class)
     public Set<Party> getParties() {
         return parties;
     }
