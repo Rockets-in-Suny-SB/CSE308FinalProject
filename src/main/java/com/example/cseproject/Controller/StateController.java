@@ -30,16 +30,8 @@ public class StateController {
     StateService stateService;
 
     @RequestMapping(value="/getDistrictData",method = RequestMethod.GET)
-    public @ResponseBody Result getDistrictsGeoJSON(@RequestParam String state, @RequestParam String election){
-        State targetState=stateService.getState(StateName.OREGON, State_Status.OLD,Election.CONGRESSION_2016).get();
-        Result r=new Result();
-        System.out.println(targetState);
-        for(District d:targetState.getDistricts()){
-//            System.out.println(d.getName());
-//            System.out.println(d.getPopulation());
-            r.addResult(d.getName(),d);
-        }
-        return r;
+    public Result getDistrictsGeoJSON(@RequestParam String state, @RequestParam String year){
+        return stateService.getDistrictsData(state,year);
     }
 
 
