@@ -27,16 +27,15 @@ public class District {
                     joinColumns = @JoinColumn(name = "district_id"))
     private Map<PartyName, Integer> partyVotes;
 
-
-
     private String geoJson;
-    @OneToMany
+
+    @Transient
     private List<Precinct> precincts;
 
-    private String districtAttributeJSON;
-
-    @Convert(converter = HashMapConverter.class)
-    private Map<String, Object> districtAttributes;
+//    private String districtAttributeJSON;
+//
+//    @Convert(converter = HashMapConverter.class)
+//    private Map<String, Object> districtAttributes;
 
 //    public void serializeDistrictAttributes() throws JsonProcessingException{
 //        ObjectMapper objectMapper = new ObjectMapper();
@@ -99,19 +98,4 @@ public class District {
         this.population = population;
     }
 
-//    public String getDistrictAttributeJSON() {
-//        return districtAttributeJSON;
-//    }
-//
-//    public void setDistrictAttributeJSON(String districtAttributeJSON) {
-//        this.districtAttributeJSON = districtAttributeJSON;
-//    }
-//
-//    public Map<String, Object> getDistrictAttributes() {
-//        return districtAttributes;
-//    }
-//
-//    public void setDistrictAttributes(Map<String, Object> districtAttributes) {
-//        this.districtAttributes = districtAttributes;
-//    }
 }
