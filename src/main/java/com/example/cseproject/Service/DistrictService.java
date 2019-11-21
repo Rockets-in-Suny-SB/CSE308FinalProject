@@ -1,12 +1,16 @@
 package com.example.cseproject.Service;
 
+import com.example.cseproject.Enum.PartyName;
 import com.example.cseproject.Model.District;
 import com.example.cseproject.Model.Precinct;
 import com.example.cseproject.Repository.DistrictRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -18,14 +22,28 @@ public class DistrictService {
 
     public Optional<District> getDistrict(Integer id){ return districtRepository.findById(id);}
 
-    public String addDistrict(Integer id, String color, String name, List<Precinct> precincts){
+    public String addDistrict(String name, HashMap<PartyName, Integer> partyVotes, Integer population){
         District district = new District();
-        district.setId(id);
-        district.setColor(color);
         district.setName(name);
-        district.setPrecincts(precincts);
+        district.setPartyVotes(partyVotes);
+        district.setPopulation(population);
         districtRepository.save(district);
-        return "Saved";
+        return "saved";
+//        Map<String, Object> attritubes = new HashMap<>();
+//        attritubes.put("name", name);
+//        attritubes.put("population", population);
+//        attritubes.put("partyVotes", partyVotes);
+//        district.setDistrictAttributes(attritubes);
+//        try{
+//            district.serializeDistrictAttributes();
+//            districtRepository.save(district);
+//            return "Saved";
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+//        return "Unsuccessfully save";
+
+
     }
 
     public String deleteDistrict(District district){
