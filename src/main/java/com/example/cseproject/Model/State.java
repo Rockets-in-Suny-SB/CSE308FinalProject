@@ -30,8 +30,6 @@ public class State {
     private Threshold threshold;
 
     @Transient
-    private Set<String> EligibleBlocs;
-    @Transient
     private Set<Cluster> clusters;
     public State(){}
     public Threshold getThreshold() {
@@ -74,6 +72,7 @@ public class State {
         return precincts;
     }
 
+    /* phase 0 */
     public Set<Set<Object>> findEligibleBlocs(){
         Set<Set<Object>> result = new HashSet<>();
 
@@ -85,6 +84,7 @@ public class State {
         return result;
     }
 
+    /* Use case 43*/
     public Set<Set<Object>> getPopulationDistribution(Parameter parameter){
         Set<DemograpicGroup> demograpicGroups = parameter.getMinorityPopulations();
         Map<DemograpicGroup,Integer> demographicResult =new HashMap<>();
@@ -97,10 +97,13 @@ public class State {
                     Integer dpPopulation = demographicGroupMap.get(dp);
                     if (dpPopulation != null){
                         Integer ddp = demographicResult.get(dp);
-                        if (ddp == null)
+                        if (ddp == null){
+                            /* if key is not in the map, create an entry*/
                             demographicResult.put(dp,dpPopulation);
-                        else
+                        }
+                        else{
                             demographicResult.put(dp,ddp+dpPopulation);
+                        }
                     }
                 }
             }

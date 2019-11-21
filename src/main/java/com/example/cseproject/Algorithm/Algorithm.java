@@ -26,7 +26,9 @@ public class Algorithm {
         State targetState=stateService.getState(StateName.valueOf(this.parameter.getStateName().toUpperCase()),
                 State_Status.NEW, this.parameter.getElection()).get();
         Set<Set<Object>> eligibleBlocs = targetState.findEligibleBlocs();
-        return null;
+        Result result = new Result();
+        result.addResult("Eligible Blocs", eligibleBlocs);
+        return result;
     }
     public Result phase1(Parameter parameter){
 

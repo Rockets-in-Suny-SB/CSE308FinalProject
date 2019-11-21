@@ -35,8 +35,8 @@ public class StateController {
         Result r=new Result();
         System.out.println(targetState);
         for(District d:targetState.getDistricts()){
-            System.out.println(d.getName());
-            System.out.println(d.getPopulation());
+//            System.out.println(d.getName());
+//            System.out.println(d.getPopulation());
             r.addResult(d.getName(),d);
         }
         return r;
