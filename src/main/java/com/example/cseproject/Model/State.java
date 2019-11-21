@@ -33,7 +33,7 @@ public class State {
     private Set<String> EligibleBlocs;
     @Transient
     private Set<Cluster> clusters;
-
+    public State(){}
     public Threshold getThreshold() {
         return threshold;
     }
