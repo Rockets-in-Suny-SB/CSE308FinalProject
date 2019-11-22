@@ -28,12 +28,12 @@ public class Algorithm {
         result.addResult("Eligible Blocs", eligibleBlocs);
         return result;
     }
-
-    public Result phase1(Parameter parameter) {
-
+    public void setPhase1(Parameter parameter){
         this.parameter = parameter;
         State targetState = stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW).get();
         this.targetState = targetState;
+    }
+    public Result phase1(Parameter parameter) {
         this.resultPairs = new HashSet<>();
         Set<Cluster> clusters = targetState.getClusters();
 
@@ -45,11 +45,16 @@ public class Algorithm {
                 isFinalIteration = combineIteration(clusters);
             }
         }
-        if (isFinalIteration && clusters.size() > parameter.getTargetDistricts()) {
-            finalCombineIteration(clusters);
+        Result r = new Result();
+        if (isFinalIteration) {
+            if(clusters.size() > parameter.getTargetDistricts()){
+                finalCombineIteration(clusters);
+            }
+            r.addResult("isFinal", true);
+        }else{
+            r.addResult("isFinal", false);
         }
         //Return result
-        Result r = new Result();
         r.addResult("clusters", clusters);
         return r;
     }
