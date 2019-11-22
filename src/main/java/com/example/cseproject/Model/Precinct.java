@@ -17,9 +17,7 @@ public class Precinct {
     private Integer id;
     private String name;
     private Integer population;
-    private String party;
-    private Integer districtId;
-    private Integer countyId;
+    private String countyName;
 
 
     private Map<Election, Vote> votes;
@@ -56,28 +54,12 @@ public class Precinct {
         this.population = population;
     }
 
-    public String getParty() {
-        return party;
+    public String getCountyName() {
+        return countyName;
     }
 
-    public void setParty(String party) {
-        this.party = party;
-    }
-
-    public Integer getDistrictId() {
-        return districtId;
-    }
-
-    public void setDistrictId(Integer districtId) {
-        this.districtId = districtId;
-    }
-
-    public Integer getCountyId() {
-        return countyId;
-    }
-
-    public void setCountyId(Integer countyId) {
-        this.countyId = countyId;
+    public void setCountyName(String countyName) {
+        this.countyName = countyName;
     }
 
     @ElementCollection
@@ -103,9 +85,9 @@ public class Precinct {
     }
 
     @ElementCollection
-    @CollectionTable(name = "groupName_groupPopulation",
+    @CollectionTable(name = "precinct_demographicGroup",
             joinColumns = @JoinColumn(name = "precinct_id"))
-    @MapKeyColumn(name = "groupName")
+    @MapKeyColumn(name = "demographicGroup")
     @Column(name = "groupPopulation")
     public Map<DemographicGroup, Integer> getDemographicGroups() {
         return demographicGroups;
