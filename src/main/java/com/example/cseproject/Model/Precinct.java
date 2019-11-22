@@ -19,8 +19,12 @@ public class Precinct {
     private Integer population;
     private String party;
     private Integer districtId;
-    private Integer countyId;
-    private Map<Election,Vote> votes;
+    private String countyId;
+
+
+
+    private Map<Election, Vote> votes;
+
     private Set<Edge> precinctEdges;
     private Map<DemographicGroup, Integer> demographicGroups;
     private String geoJson;
@@ -70,20 +74,26 @@ public class Precinct {
         this.districtId = districtId;
     }
 
-    public Integer getCountyId() {
+    public String getCountyId() {
         return countyId;
     }
 
-    public void setCountyId(Integer countyId) {
+    public void setCountyId(String countyId) {
         this.countyId = countyId;
     }
-    //Todo:Change Notation
-    @OneToMany(targetEntity = Vote.class)
-    public Map<Election,Vote> getVotes() {
+
+
+    @ElementCollection
+    @CollectionTable(name = "precinct_votes",
+            joinColumns = @JoinColumn(name = "precinct_id"))
+    @MapKeyColumn(name = "election")
+    @Column(name = "vote")
+    public Map<Election, Vote> getVotes() {
         return votes;
     }
 
-    public void setVotes(Map<Election,Vote> votes) {
+    public void setVotes(Map<Election, Vote> votes) {
+
         this.votes = votes;
     }
 
@@ -174,14 +184,10 @@ public class Precinct {
 
     /* Use case 24: whether the vote for a party candidate exceeded the user supplied threshold */
     public EligibleBloc checkBlocThreshold(Threshold threshold, Election election){
-        Map<Election,Vote> votes = this.getVotes();
+
+        Map<Election, Vote> votes = this.getVotes();
         Vote targetVote = votes.get(election);
-        /*for (Vote vote : votes) {
-            if (vote.getElection() == election){
-                targetVote = vote;
-                break;
-            }
-        }*/
+
         Integer totalVotes = targetVote.getTotalVotes();
         Integer winningVotes = targetVote.getWinningVotes();
         PartyName winningPartyName = targetVote.getWinningPartyName();
