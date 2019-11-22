@@ -46,6 +46,7 @@ public class State {
     private Map<DemographicGroup, Integer> demographicGroups;
 
     public State() {
+        initializeClusters();
     }
 
     public StateName getName() {
@@ -166,7 +167,10 @@ public class State {
     }
 
     public void initializeClusters(){
-
+        this.clusters=new HashSet<>();
+        for(Precinct p:precincts){
+            this.clusters.add(new Cluster(p));
+        }
     }
 }
 

@@ -18,18 +18,18 @@ public class Cluster {
     private Set<Precinct> precincts;
     private Set<Cluster> neighbors;
     private int population;
-    private Map<DemographicGroup,Integer> minorityGroupPopulation;
-    private Map<String,Integer> countyCount;
+    private Map<DemographicGroup, Integer> minorityGroupPopulation;
+    private Map<String, Integer> countyCount;
     public boolean paired;
 
     //constructor
     public Cluster(Precinct precinct) {
         this.id = precinct.getId();
-        this.precincts=new HashSet<>();
-        this.neighbors =new HashSet<>();
+        this.precincts = new HashSet<>();
+        this.neighbors = new HashSet<>();
         this.minorityGroupPopulation = precinct.getMinorityGroupPopulation();
         this.countyCount = new HashMap<>();
-        this.population=precinct.getPopulation();
+        this.population = precinct.getPopulation();
         //this.countyCount.put(precinct.getCountyId(),1);
         this.precincts.add(precinct);
         this.paired = false;
@@ -51,72 +51,76 @@ public class Cluster {
         this.population = population;
     }
 
-    public Set<Cluster> getNeighbors(){return this.neighbors;}
+    public Set<Cluster> getNeighbors() {
+        return this.neighbors;
+    }
 
-    public void addClusterData(Cluster c){
+    public void addClusterData(Cluster c) {
         addAllPopulation(c);
         addAllMinorityPopulation(c);
     }
 
-    public void combine(Cluster c2){
+    public void combine(Cluster c2) {
         //Combine Precincts
-        for(Precinct p:c2.getPrecincts()){
-            if(!precincts.contains(p)){
+        for (Precinct p : c2.getPrecincts()) {
+            if (!precincts.contains(p)) {
                 precincts.add(p);
             }
         }
         //Combine Neighbors
-        for(Cluster n:c2.getNeighbors()){
-            if(!neighbors.contains(n)){
+        for (Cluster n : c2.getNeighbors()) {
+            if (!neighbors.contains(n) && n != this) {
                 neighbors.add(n);
             }
         }
     }
 
 
+    private void addEdges(List<Edge> edges) {
+    }
 
-    private void addEdges(List<Edge> edges){}
-    public Pair<Cluster,Cluster> findBestMajorityMinorityPair(DemographicGroup d){
-        double bestScore=0;
-        Cluster bestNeighbor=null;
-        double candidateScore=0;
-        for(Cluster n:getNeighbors()){
-            candidateScore=n.calculateMajorityMinorityScore(n,d);
-            if(candidateScore>bestScore){
-                bestScore=candidateScore;
-                bestNeighbor=n;
+    public Pair<Cluster, Cluster> findBestMajorityMinorityPair(DemographicGroup d) {
+        double bestScore = 0;
+        Cluster bestNeighbor = null;
+        double candidateScore = 0;
+        for (Cluster n : getNeighbors()) {
+            candidateScore = n.calculateMajorityMinorityScore(n, d);
+            if (candidateScore > bestScore) {
+                bestScore = candidateScore;
+                bestNeighbor = n;
             }
         }
-        Threshold t=new Threshold();
+        Threshold t = new Threshold();
 
-        double threshold=t.getMajorityMinorityThreshold();
-        if(bestScore>threshold&&bestNeighbor!=null){
-            this.paired=true;
-            bestNeighbor.paired=true;
-            return Pair.of(this,bestNeighbor);
-        }else {
+        double threshold = t.getMajorityMinorityThreshold();
+        if (bestScore > threshold && bestNeighbor != null) {
+            this.paired = true;
+            bestNeighbor.paired = true;
+            return Pair.of(this, bestNeighbor);
+        } else {
             return null;
         }
     }
-    public Pair<Cluster,Cluster> findBestPairBasedOnFactor(JoinFactor factor){
-        double bestScore=0;
-        Cluster bestNeighbor=null;
-        double candidateScore=0;
-        for(Cluster n:getNeighbors()){
-            candidateScore=n.calculateFactorScore(n,factor);
-            if(candidateScore>bestScore){
-                bestScore=candidateScore;
-                bestNeighbor=n;
+
+    public Pair<Cluster, Cluster> findBestPairBasedOnFactor(JoinFactor factor) {
+        double bestScore = 0;
+        Cluster bestNeighbor = null;
+        double candidateScore = 0;
+        for (Cluster n : getNeighbors()) {
+            candidateScore = n.calculateFactorScore(n, factor);
+            if (candidateScore > bestScore) {
+                bestScore = candidateScore;
+                bestNeighbor = n;
             }
         }
-        Threshold t=new Threshold();
+        Threshold t = new Threshold();
 
-        double threshold=t.getMajorityMinorityThreshold();
-        if(bestScore>threshold&&bestNeighbor!=null){
-            this.paired=true;
-            bestNeighbor.paired=true;
-            return Pair.of(this,bestNeighbor);
-        }else {
+        double threshold = t.getMajorityMinorityThreshold();
+        if (bestScore > threshold && bestNeighbor != null) {
+            this.paired = true;
+            bestNeighbor.paired = true;
+            return Pair.of(this, bestNeighbor);
+        } else {
             return null;
         }
     }
@@ -126,9 +130,9 @@ public class Cluster {
     }*/
 
 
-    public double calculateMajorityMinorityScore(Cluster c, DemographicGroup d){
-        double score= (c.getMinorityGroupPopulation().get(d)+this.getMinorityGroupPopulation().get(d))
-                /(c.getPopulation()+this.getPopulation());
+    public double calculateMajorityMinorityScore(Cluster c, DemographicGroup d) {
+        double score = (c.getMinorityGroupPopulation().get(d) + this.getMinorityGroupPopulation().get(d))
+                / (c.getPopulation() + this.getPopulation());
         return new Random().nextDouble();
     }
 
@@ -146,19 +150,23 @@ public class Cluster {
         }
     }*/
 
-    public void addAllPopulation(Cluster c){
-        this.population+=c.population;
+    public void addAllPopulation(Cluster c) {
+        this.population += c.population;
     }
-    public void addAllMinorityPopulation(Cluster c){
-        for(Precinct p:c.getPrecincts()){
-            for(DemographicGroup k:this.minorityGroupPopulation.keySet()){
+
+    public void addAllMinorityPopulation(Cluster c) {
+        for (Precinct p : c.getPrecincts()) {
+            for (DemographicGroup k : this.minorityGroupPopulation.keySet()) {
                 this.minorityGroupPopulation.put(k,
                         p.getMinorityGroupPopulation().get(k)
-                        + this.minorityGroupPopulation.get(k));
+                                + this.minorityGroupPopulation.get(k));
             }
         }
-    };
-    public double calculateFactorScore(Cluster c,JoinFactor factor){
+    }
+
+    ;
+
+    public double calculateFactorScore(Cluster c, JoinFactor factor) {
         //Todo:Calculate the combine score based on factor
         return new Random().nextDouble();
     }

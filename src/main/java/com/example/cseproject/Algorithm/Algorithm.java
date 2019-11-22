@@ -19,56 +19,62 @@ public class Algorithm {
     private State targetState;
     @Autowired
     private StateService stateService;
-    public Result phase0(Threshold threshold){
-        State targetState=stateService.getState(StateName.valueOf(this.parameter.getStateName().toUpperCase()),
+
+    public Result phase0(Threshold threshold) {
+        State targetState = stateService.getState(StateName.valueOf(this.parameter.getStateName().toUpperCase()),
                 State_Status.NEW).get();
         Set<EligibleBloc> eligibleBlocs = targetState.findEligibleBlocs();
         Result result = new Result();
         result.addResult("Eligible Blocs", eligibleBlocs);
         return result;
     }
-    public Result phase1(Parameter parameter){
 
-        this.parameter=parameter;
-        State targetState=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW).get();
-        this.targetState=targetState;
-        this.resultPairs=new HashSet<>();
-        Set<Cluster> clusters=targetState.getClusters();
+    public Result phase1(Parameter parameter) {
 
-        boolean isFinalIteration=false;
-        if(parameter.getUpdateDiscrete()){
-            isFinalIteration=combineIteration(clusters);
-        }else{
-            while(clusters.size()>parameter.getTargetDistricts()&&!isFinalIteration) {
-                isFinalIteration=combineIteration(clusters);
+        this.parameter = parameter;
+        State targetState = stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW).get();
+        this.targetState = targetState;
+        this.resultPairs = new HashSet<>();
+        Set<Cluster> clusters = targetState.getClusters();
+
+        boolean isFinalIteration = false;
+        if (parameter.getUpdateDiscrete()) {
+            isFinalIteration = combineIteration(clusters);
+        } else {
+            while (clusters.size() > parameter.getTargetDistricts() && !isFinalIteration) {
+                isFinalIteration = combineIteration(clusters);
             }
         }
-        if(isFinalIteration&&clusters.size()>parameter.getTargetDistricts()){
+        if (isFinalIteration && clusters.size() > parameter.getTargetDistricts()) {
             finalCombineIteration(clusters);
         }
         //Return result
-        return null;
+        Result r = new Result();
+        r.addResult("clusters", clusters);
+        return r;
     }
-    public boolean combineIteration(Set<Cluster> clusters){
-        boolean isFinalIteration=false;
+
+    public boolean combineIteration(Set<Cluster> clusters) {
+        boolean isFinalIteration = false;
         combineBasedOnMajorityMinority(clusters);
         combineBasedOnJoinFactor(clusters);
-        if(resultPairs.size()>0) {
+        if (resultPairs.size() > 0) {
             combinePairs(resultPairs);
             resultPairs.removeAll(resultPairs);
-        }else{
-            isFinalIteration=true;
+        } else {
+            isFinalIteration = true;
         }
         clearPaired(clusters);
         return isFinalIteration;
     }
-    public void finalCombineIteration(Set<Cluster> clusters){
-        PriorityQueue<Cluster> minPriorityQueue=new PriorityQueue<>((o1, o2) -> -(o1.getPopulation()-o2.getPopulation()));
-        int targetDistricts=parameter.getTargetDistricts();
-        while(minPriorityQueue.size()>targetDistricts){
-            Cluster c1=minPriorityQueue.poll();
-            Cluster c2=minPriorityQueue.poll();
-            targetState.combine(c1,c2);
+
+    public void finalCombineIteration(Set<Cluster> clusters) {
+        PriorityQueue<Cluster> minPriorityQueue = new PriorityQueue<>((o1, o2) -> -(o1.getPopulation() - o2.getPopulation()));
+        int targetDistricts = parameter.getTargetDistricts();
+        while (minPriorityQueue.size() > targetDistricts) {
+            Cluster c1 = minPriorityQueue.poll();
+            Cluster c2 = minPriorityQueue.poll();
+            targetState.combine(c1, c2);
             minPriorityQueue.add(c1);
         }
     }
@@ -85,40 +91,43 @@ public class Algorithm {
 
     //
 
-//    public Result phase2(Parameter parameter){}
+    //    public Result phase2(Parameter parameter){}
 //
 //    public Cluster findPair(Cluster c){}
-      public void combineBasedOnJoinFactor(Set<Cluster> clusters){
-          for(JoinFactor j:JoinFactor.values()) {
-              for (Cluster c : clusters) {
-                  if (!c.paired) {
-                      Pair<Cluster, Cluster> p = c.findBestPairBasedOnFactor(j);
-                      if (p != null) {
-                          resultPairs.add(p);
-                      }
-                  }
-              }
-          }
-      }
-      public void combineBasedOnMajorityMinority(Set<Cluster> clusters){
-          for(Cluster c:clusters){
-              if(!c.paired) {
-                  Pair<Cluster, Cluster> p = c.findBestMajorityMinorityPair(parameter.getTargetMinorityPopulation());
-                  if (p != null) {
-                      resultPairs.add(p);
-                  }
-              }
-          }
-      }
-      public void combinePairs(Set<Pair<Cluster,Cluster>> pairs){
-          for(Pair<Cluster,Cluster> p:pairs){
-              targetState.combine(p.getFirst(),p.getSecond());
-          }
-      }
-      public void clearPaired(Set<Cluster> clusters){
-        for (Cluster c:clusters){
-            c.paired=false;
+    public void combineBasedOnJoinFactor(Set<Cluster> clusters) {
+        for (JoinFactor j : JoinFactor.values()) {
+            for (Cluster c : clusters) {
+                if (!c.paired) {
+                    Pair<Cluster, Cluster> p = c.findBestPairBasedOnFactor(j);
+                    if (p != null) {
+                        resultPairs.add(p);
+                    }
+                }
+            }
         }
-      }
+    }
+
+    public void combineBasedOnMajorityMinority(Set<Cluster> clusters) {
+        for (Cluster c : clusters) {
+            if (!c.paired) {
+                Pair<Cluster, Cluster> p = c.findBestMajorityMinorityPair(parameter.getTargetMinorityPopulation());
+                if (p != null) {
+                    resultPairs.add(p);
+                }
+            }
+        }
+    }
+
+    public void combinePairs(Set<Pair<Cluster, Cluster>> pairs) {
+        for (Pair<Cluster, Cluster> p : pairs) {
+            targetState.combine(p.getFirst(), p.getSecond());
+        }
+    }
+
+    public void clearPaired(Set<Cluster> clusters) {
+        for (Cluster c : clusters) {
+            c.paired = false;
+        }
+    }
 //    public void move(Cluster c){}
 }
