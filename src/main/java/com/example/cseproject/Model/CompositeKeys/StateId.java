@@ -14,4 +14,20 @@ public class StateId implements Serializable {
         this.name = name;
         this.status = status;
     }
+
+    public StateName getName() {
+        return name;
+    }
+
+    public void setName(StateName name) {
+        this.name = name;
+    }
+
+    public State_Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(State_Status status) {
+        this.status = status;
+    }
 }

@@ -26,22 +26,12 @@ public class StateService {
     private Iterable<State> getAllState(){ return stateRepository.findAll(); }
 
     public Optional<State> getState(StateName name, State_Status status){
-        StateId id = new StateId(name, status);
-        return stateRepository.findById(id);}
-
-    public String addState(StateName name, State_Status status, Set<District> districts){
-        State  state = new State();
-        state.setDistricts(districts);
-        state.setName(name);
-        state.setStatus(status);
-        stateRepository.save(state);
-        return "Saved";
+        StateId id = new StateId();
+        id.setName(name);
+        id.setStatus(status);
+        return stateRepository.findById(id);
     }
 
-    public String deleteState(State state){
-        stateRepository.delete(state);
-        return "Deleted";
-    }
     public Result getDistrictsData(String state, String year) {
         State targetState=getState(StateName.valueOf(state), State_Status.OLD).get();
         Result districtDataList=new Result();

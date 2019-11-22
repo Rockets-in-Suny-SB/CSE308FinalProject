@@ -1,6 +1,5 @@
 package com.example.cseproject.Model;
 
-import com.example.cseproject.Algorithm.SetLib;
 import com.example.cseproject.DataClasses.*;
 import com.example.cseproject.DataClasses.Parameter;
 import com.example.cseproject.Enum.DemographicGroup;
@@ -20,19 +19,17 @@ public class State {
 
     @Id
     private StateName name;
-
     @Id
     private State_Status status;
-
     @OneToMany
     private Set<District> districts;
     @Transient
     private Threshold threshold;
-
     private Integer population;
     @Transient
     private Set<Cluster> clusters;
     @Enumerated
+    @Transient
     private Election election;
     @OneToMany(targetEntity = Precinct.class)
     private Set<Precinct> precincts;
@@ -167,10 +164,10 @@ public class State {
     }
 
     public void initializeClusters(){
-        this.clusters=new HashSet<>();
-        for(Precinct p:precincts){
-            this.clusters.add(new Cluster(p));
-        }
+//        this.clusters=new HashSet<>();
+//        for(Precinct p:precincts){
+//            this.clusters.add(new Cluster(p));
+//        }
     }
 }
 

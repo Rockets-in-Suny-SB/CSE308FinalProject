@@ -18,9 +18,11 @@ public class AlgorithmController {
     @Autowired
     StateService stateService;
     @RequestMapping(value = "/phase0", method = RequestMethod.POST)
-    public @ResponseBody Result runPhase0(@RequestParam Float populationThreshold, @RequestParam Float blocThreshold){
-        algorithmService.setThreshold(populationThreshold, blocThreshold);
-        Result result = algorithmService.runPhase0();
+    public @ResponseBody Result runPhase0(@RequestParam String stateName,
+                                          @RequestParam String election,
+                                          @RequestParam Float populationThreshold,
+                                          @RequestParam Float blocThreshold){
+        Result result = algorithmService.runPhase0(stateName, election, populationThreshold, blocThreshold);
         return result;
     }
     @RequestMapping(value = "/phase1Param",method = RequestMethod.POST)

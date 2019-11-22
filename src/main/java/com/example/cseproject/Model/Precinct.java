@@ -156,8 +156,11 @@ public class Precinct {
             return null;
         }
         EligibleBloc eligibleBloc = this.checkBlocThreshold(threshold, election);
-        eligibleBloc.setDemographicGroup(populationResult);
-        return eligibleBloc;
+        if (eligibleBloc != null){
+            eligibleBloc.setDemographicGroup(populationResult);
+            return eligibleBloc;
+        }
+        return null;
     }
 
     /* Use case 23: check whether it meets populution threshold or not*/

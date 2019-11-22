@@ -8,6 +8,8 @@ public class VoteId implements Serializable {
     private Election election;
     private Integer id;
 
+    public VoteId(){
+    }
     public VoteId(Election election, Integer id) {
         this.election = election;
         this.id = id;

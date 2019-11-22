@@ -1,11 +1,9 @@
 package com.example.cseproject.Service;
 
 import com.example.cseproject.Algorithm.Algorithm;
-import com.example.cseproject.DataClasses.MinorityPopulation;
-import com.example.cseproject.DataClasses.Parameter;
-import com.example.cseproject.DataClasses.Result;
-import com.example.cseproject.DataClasses.Threshold;
+import com.example.cseproject.DataClasses.*;
 import com.example.cseproject.Enum.DemographicGroup;
+import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.StateName;
 import com.example.cseproject.Enum.State_Status;
 import com.example.cseproject.Model.State;
@@ -21,23 +19,20 @@ public class AlgorithmService {
     StateService stateService;
     Algorithm algorithm;
 
-    public String setThreshold(Float populationThreshold, Float blocThreshold) {
-        Parameter parameter = algorithm.getParameter();
-        State targetState = stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()),
-                State_Status.NEW).get();
-        Threshold threshold = new Threshold();
-        threshold.setBlocThreshold(blocThreshold);
-        threshold.setPopulationThreshold(populationThreshold);
-        targetState.setThreshold(threshold);
-        return "Successfully set thresholds";
-    }
 
-    public Result runPhase0() {
-        Parameter parameter = algorithm.getParameter();
-        State targetState = stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()),
-                State_Status.NEW).get();
-        Result phase0Result = algorithm.phase0(targetState.getThreshold());
-        return phase0Result;
+    public Result runPhase0(String stateName, String election, Float populationThreshold, Float blocThreshold) {
+        State targetState = stateService.getState(StateName.valueOf(stateName.toUpperCase()),
+                State_Status.OLD).get();
+        System.out.println("okay");
+        targetState.setElection(Election.valueOf(election.toUpperCase()));
+        Threshold threshold = new Threshold();
+        threshold.setPopulationThreshold(populationThreshold);
+        threshold.setBlocThreshold(blocThreshold);
+        targetState.setThreshold(threshold);
+        Set<EligibleBloc> eligibleBlocs = targetState.findEligibleBlocs();
+        Result result = new Result();
+        result.addResult("Eligible Blocs", eligibleBlocs);
+        return result;
     }
 
     public Result runPhase1() {
@@ -57,8 +52,6 @@ public class AlgorithmService {
                                             float minimumPercentage,
                                             Set<String> minorityPopulations,
                                             Boolean isCombined) {
-
-
         Parameter parameter = algorithm.getParameter();
         parameter.setCombined(isCombined);
         parameter.setMaximumPercentage(maximumPercentage);
