@@ -20,7 +20,9 @@ public class Precinct {
     private String party;
     private Integer districtId;
     private Integer countyId;
-    private Set<Vote> votes;
+
+
+    private Map<Election, Vote> votes;
     private Set<Edge> precinctEdges;
     private Map<DemographicGroup, Integer> demographicGroups;
     private String geoJson;
@@ -78,12 +80,16 @@ public class Precinct {
         this.countyId = countyId;
     }
 
-    @OneToMany(targetEntity = Vote.class)
-    public Set<Vote> getVotes() {
+    @ElementCollection
+    @CollectionTable(name = "precinct_votes",
+            joinColumns = @JoinColumn(name = "precinct_id"))
+    @MapKeyColumn(name = "election")
+    @Column(name = "vote")
+    public Map<Election, Vote> getVotes() {
         return votes;
     }
 
-    public void setVotes(Set<Vote> votes) {
+    public void setVotes(Map<Election, Vote> votes) {
         this.votes = votes;
     }
 
@@ -174,14 +180,8 @@ public class Precinct {
 
     /* Use case 24: whether the vote for a party candidate exceeded the user supplied threshold */
     public EligibleBloc checkBlocThreshold(Threshold threshold, Election election){
-        Set<Vote> votes = this.getVotes();
-        Vote targetVote = null;
-        for (Vote vote : votes) {
-            if (vote.getElection() == election){
-                targetVote = vote;
-                break;
-            }
-        }
+        Map<Election, Vote> votes = this.getVotes();
+        Vote targetVote = votes.get(election);
         Integer totalVotes = targetVote.getTotalVotes();
         Integer winningVotes = targetVote.getWinningVotes();
         PartyName winningPartyName = targetVote.getWinningPartyName();
