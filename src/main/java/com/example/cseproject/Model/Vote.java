@@ -12,8 +12,8 @@ import java.util.Map;
 public class Vote {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
     @Id
     private Election election;
     private Integer totalVotes;
@@ -21,19 +21,12 @@ public class Vote {
     private Integer winningVotes;
     @ElementCollection
     @CollectionTable(name = "vote_partyVotes",
-            joinColumns ={@JoinColumn(name = "vote_id"),
-                          @JoinColumn(name = "election")})
+            joinColumns ={@JoinColumn(name = "election"),
+                          @JoinColumn(name = "vote_id")})
     @MapKeyColumn(name = "partyName")
     @Column(name = "partyVotes")
     private Map<PartyName, Integer> partyVotes;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Election getElection() {
         return election;
@@ -74,6 +67,14 @@ public class Vote {
 
     public void setPartyVotes(Map<PartyName, Integer> partyVotes) {
         this.partyVotes = partyVotes;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }
 
