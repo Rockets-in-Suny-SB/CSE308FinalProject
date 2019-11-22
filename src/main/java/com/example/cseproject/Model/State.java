@@ -160,12 +160,13 @@ public class State {
     }
 
     public void combine(Cluster c1, Cluster c2) {
-        c1.updateClusterData(c2);
-        Set<Cluster> c1Neighbors = c1.getNeighbors();
-        Set<Cluster> c2Neighbors = c2.getNeighbors();
-        Set<Cluster> intersectingClusters = SetLib.intersection(c1Neighbors, c2Neighbors);
-        c1.combine(intersectingClusters, c2);
+        c1.addClusterData(c2);
+        c1.combine(c2);
         clusters.remove(c2);
+    }
+
+    public void initializeClusters(){
+
     }
 }
 
