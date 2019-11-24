@@ -197,7 +197,7 @@ public class Precinct {
         eligibleBloc.setWinningVotes(winningVotes);
         eligibleBloc.setTotalVotes(totalVotes);
         eligibleBloc.setPopulation(this.population);
-        eligibleBloc.setPrecinctName(this.name);
+        eligibleBloc.setPrecinctId(this.id);
         eligibleBloc.setPercentage(percentage);
         return eligibleBloc;
     }

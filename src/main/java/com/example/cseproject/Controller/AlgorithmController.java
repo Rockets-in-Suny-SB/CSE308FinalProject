@@ -17,7 +17,7 @@ public class AlgorithmController {
     AlgorithmService algorithmService;
     @Autowired
     StateService stateService;
-    @RequestMapping(value = "/phase0", method = RequestMethod.POST)
+    @RequestMapping(value = "/phase0", method = RequestMethod.GET)
     public @ResponseBody Result runPhase0(@RequestParam String stateName,
                                           @RequestParam String election,
                                           @RequestParam Float populationThreshold,

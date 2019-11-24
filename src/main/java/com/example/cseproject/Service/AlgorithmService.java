@@ -23,7 +23,6 @@ public class AlgorithmService {
     public Result runPhase0(String stateName, String election, Float populationThreshold, Float blocThreshold) {
         State targetState = stateService.getState(StateName.valueOf(stateName.toUpperCase()),
                 State_Status.OLD).get();
-        System.out.println("okay");
         targetState.setElection(Election.valueOf(election.toUpperCase()));
         Threshold threshold = new Threshold();
         threshold.setPopulationThreshold(populationThreshold);
