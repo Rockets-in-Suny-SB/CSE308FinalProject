@@ -35,14 +35,16 @@ public class AlgorithmController {
         Result result = algorithmService.runPhase1();
         return result;
     }
-    @RequestMapping(value="/specifyMinorityPopulation",method = RequestMethod.POST)
-    public @ResponseBody Result specifyMinorityPopulation( @RequestParam float maximumPercentage,
-                                             @RequestParam float minimumPercentage,
-                                             @RequestParam Set<String> minorityPopulations,
-                                             @RequestParam Boolean isCombined){
+    @RequestMapping(value="/specifyMinorityPopulation",method = RequestMethod.GET)
+    public @ResponseBody Result specifyMinorityPopulation( @RequestParam String stateName,
+                                                        @RequestParam String status ,
+                                                        @RequestParam Float maximumPercentage,
+                                                        @RequestParam Float minimumPercentage,
+                                                        @RequestParam Set<String> minorityPopulations,
+                                                        @RequestParam Boolean isCombined){
         algorithmService.specifyMinorityPopulation(maximumPercentage, minimumPercentage,
                                                         minorityPopulations, isCombined);
-        Result minorityPopulationResult = algorithmService.getMinorityPopulation();
+        Result minorityPopulationResult = algorithmService.getMinorityPopulation(stateName, status);
         return minorityPopulationResult;
     }
 

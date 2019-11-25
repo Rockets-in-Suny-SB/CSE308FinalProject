@@ -139,12 +139,16 @@ public class State {
         Set<MinorityPopulation> minorityPopulations = new HashSet<>();
         /* add white population */
         Integer whitePopulation = this.getDemographicGroups().get(DemographicGroup.WHITE);
-        Float whitePercentage = (float) whitePopulation / this.population;
-        MinorityPopulation whitePopulationData = new MinorityPopulation(DemographicGroup.WHITE,
-                                                        whitePercentage, whitePopulation);
-        minorityPopulations.add(whitePopulationData);
+        System.out.println(this.getDemographicGroups());
+        if (whitePopulation != null){
+            Float whitePercentage = (float) whitePopulation / this.population;
+            MinorityPopulation whitePopulationData = new MinorityPopulation(DemographicGroup.WHITE,
+                    whitePercentage, whitePopulation);
+            minorityPopulations.add(whitePopulationData);
+        }
         for (DemographicGroup demographicGroup : demographicGroups) {
             Integer population = this.demographicGroups.get(demographicGroup);
+            System.out.println(population);
             if (population != null) {
                 Float percentage = (float) population / this.population;
                 if (population >= minimumPercentage && population <= maximumPercentage) {
