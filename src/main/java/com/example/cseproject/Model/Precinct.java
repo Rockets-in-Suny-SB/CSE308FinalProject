@@ -1,5 +1,6 @@
 package com.example.cseproject.Model;
 
+import com.example.cseproject.DataClasses.Cluster;
 import com.example.cseproject.DataClasses.EligibleBloc;
 import com.example.cseproject.DataClasses.Threshold;
 import com.example.cseproject.Enum.DemographicGroup;
@@ -21,7 +22,16 @@ public class Precinct {
     private Integer districtId;
     private Integer countyId;
 
+    @Transient
+    public Cluster getParentCluster() {
+        return parentCluster;
+    }
 
+    public void setParentCluster(Cluster parentCluster) {
+        this.parentCluster = parentCluster;
+    }
+
+    private Cluster parentCluster;
     private Map<Election, Vote> votes;
     private Set<Edge> precinctEdges;
     private Map<DemographicGroup, Integer> demographicGroups;
