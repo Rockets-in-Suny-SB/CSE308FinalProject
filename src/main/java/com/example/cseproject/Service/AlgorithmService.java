@@ -19,11 +19,15 @@ public class AlgorithmService {
     StateService stateService;
     Algorithm algorithm;
 
+    public AlgorithmService(){
+        algorithm = new Algorithm();
+        algorithm.setParameter(new Parameter());
+    }
+
 
     public Result runPhase0(String stateName, String election, Float populationThreshold, Float blocThreshold) {
         State targetState = stateService.getState(StateName.valueOf(stateName.toUpperCase()),
                 State_Status.OLD).get();
-        System.out.println("okay");
         targetState.setElection(Election.valueOf(election.toUpperCase()));
         Threshold threshold = new Threshold();
         threshold.setPopulationThreshold(populationThreshold);
@@ -65,10 +69,11 @@ public class AlgorithmService {
         return "successfully specify minority population";
     }
 
-    public Result getMinorityPopulation() {
+    public Result getMinorityPopulation(String stateName, String status) {
         Parameter parameter = algorithm.getParameter();
-        State targetState = stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()),
-                State_Status.NEW).get();
+        State targetState = stateService.getState(StateName.valueOf(stateName.toUpperCase()),
+                State_Status.valueOf(status.toUpperCase())).get();
+        System.out.println(targetState);
         Set<MinorityPopulation> minorityPopulationResult = targetState.getPopulationDistribution(parameter);
         Result result = new Result();
         result.addResult("Minority Population Distribution Table", minorityPopulationResult);

@@ -4,7 +4,7 @@ import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Enum.PartyName;
 
 public class EligibleBloc {
-    private String precinctName;
+    private Integer precinctId;
     private DemographicGroup demographicGroup;
     private Integer population;
     private Integer winningVotes;
@@ -15,12 +15,12 @@ public class EligibleBloc {
     public EligibleBloc() {
     }
 
-    public String getPrecinctName() {
-        return precinctName;
+    public Integer getPrecinctIdd() {
+        return precinctId;
     }
 
-    public void setPrecinctName(String precinctName) {
-        this.precinctName = precinctName;
+    public void setPrecinctId(Integer precinctId) {
+        this.precinctId = precinctId;
     }
 
     public DemographicGroup getDemographicGroup() {

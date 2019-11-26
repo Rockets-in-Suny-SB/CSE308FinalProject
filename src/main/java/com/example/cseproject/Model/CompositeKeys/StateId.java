@@ -4,6 +4,7 @@ import com.example.cseproject.Enum.StateName;
 import com.example.cseproject.Enum.State_Status;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class StateId implements Serializable {
 
@@ -29,5 +30,23 @@ public class StateId implements Serializable {
 
     public void setStatus(State_Status status) {
         this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof StateId)) {
+            return false;
+        }
+        StateId stateId = (StateId) o;
+        return this.status == stateId.status &&
+                this.name == stateId.name;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, status);
     }
 }
