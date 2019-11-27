@@ -133,7 +133,7 @@ public class Cluster {
     public double calculateMajorityMinorityScore(Cluster c, DemographicGroup d) {
         double score = (c.getMinorityGroupPopulation().get(d) + this.getMinorityGroupPopulation().get(d))
                 / (c.getPopulation() + this.getPopulation());
-        return new Random().nextDouble();
+        return score;
     }
 
     public Map<DemographicGroup, Integer> getMinorityGroupPopulation() {
@@ -168,7 +168,22 @@ public class Cluster {
 
     public double calculateFactorScore(Cluster c, JoinFactor factor) {
         //Todo:Calculate the combine score based on factor
-        return new Random().nextDouble();
+        double score=0;
+        switch (factor){
+            case COMPACTNESS:
+                score=0;
+                break;
+            case SINGLECOUNTY:
+                score=0.25;
+                break;
+            case EQUALPOPULATION:
+                score=0.5;
+                break;
+            case POLITICALFAIRNESS:
+                score=0.75;
+                break;
+        }
+        return score;
     }
     /*public Set<Edge> getEdges(Set<Cluster> clusters){
         return null;

@@ -8,12 +8,18 @@ import com.example.cseproject.Enum.State_Status;
 import com.example.cseproject.Model.District;
 import com.example.cseproject.Model.State;
 import com.example.cseproject.Service.StateService;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +35,17 @@ public class StateController {
     @Autowired
     StateService stateService;
 
+    @RequestMapping(value="/test",method = RequestMethod.GET)
+    public String test(){
+        try {
+            File file = ResourceUtils.getFile("classpath:ohio_p0.json");
+            String str =Files.readString(file.toPath(), StandardCharsets.UTF_8);
+            return str;
+        }catch (Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
     @RequestMapping(value="/getDistrictData",method = RequestMethod.GET)
     public Result getDistrictsGeoJSON(@RequestParam String state, @RequestParam String year){
         return stateService.getDistrictsData(state,year);

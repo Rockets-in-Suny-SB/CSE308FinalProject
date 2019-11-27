@@ -43,7 +43,7 @@ public class State {
     private Map<DemographicGroup, Integer> demographicGroups;
 
     public State() {
-        //initializeClusters();
+        this.clusters=new HashSet<>();
     }
 
     public StateName getName() {
@@ -167,19 +167,7 @@ public class State {
         clusters.remove(c2);
     }
 
-    public void initializeClusters(){
-        this.clusters=new HashSet<>();
-       for(Precinct p:precincts){
-           this.clusters.add(new Cluster(p));
-       }
-       for(Cluster c:clusters){
-           c.getPrecincts().forEach((p)->{
-               p.getPrecinctEdges().forEach(e->{
-                   //Add Cluster to neighbor
-               });
-           });
-       }
-    }
+
 }
 
 
