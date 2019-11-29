@@ -164,7 +164,7 @@ public class Cluster {
         }
     }
 
-    ;
+
 
     public double calculateFactorScore(Cluster c, JoinFactor factor) {
         //Todo:Calculate the combine score based on factor
