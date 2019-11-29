@@ -1,20 +1,14 @@
 package com.example.cseproject.Model;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Entity // This tells Hibernate to make a table out of this class
-public class User {
-    @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+@Entity
+public class County {
     private Integer id;
-
     private String name;
 
-    private String email;
-
+    @Id
     public Integer getId() {
         return id;
     }
@@ -30,14 +24,4 @@ public class User {
     public void setName(String name) {
         this.name = name;
     }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-
 }

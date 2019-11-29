@@ -23,14 +23,6 @@ public class Algorithm {
     private StateService stateService;
     @Autowired
     private PrecinctService precinctService;
-    public Result phase0(Threshold threshold) {
-        State targetState = stateService.getState(StateName.valueOf(this.parameter.getStateName().toUpperCase()),
-                State_Status.NEW).get();
-        Set<EligibleBloc> eligibleBlocs = targetState.findEligibleBlocs();
-        Result result = new Result();
-        result.addResult("Eligible Blocs", eligibleBlocs);
-        return result;
-    }
     public void setPhase1(Parameter parameter){
         this.parameter = parameter;
         State targetState = stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW).get();
@@ -142,13 +134,13 @@ public class Algorithm {
     public void initializeClusters(State state){
         Set<Cluster> clusters=state.getClusters();
         for(Precinct p:state.getPrecincts()){
-            Cluster c=new Cluster(p);
+            Cluster c = new Cluster(p);
             p.setParentCluster(c);
             clusters.add(c);
         }
         for(Cluster c:clusters){
             c.getPrecincts().forEach((p)->{
-                Set<Cluster> cNeighbor=c.getNeighbors();
+                Set<Cluster> cNeighbor = c.getNeighbors();
                 p.getPrecinctEdges().forEach(e->{
                     //Add Cluster to neighbor
                     Cluster parent=precinctService.getPrecinct(e.getAdjacentPrecinctId()).get().getParentCluster();

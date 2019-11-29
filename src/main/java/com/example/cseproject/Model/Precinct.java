@@ -18,16 +18,12 @@ public class Precinct {
     private Integer id;
     private String name;
     private Integer population;
-    private String party;
-    private Integer districtId;
-    private String countyName;
+    private Integer countyId;
     private Cluster parentCluster;
     private Map<Election, Vote> votes;
     private Set<Edge> precinctEdges;
-    private Map<DemographicGroup, Integer> demographicGroups;
     private String geoJson;
     private Map<DemographicGroup, Integer> minorityGroupPopulation;
-    private Map<Integer, Float> CountyAreas;
 
     public Precinct() {
 
@@ -69,28 +65,13 @@ public class Precinct {
         this.population = population;
     }
 
-    public String getParty() {
-        return party;
+    @ManyToOne(targetEntity = County.class)
+    public Integer getCountyId() {
+        return countyId;
     }
 
-    public void setParty(String party) {
-        this.party = party;
-    }
-
-    public Integer getDistrictId() {
-        return districtId;
-    }
-
-    public void setDistrictId(Integer districtId) {
-        this.districtId = districtId;
-    }
-
-    public String getCountyName() {
-        return countyName;
-    }
-
-    public void setCountyName(String countyName) {
-        this.countyName = countyName;
+    public void setCountyId(Integer countyId) {
+        this.countyId = countyId;
     }
 
     @ElementCollection
@@ -115,19 +96,6 @@ public class Precinct {
         this.precinctEdges = precinctEdges;
     }
 
-    @ElementCollection
-    @CollectionTable(name = "groupName_groupPopulation",
-            joinColumns = @JoinColumn(name = "precinct_id"))
-    @MapKeyColumn(name = "groupName")
-    @Column(name = "groupPopulation")
-    public Map<DemographicGroup, Integer> getDemographicGroups() {
-        return demographicGroups;
-    }
-
-    public void setDemographicGroups(Map<DemographicGroup, Integer> demographicGroups) {
-        this.demographicGroups = demographicGroups;
-    }
-
     public String getGeoJson() {
         return geoJson;
     }
@@ -148,20 +116,6 @@ public class Precinct {
     public void setMinorityGroupPopulation(Map<DemographicGroup, Integer> minorityGroupPopulation) {
         this.minorityGroupPopulation = minorityGroupPopulation;
     }
-
-    @ElementCollection
-    @CollectionTable(name = "countyName_area",
-            joinColumns = @JoinColumn(name = "precinct_id"))
-    @MapKeyColumn(name = "countyName")
-    @Column(name = "area")
-    public Map<Integer, Float> getCountyAreas() {
-        return CountyAreas;
-    }
-
-    public void setCountyAreas(Map<Integer, Float> countyAreas) {
-        CountyAreas = countyAreas;
-    }
-
 
     public EligibleBloc doBlocAnalysis(Threshold threshold, Election election) {
         DemographicGroup populationResult = findLargestDemographicGroup(threshold);
@@ -200,17 +154,22 @@ public class Precinct {
         Vote targetVote = votes.get(election);
         Integer totalVotes = targetVote.getTotalVotes();
         Integer winningVotes = targetVote.getWinningVotes();
-        PartyName winningPartyName = targetVote.getWinningPartyName();
+        if (winningVotes > this.population) {
+            return null;
+        }
+        PartyName winningPartyValue = targetVote.getWinningPartyName();
         Float percentage = (float) winningVotes / totalVotes;
         if (percentage < threshold.getBlocThreshold()) {
             return null;
         }
         EligibleBloc eligibleBloc = new EligibleBloc();
-        eligibleBloc.setWinningParty(winningPartyName);
+        String winningPartyName = winningPartyValue.name();
+        String winningPartyResult = winningPartyName.substring(0,1).toUpperCase() + winningPartyName.substring(1);
+        eligibleBloc.setWinningParty(winningPartyResult);
         eligibleBloc.setWinningVotes(winningVotes);
         eligibleBloc.setTotalVotes(totalVotes);
         eligibleBloc.setPopulation(this.population);
-        eligibleBloc.setPrecinctId(this.id);
+        eligibleBloc.setPrecinctName(this.name);
         eligibleBloc.setPercentage(percentage);
         return eligibleBloc;
     }
