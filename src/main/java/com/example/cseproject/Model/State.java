@@ -21,7 +21,7 @@ public class State {
     private StateName name;
     @Id
     private State_Status status;
-    @OneToMany
+    @ManyToMany(targetEntity = District.class)
     private Set<District> districts;
     @Transient
     private Threshold threshold;
@@ -31,7 +31,7 @@ public class State {
     @Enumerated
     @Transient
     private Election election;
-    @OneToMany(targetEntity = Precinct.class)
+    @ManyToMany(targetEntity = Precinct.class)
     private Set<Precinct> precincts;
 
     @ElementCollection
