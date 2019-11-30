@@ -18,8 +18,9 @@ public class Precinct {
     private Integer id;
     private String name;
     private Integer population;
+    @ManyToOne(targetEntity = County.class)
     private Integer countyId;
-    private Cluster parentCluster;
+    private Integer parentClusterId;
     private Map<Election, Vote> votes;
     private Set<Edge> precinctEdges;
     private String geoJson;
@@ -30,12 +31,12 @@ public class Precinct {
     }
 
     @Transient
-    public Cluster getParentCluster() {
-        return parentCluster;
+    public Integer getParentCluster() {
+        return parentClusterId;
     }
 
-    public void setParentCluster(Cluster parentCluster) {
-        this.parentCluster = parentCluster;
+    public void setParentCluster(Integer parentClusterId) {
+        this.parentClusterId = parentClusterId;
     }
 
     @Id
@@ -65,7 +66,6 @@ public class Precinct {
         this.population = population;
     }
 
-    @ManyToOne(targetEntity = County.class)
     public Integer getCountyId() {
         return countyId;
     }

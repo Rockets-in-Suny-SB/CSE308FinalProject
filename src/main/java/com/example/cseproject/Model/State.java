@@ -7,8 +7,12 @@ import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.StateName;
 import com.example.cseproject.Enum.State_Status;
 import com.example.cseproject.Model.CompositeKeys.StateId;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.persistence.*;
+import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +31,7 @@ public class State {
     private Threshold threshold;
     private Integer population;
     @Transient
-    private Set<Cluster> clusters;
+    private Map<Integer, Cluster> clusters;
     @Enumerated
     @Transient
     private Election election;
@@ -43,7 +47,13 @@ public class State {
     private Map<DemographicGroup, Integer> demographicGroups;
 
     public State() {
-        this.clusters=new HashSet<>();
+        /*try {
+            ObjectMapper mapper = new ObjectMapper();
+            Set<Cluster> clusters = mapper.readValue(ResourceUtils.getFile("classpath:clusters.json"), new TypeReference<>(){});
+        }catch (Exception e){
+            System.out.println(e);
+        }*/
+        this.clusters=new HashMap<>();
     }
 
     public StateName getName() {
@@ -104,11 +114,11 @@ public class State {
         this.precincts = precincts;
     }
 
-    public Set<Cluster> getClusters() {
+    public Map<Integer,Cluster> getClusters() {
         return this.clusters;
     }
 
-    public void setClusters(Set<Cluster> clusters) {
+    public void setClusters(Map<Integer,Cluster> clusters) {
         this.clusters = clusters;
     }
 

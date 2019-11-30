@@ -12,6 +12,14 @@ import org.springframework.data.util.Pair;
 import java.util.*;
 
 public class Cluster {
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     private Integer id;
     //private Vote vote;
     //private List<Edge> edges;
@@ -27,7 +35,7 @@ public class Cluster {
         this.id = precinct.getId();
         this.precincts = new HashSet<>();
         this.neighbors = new HashSet<>();
-        this.minorityGroupPopulation = precinct.getMinorityGroupPopulation();
+        this.minorityGroupPopulation = new HashMap<>(precinct.getMinorityGroupPopulation());
         this.countyCount = new HashMap<>();
         this.population = precinct.getPopulation();
         //this.countyCount.put(precinct.getCountyId(),1);
@@ -62,17 +70,50 @@ public class Cluster {
 
     public void combine(Cluster c2) {
         //Combine Precincts
-        for (Precinct p : c2.getPrecincts()) {
+        Set<Precinct> precincts=c2.getPrecincts();
+        for (Precinct p : precincts) {
             if (!precincts.contains(p)) {
+                p.setParentCluster(this.id);
                 precincts.add(p);
             }
         }
         //Combine Neighbors
-        for (Cluster n : c2.getNeighbors()) {
+        Set<Cluster> neighbors=c2.getNeighbors();
+        for (Cluster n : neighbors) {
             if (!neighbors.contains(n) && n != this) {
                 neighbors.add(n);
             }
+
         }
+        try {
+            neighbors=c2.getNeighbors();
+            for(Cluster n : neighbors){
+                //Remove c2 from c2's neighbors
+                n.getNeighbors().remove(c2);
+            }
+        }catch (Exception e1){
+            System.out.println("First failed:"+e1);
+            try {
+                boolean itSelf=false;
+                for(Cluster n : neighbors){
+                    //Remove c2 from c2's neighbors
+                    if(n.getNeighbors()!=neighbors) {
+                        n.getNeighbors().remove(c2);
+                    }else{
+                        System.out.println("Error: C2 neighbors contains itself!!");
+                        itSelf=true;
+                    }
+                }
+                if(itSelf){
+                    System.out.println("Error: C2 neighbors contains itself!!2");
+                    c2.getNeighbors().remove(c2);
+                }
+            }catch (Exception e2){
+                System.out.println("Second failed also:"+e2);
+            }
+        }
+
+        //neighbors.remove(c2);
     }
 
 
@@ -83,16 +124,23 @@ public class Cluster {
         double bestScore = 0;
         Cluster bestNeighbor = null;
         double candidateScore = 0;
-        for (Cluster n : getNeighbors()) {
-            candidateScore = n.calculateMajorityMinorityScore(n, d);
-            if (candidateScore > bestScore) {
-                bestScore = candidateScore;
-                bestNeighbor = n;
+        Set<Cluster> neighbors=getNeighbors();
+        //System.out.println("MM4:"+neighbors.size());
+        for (Cluster n : neighbors) {
+            if(!n.paired) {
+                candidateScore = n.calculateMajorityMinorityScore(n, d);
+                //System.out.println(candidateScore);
+                if (candidateScore > bestScore) {
+                    System.out.println("MM5:"+candidateScore);
+                    bestScore = candidateScore;
+                    bestNeighbor = n;
+                }
             }
         }
         Threshold t = new Threshold();
 
         double threshold = t.getMajorityMinorityThreshold();
+        //System.out.println("Th:"+threshold);
         if (bestScore > threshold && bestNeighbor != null) {
             this.paired = true;
             bestNeighbor.paired = true;
@@ -107,16 +155,18 @@ public class Cluster {
         Cluster bestNeighbor = null;
         double candidateScore = 0;
         for (Cluster n : getNeighbors()) {
-            candidateScore = n.calculateFactorScore(n, factor);
-            if (candidateScore > bestScore) {
-                bestScore = candidateScore;
-                bestNeighbor = n;
+            if(!n.paired) {
+                candidateScore = n.calculateFactorScore(n, factor);
+                if (candidateScore > bestScore) {
+                    bestScore = candidateScore;
+                    bestNeighbor = n;
+                }
             }
         }
         Threshold t = new Threshold();
 
         double threshold = t.getMajorityMinorityThreshold();
-        if (bestScore > threshold && bestNeighbor != null) {
+        if (bestScore >= threshold && bestNeighbor != null) {
             this.paired = true;
             bestNeighbor.paired = true;
             return Pair.of(this, bestNeighbor);
@@ -131,8 +181,12 @@ public class Cluster {
 
 
     public double calculateMajorityMinorityScore(Cluster c, DemographicGroup d) {
-        double score = (c.getMinorityGroupPopulation().get(d) + this.getMinorityGroupPopulation().get(d))
-                / (c.getPopulation() + this.getPopulation());
+        int totalPopulation=c.getPopulation() + this.getPopulation();
+        int totalMinorityPopulation=(c.getMinorityGroupPopulation().get(d) + this.getMinorityGroupPopulation().get(d));
+        //System.out.println("TT:"+totalPopulation);
+        //System.out.println(("TM:")+totalMinorityPopulation);
+        double score = totalPopulation==0?0: totalMinorityPopulation / (totalPopulation*1.0);
+        //System.out.println("MM:"+score);
         return score;
     }
 

@@ -5,6 +5,7 @@ import com.example.cseproject.Model.Edge;
 import com.example.cseproject.Model.Precinct;
 import com.example.cseproject.Model.Vote;
 import com.example.cseproject.Repository.PrecinctRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -12,6 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 @Service
 public class PrecinctService {
+    @Autowired
     private PrecinctRepository precinctRepository;
     private Iterable<Precinct> getAllPrecinct(){ return precinctRepository.findAll(); }
 

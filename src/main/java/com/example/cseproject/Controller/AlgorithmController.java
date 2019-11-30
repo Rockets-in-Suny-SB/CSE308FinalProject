@@ -26,12 +26,12 @@ public class AlgorithmController {
         return result;
     }
     @RequestMapping(value = "/phase1Param",method = RequestMethod.POST)
-    public String setPhase1(@RequestParam Parameter parameter){
+    public Result setPhase1(@RequestBody Parameter parameter){
         algorithmService.setPhase1(parameter);
-        return "Parameters have been set";
+        return algorithmService.runPhase1();
     }
     @RequestMapping(value = "/phase1", method = RequestMethod.POST)
-    public @ResponseBody Result runPhase1(@RequestParam Parameter parameter){
+    public @ResponseBody Result runPhase1(){
         Result result = algorithmService.runPhase1();
         return result;
     }
