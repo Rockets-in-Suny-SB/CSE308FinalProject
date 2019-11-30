@@ -13,12 +13,13 @@ public class Vote {
 
     @Id
     private Integer id;
-
     @Id
     private Election election;
     private Integer totalVotes;
     private PartyName winningPartyName;
     private Integer winningVotes;
+    private Float winningPartyPercentage;
+
     @ElementCollection
     @CollectionTable(name = "vote_partyVotes",
             joinColumns ={@JoinColumn(name = "election"),
@@ -26,7 +27,6 @@ public class Vote {
     @MapKeyColumn(name = "partyName")
     @Column(name = "partyVotes")
     private Map<PartyName, Integer> partyVotes;
-
 
     public Election getElection() {
         return election;
@@ -75,6 +75,14 @@ public class Vote {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Float getWinningPartyPercentage() {
+        return winningPartyPercentage;
+    }
+
+    public void setWinningPartyPercentage(Float winningPartyPercentage) {
+        this.winningPartyPercentage = winningPartyPercentage;
     }
 }
 

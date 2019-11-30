@@ -6,6 +6,7 @@ import com.example.cseproject.DataClasses.Threshold;
 import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.PartyName;
+import org.springframework.data.util.Pair;
 
 
 import javax.persistence.*;
@@ -18,12 +19,14 @@ public class Precinct {
     private Integer id;
     private String name;
     private Integer population;
+    @ManyToOne(targetEntity = County.class)
     private Integer countyId;
     private Cluster parentCluster;
     private Map<Election, Vote> votes;
     private Set<Edge> precinctEdges;
     private String geoJson;
     private Map<DemographicGroup, Integer> minorityGroupPopulation;
+    private DemographicGroup largestPopulationGroup;
 
     public Precinct() {
 
@@ -39,7 +42,7 @@ public class Precinct {
     }
 
     @Id
-    @GeneratedValue()
+    @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "precinct_id")
     public Integer getId() {
         return id;
@@ -65,7 +68,7 @@ public class Precinct {
         this.population = population;
     }
 
-    @ManyToOne(targetEntity = County.class)
+
     public Integer getCountyId() {
         return countyId;
     }
@@ -118,49 +121,45 @@ public class Precinct {
     }
 
     public EligibleBloc doBlocAnalysis(Threshold threshold, Election election) {
-        DemographicGroup populationResult = findLargestDemographicGroup(threshold);
-        if (populationResult == null) {
-            return null;
-        }
-        EligibleBloc eligibleBloc = this.checkBlocThreshold(threshold, election);
-        if (eligibleBloc != null) {
-            eligibleBloc.setDemographicGroup(populationResult);
-            return eligibleBloc;
-        }
-        return null;
+        Pair<Boolean, DemographicGroup> populationResult = findLargestDemographicGroup(threshold);
+        Pair<Boolean, EligibleBloc> votingResult = this.checkBlocThreshold(threshold, election);
+        Boolean isEligible = populationResult.getFirst() && votingResult.getFirst();
+        EligibleBloc eligibleBloc = votingResult.getSecond();
+        eligibleBloc.setDemographicGroup(populationResult.getSecond());
+        eligibleBloc.setEligibleBloc(isEligible);
+        return eligibleBloc;
     }
 
     /* Use case 23: check whether it meets populution threshold or not*/
-    public DemographicGroup findLargestDemographicGroup(Threshold threshold) {
-        DemographicGroup dominate = DemographicGroup.WHITE;
+    public Pair<Boolean, DemographicGroup> findLargestDemographicGroup(Threshold threshold) {
+        DemographicGroup mostPopulationGroup = DemographicGroup.WHITE;
+        Boolean isEligible = false;
         Float maxPercent = (float) 0;
         Float populationThreshold = threshold.getPopulationThreshold();
         for (Map.Entry<DemographicGroup, Integer> entry : this.minorityGroupPopulation.entrySet()) {
             Float percentage = (float) entry.getValue() / this.population;
-            if (percentage > populationThreshold && percentage > maxPercent) {
-                dominate = entry.getKey();
+            if (percentage > maxPercent) {
+                mostPopulationGroup = entry.getKey();
                 maxPercent = percentage;
             }
         }
-        if (dominate != DemographicGroup.WHITE) {
-            return null;
+        if (maxPercent > populationThreshold) {
+            isEligible = true;
         }
-        return dominate;
+        return Pair.of(isEligible, mostPopulationGroup);
     }
 
     /* Use case 24: whether the vote for a party candidate exceeded the user supplied threshold */
-    public EligibleBloc checkBlocThreshold(Threshold threshold, Election election) {
+    public Pair<Boolean, EligibleBloc> checkBlocThreshold(Threshold threshold, Election election) {
+        Boolean isEligible = false;
         Map<Election, Vote> votes = this.getVotes();
         Vote targetVote = votes.get(election);
         Integer totalVotes = targetVote.getTotalVotes();
         Integer winningVotes = targetVote.getWinningVotes();
-        if (winningVotes > this.population) {
-            return null;
-        }
         PartyName winningPartyValue = targetVote.getWinningPartyName();
         Float percentage = (float) winningVotes / totalVotes;
-        if (percentage < threshold.getBlocThreshold()) {
-            return null;
+        if (percentage > threshold.getBlocThreshold()) {
+            isEligible = true;
         }
         EligibleBloc eligibleBloc = new EligibleBloc();
         String winningPartyName = winningPartyValue.name();
@@ -171,7 +170,10 @@ public class Precinct {
         eligibleBloc.setPopulation(this.population);
         eligibleBloc.setPrecinctName(this.name);
         eligibleBloc.setPercentage(percentage);
-        return eligibleBloc;
+        if (winningVotes > this.population) {
+            isEligible = false;
+        }
+        return Pair.of(isEligible, eligibleBloc);
     }
 
 }
