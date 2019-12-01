@@ -18,7 +18,7 @@ public class AlgorithmController {
     @Autowired
     StateService stateService;
 
-    @RequestMapping(value = "/phase0", method = RequestMethod.GET)
+    @RequestMapping(value = "/phase0", method = RequestMethod.POST)
     public @ResponseBody
     Result runPhase0(@RequestParam String stateName,
                      @RequestParam String election,
@@ -41,7 +41,7 @@ public class AlgorithmController {
 //        return result;
 //    }
 
-    @RequestMapping(value = "/specifyMinorityPopulation", method = RequestMethod.GET)
+    @RequestMapping(value = "/specifyMinorityPopulation", method = RequestMethod.POST)
     public @ResponseBody
     Result specifyMinorityPopulation(@RequestParam String stateName,
                                      @RequestParam String status,
