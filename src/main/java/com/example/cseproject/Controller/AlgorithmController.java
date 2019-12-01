@@ -24,8 +24,7 @@ public class AlgorithmController {
                      @RequestParam String election,
                      @RequestParam Float populationThreshold,
                      @RequestParam Float blocThreshold) {
-        Result result = algorithmService.runPhase0(stateName, election, populationThreshold, blocThreshold);
-        return result;
+        return algorithmService.runPhase0(stateName, election, populationThreshold, blocThreshold);
     }
 
     @RequestMapping(value = "/phase1Param", method = RequestMethod.POST)
@@ -51,8 +50,7 @@ public class AlgorithmController {
                                      @RequestParam Boolean isCombined) {
         algorithmService.specifyMinorityPopulation(maximumPercentage, minimumPercentage,
                 minorityPopulations, isCombined);
-        Result minorityPopulationResult = algorithmService.getMinorityPopulation(stateName, status);
-        return minorityPopulationResult;
+        return algorithmService.getMinorityPopulation(stateName, status);
     }
 
 
