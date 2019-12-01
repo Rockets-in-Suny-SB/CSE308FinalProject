@@ -17,6 +17,7 @@ import java.util.Set;
 public class AlgorithmService {
     @Autowired
     StateService stateService;
+    @Autowired
     Algorithm algorithm;
 
     public AlgorithmService() {
@@ -41,7 +42,7 @@ public class AlgorithmService {
 
     public Result runPhase1() {
         Parameter parameter = algorithm.getParameter();
-        Result phase1Result = algorithm.phase1(parameter);
+        Result phase1Result = algorithm.phase1();
         return phase1Result;
     }
 
