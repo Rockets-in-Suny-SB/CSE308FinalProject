@@ -2,15 +2,11 @@ package com.example.cseproject.Service;
 
 import com.example.cseproject.Enum.PartyName;
 import com.example.cseproject.Model.District;
-import com.example.cseproject.Model.Precinct;
 import com.example.cseproject.Repository.DistrictRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -18,11 +14,15 @@ public class DistrictService {
     @Autowired
     private DistrictRepository districtRepository;
 
-    public Iterable<District> getAllDistrict(){return districtRepository.findAll();}
+    public Iterable<District> getAllDistrict() {
+        return districtRepository.findAll();
+    }
 
-    public Optional<District> getDistrict(Integer id){ return districtRepository.findById(id);}
+    public Optional<District> getDistrict(Integer id) {
+        return districtRepository.findById(id);
+    }
 
-    public String addDistrict(String name, HashMap<PartyName, Integer> partyVotes, Integer population){
+    public String addDistrict(String name, HashMap<PartyName, Integer> partyVotes, Integer population) {
         District district = new District();
         district.setName(name);
         district.setPartyVotes(partyVotes);
@@ -46,7 +46,7 @@ public class DistrictService {
 
     }
 
-    public String deleteDistrict(District district){
+    public String deleteDistrict(District district) {
         districtRepository.delete(district);
         return "Deleted";
     }

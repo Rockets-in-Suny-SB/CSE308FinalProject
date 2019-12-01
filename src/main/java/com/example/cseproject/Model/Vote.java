@@ -21,8 +21,8 @@ public class Vote {
     private Integer winningVotes;
     @ElementCollection
     @CollectionTable(name = "vote_partyVotes",
-            joinColumns ={@JoinColumn(name = "election"),
-                          @JoinColumn(name = "vote_id")})
+            joinColumns = {@JoinColumn(name = "election"),
+                    @JoinColumn(name = "vote_id")})
     @MapKeyColumn(name = "partyName")
     @Column(name = "partyVotes")
     private Map<PartyName, Integer> partyVotes;

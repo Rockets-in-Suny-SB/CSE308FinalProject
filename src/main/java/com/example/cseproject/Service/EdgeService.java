@@ -1,7 +1,6 @@
 package com.example.cseproject.Service;
 
 import com.example.cseproject.Model.Edge;
-import com.example.cseproject.Model.Precinct;
 import com.example.cseproject.Repository.EdgeRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +10,13 @@ import java.util.Optional;
 public class EdgeService {
     private EdgeRepository edgeRepository;
 
-    private Iterable<Edge> getAllEdges(){ return edgeRepository.findAll(); }
+    private Iterable<Edge> getAllEdges() {
+        return edgeRepository.findAll();
+    }
 
-    public Optional<Edge> getEdge(Integer id){return edgeRepository.findById(id);}
+    public Optional<Edge> getEdge(Integer id) {
+        return edgeRepository.findById(id);
+    }
 
 //    public String addEdge(Integer id, Integer adjacentPrecinct1_id, Integer adjacentPrecinct2_id,
 //                          Boolean sameCounty, Float demographicSimilarity, Integer precinct_id){
@@ -29,11 +32,10 @@ public class EdgeService {
 //        return "Saved";
 //    }
 
-    public String deleteEdge(Edge edge){
+    public String deleteEdge(Edge edge) {
         edgeRepository.delete(edge);
         return "Deleted";
     }
-
 
 
 }

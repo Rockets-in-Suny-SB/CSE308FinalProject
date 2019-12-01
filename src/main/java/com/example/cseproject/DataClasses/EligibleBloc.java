@@ -1,7 +1,6 @@
 package com.example.cseproject.DataClasses;
 
 import com.example.cseproject.Enum.DemographicGroup;
-import com.example.cseproject.Enum.PartyName;
 
 public class EligibleBloc {
     private String precinctName;
@@ -11,6 +10,7 @@ public class EligibleBloc {
     private Integer totalVotes;
     private String winningParty;
     private Float percentage;
+    private Boolean isEligible;
 
     public EligibleBloc() {
     }
@@ -70,4 +70,13 @@ public class EligibleBloc {
     public void setPercentage(Float percentage) {
         this.percentage = percentage;
     }
+
+    public Boolean getEligible() {
+        return isEligible;
+    }
+
+    public void setEligible(Boolean eligible) {
+        isEligible = eligible;
+    }
+
 }

@@ -19,7 +19,7 @@ public class AlgorithmService {
     StateService stateService;
     Algorithm algorithm;
 
-    public AlgorithmService(){
+    public AlgorithmService() {
         algorithm = new Algorithm();
         algorithm.setParameter(new Parameter());
     }

@@ -1,7 +1,7 @@
 package com.example.cseproject.Model;
 
-import com.example.cseproject.DataClasses.*;
 import com.example.cseproject.DataClasses.Parameter;
+import com.example.cseproject.DataClasses.*;
 import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.StateName;
@@ -43,19 +43,19 @@ public class State {
     private Map<DemographicGroup, Integer> demographicGroups;
 
     public State() {
-        this.clusters=new HashSet<>();
+        this.clusters = new HashSet<>();
     }
 
     public StateName getName() {
         return name;
     }
 
-    @Column (name="state_name")
+    @Column(name = "state_name")
     public void setName(StateName name) {
         this.name = name;
     }
 
-    @Column ( name="state_status")
+    @Column(name = "state_status")
     public State_Status getStatus() {
         return status;
     }
@@ -140,7 +140,7 @@ public class State {
         /* add white population */
         Integer whitePopulation = this.getDemographicGroups().get(DemographicGroup.WHITE);
         System.out.println(this.getDemographicGroups());
-        if (whitePopulation != null){
+        if (whitePopulation != null) {
             Float whitePercentage = (float) whitePopulation / this.population;
             MinorityPopulation whitePopulationData = new MinorityPopulation(DemographicGroup.WHITE,
                     whitePercentage, whitePopulation);
@@ -153,7 +153,7 @@ public class State {
                 Float percentage = (float) population / this.population;
                 if (population >= minimumPercentage && population <= maximumPercentage) {
                     MinorityPopulation minorityPopulation = new MinorityPopulation(demographicGroup,
-                                                                percentage, population);
+                            percentage, population);
                     minorityPopulations.add(minorityPopulation);
                 }
             }

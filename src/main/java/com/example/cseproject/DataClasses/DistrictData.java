@@ -13,6 +13,13 @@ public class DistrictData {
     private Map<PartyName, Integer> partyVotes;
     private Map<DemographicGroup, Integer> minorityGroupPopulation;
 
+    public DistrictData(District district) {
+        this.name = district.getName();
+        this.population = district.getPopulation();
+        this.partyVotes = district.getPartyVotes();
+        this.minorityGroupPopulation = district.getMinorityGroupPopulation();
+    }
+
     public String getName() {
         return name;
     }
@@ -36,14 +43,6 @@ public class DistrictData {
     public void setPartyVotes(Map<PartyName, Integer> partyVotes) {
         this.partyVotes = partyVotes;
     }
-
-    public DistrictData(District district) {
-        this.name = district.getName();
-        this.population = district.getPopulation();
-        this.partyVotes = district.getPartyVotes();
-        this.minorityGroupPopulation= district.getMinorityGroupPopulation();
-    }
-
 
 
 }

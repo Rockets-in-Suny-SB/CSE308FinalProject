@@ -1,7 +1,8 @@
 package com.example.cseproject.Algorithm;
 
-import com.example.cseproject.DataClasses.*;
-import com.example.cseproject.Enum.Election;
+import com.example.cseproject.DataClasses.Cluster;
+import com.example.cseproject.DataClasses.Parameter;
+import com.example.cseproject.DataClasses.Result;
 import com.example.cseproject.Enum.JoinFactor;
 import com.example.cseproject.Enum.StateName;
 import com.example.cseproject.Enum.State_Status;
@@ -12,7 +13,9 @@ import com.example.cseproject.Service.StateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.PriorityQueue;
+import java.util.Set;
 
 public class Algorithm {
     private Set<Pair<Cluster, Cluster>> resultPairs;
@@ -23,12 +26,14 @@ public class Algorithm {
     private StateService stateService;
     @Autowired
     private PrecinctService precinctService;
-    public void setPhase1(Parameter parameter){
+
+    public void setPhase1(Parameter parameter) {
         this.parameter = parameter;
         State targetState = stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW).get();
         this.targetState = targetState;
         initializeClusters(this.targetState);
     }
+
     public Result phase1(Parameter parameter) {
         this.resultPairs = new HashSet<>();
         Set<Cluster> clusters = targetState.getClusters();
@@ -43,11 +48,11 @@ public class Algorithm {
         }
         Result r = new Result();
         if (isFinalIteration) {
-            if(clusters.size() > parameter.getTargetDistricts()){
+            if (clusters.size() > parameter.getTargetDistricts()) {
                 finalCombineIteration(clusters);
             }
             r.addResult("isFinal", true);
-        }else{
+        } else {
             r.addResult("isFinal", false);
         }
         //Return result
@@ -131,22 +136,23 @@ public class Algorithm {
             c.paired = false;
         }
     }
-    public void initializeClusters(State state){
-        Set<Cluster> clusters=state.getClusters();
-        for(Precinct p:state.getPrecincts()){
+
+    public void initializeClusters(State state) {
+        Set<Cluster> clusters = state.getClusters();
+        for (Precinct p : state.getPrecincts()) {
             Cluster c = new Cluster(p);
             p.setParentCluster(c);
             clusters.add(c);
         }
-        for(Cluster c:clusters){
-            c.getPrecincts().forEach((p)->{
+        for (Cluster c : clusters) {
+            c.getPrecincts().forEach((p) -> {
                 Set<Cluster> cNeighbor = c.getNeighbors();
-                p.getPrecinctEdges().forEach(e->{
+                p.getPrecinctEdges().forEach(e -> {
                     //Add Cluster to neighbor
-                    Cluster parent=precinctService.getPrecinct(e.getAdjacentPrecinctId()).get().getParentCluster();
-                    if(parent!=null){
+                    Cluster parent = precinctService.getPrecinct(e.getAdjacentPrecinctId()).get().getParentCluster();
+                    if (parent != null) {
                         cNeighbor.add(parent);
-                    }else{
+                    } else {
                         System.out.println("Error: Parent Cluster is null!");
                     }
                 });

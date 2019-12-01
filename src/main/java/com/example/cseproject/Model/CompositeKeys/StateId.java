@@ -10,7 +10,10 @@ public class StateId implements Serializable {
 
     private StateName name;
     private State_Status status;
-    public StateId(){}
+
+    public StateId() {
+    }
+
     public StateId(StateName name, State_Status status) {
         this.name = name;
         this.status = status;
@@ -33,7 +36,7 @@ public class StateId implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
         if (o == this) {
             return true;
         }

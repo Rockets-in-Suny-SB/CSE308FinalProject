@@ -7,18 +7,18 @@ public class MinorityPopulation {
     private Float percentage;
     private Integer population;
 
+    public MinorityPopulation(DemographicGroup demographicGroup, Float percentage, Integer population) {
+        this.demographicGroup = demographicGroup;
+        this.percentage = percentage;
+        this.population = population;
+    }
+
     public DemographicGroup getDemographicGroup() {
         return demographicGroup;
     }
 
     public void setDemographicGroup(DemographicGroup demographicGroup) {
         this.demographicGroup = demographicGroup;
-    }
-
-    public MinorityPopulation(DemographicGroup demographicGroup, Float percentage, Integer population) {
-        this.demographicGroup = demographicGroup;
-        this.percentage = percentage;
-        this.population = population;
     }
 
     public Float getPercentage() {
