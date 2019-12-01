@@ -31,7 +31,7 @@ public class Algorithm {
         this.parameter = parameter;
         State targetState = stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW).get();
         this.targetState = targetState;
-        initializeClusters(this.targetState);
+//        initializeClusters(this.targetState);
     }
 
     public Result phase1(Parameter parameter) {
@@ -137,27 +137,27 @@ public class Algorithm {
         }
     }
 
-    public void initializeClusters(State state) {
-        Set<Cluster> clusters = state.getClusters();
-        for (Precinct p : state.getPrecincts()) {
-            Cluster c = new Cluster(p);
-            p.setParentCluster(c);
-            clusters.add(c);
-        }
-        for (Cluster c : clusters) {
-            c.getPrecincts().forEach((p) -> {
-                Set<Cluster> cNeighbor = c.getNeighbors();
-                p.getPrecinctEdges().forEach(e -> {
-                    //Add Cluster to neighbor
-                    Cluster parent = precinctService.getPrecinct(e.getAdjacentPrecinctId()).get().getParentCluster();
-                    if (parent != null) {
-                        cNeighbor.add(parent);
-                    } else {
-                        System.out.println("Error: Parent Cluster is null!");
-                    }
-                });
-            });
-        }
-    }
+//    public void initializeClusters(State state) {
+//        Set<Cluster> clusters = state.getClusters();
+//        for (Precinct p : state.getPrecincts()) {
+//            Cluster c = new Cluster(p);
+//            p.setParentCluster(c);
+//            clusters.add(c);
+//        }
+//        for (Cluster c : clusters) {
+//            c.getPrecincts().forEach((p) -> {
+//                Set<Cluster> cNeighbor = c.getNeighbors();
+//                p.getPrecinctEdges().forEach(e -> {
+//                    //Add Cluster to neighbor
+//                    Cluster parent = precinctService.getPrecinct(e.getAdjacentPrecinctId()).get().getParentCluster();
+//                    if (parent != null) {
+//                        cNeighbor.add(parent);
+//                    } else {
+//                        System.out.println("Error: Parent Cluster is null!");
+//                    }
+//                });
+//            });
+//        }
+//    }
 //    public void move(Cluster c){}
 }
