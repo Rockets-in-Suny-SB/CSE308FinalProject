@@ -123,7 +123,16 @@ public class Precinct {
         Pair<Boolean, EligibleBloc> votingResult = this.checkBlocThreshold(threshold, election);
         Boolean isEligible = populationResult.getFirst() && votingResult.getFirst();
         EligibleBloc eligibleBloc = votingResult.getSecond();
-        eligibleBloc.setDemographicGroup(populationResult.getSecond());
+        String demographicName = populationResult.getSecond().name();
+        String[] names = demographicName.split("_");
+        StringBuilder demographicResult = new StringBuilder();
+        for (String name : names) {
+            name = name.substring(0,1) + name.substring(1).toLowerCase();
+            demographicResult.append(name).append(" ");
+        }
+        demographicResult = new StringBuilder(demographicResult.substring(0, demographicResult.length() - 1));
+        System.out.println(demographicResult);
+        eligibleBloc.setDemographicGroup(demographicResult.toString());
         eligibleBloc.setEligible(isEligible);
         return eligibleBloc;
     }
@@ -161,7 +170,7 @@ public class Precinct {
         }
         EligibleBloc eligibleBloc = new EligibleBloc();
         String winningPartyName = winningPartyValue.name();
-        String winningPartyResult = winningPartyName.substring(0, 1).toUpperCase() + winningPartyName.substring(1);
+        String winningPartyResult = winningPartyName.substring(0, 1) + winningPartyName.substring(1).toLowerCase();
         eligibleBloc.setWinningParty(winningPartyResult);
         eligibleBloc.setWinningVotes(winningVotes);
         eligibleBloc.setTotalVotes(totalVotes);
