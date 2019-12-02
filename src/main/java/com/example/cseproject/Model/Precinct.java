@@ -1,6 +1,5 @@
 package com.example.cseproject.Model;
 
-import com.example.cseproject.DataClasses.Cluster;
 import com.example.cseproject.DataClasses.EligibleBloc;
 import com.example.cseproject.DataClasses.Threshold;
 import com.example.cseproject.Enum.DemographicGroup;
@@ -131,7 +130,6 @@ public class Precinct {
             demographicResult.append(name).append(" ");
         }
         demographicResult = new StringBuilder(demographicResult.substring(0, demographicResult.length() - 1));
-        System.out.println(demographicResult);
         eligibleBloc.setDemographicGroup(demographicResult.toString());
         eligibleBloc.setEligible(isEligible);
         return eligibleBloc;
