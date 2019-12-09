@@ -1,0 +1,13 @@
+set phase1(also run phase one):post
+http://localhost:8080/setting/phase1Param
+{
+	"stateName":"OHIO",
+	"weights":null,
+	"targetDistricts":20,
+	"updateDiscrete":true,
+	"election":"CONGRESSIONAL_2016",
+	"targetMinorityPopulation":"AFRICAN_AMERICAN"
+}
+
+run phase1(run only):post
+http://localhost:8080/setting/phase1
