@@ -40,7 +40,7 @@ public class Precinct {
     }
 
     @Id
-    @GeneratedValue()
+    //@GeneratedValue()
     @Column(name = "precinct_id")
     public Integer getId() {
         return id;

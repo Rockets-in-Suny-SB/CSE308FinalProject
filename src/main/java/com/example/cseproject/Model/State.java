@@ -9,6 +9,7 @@ import com.example.cseproject.Enum.State_Status;
 import com.example.cseproject.Model.CompositeKeys.StateId;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.util.ResourceUtils;
 
 import javax.persistence.*;
 import java.io.File;
@@ -47,13 +48,9 @@ public class State {
     private Map<DemographicGroup, Integer> demographicGroups;
 
     public State() {
-        /*try {
-            ObjectMapper mapper = new ObjectMapper();
-            Set<Cluster> clusters = mapper.readValue(ResourceUtils.getFile("classpath:clusters.json"), new TypeReference<>(){});
-        }catch (Exception e){
-            System.out.println(e);
-        }*/
-        this.clusters=new HashMap<>();
+
+
+        //this.clusters=new HashMap<>();
     }
 
     public StateName getName() {
@@ -171,10 +168,10 @@ public class State {
         return minorityPopulations;
     }
 
-    public void combine(Cluster c1, Cluster c2) {
+    public void combine(Cluster c1, Cluster c2, Map<Integer,Cluster> clusters) {
         c1.addClusterData(c2);
-        c1.combine(c2);
-        clusters.remove(c2);
+        c1.combine(c2,clusters);
+        //clusters.remove(c2);
     }
 
 
