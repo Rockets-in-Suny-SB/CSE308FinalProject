@@ -2,14 +2,22 @@ package com.example.cseproject.DataClasses;
 
 import com.example.cseproject.Enum.JoinFactor;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Threshold {
     private float populationThreshold;
     private float blocThreshold;
     private double majorityMinorityThreshold;
-    private Map<JoinFactor, Float> joinFactorThreshold;
-
+    private Map<JoinFactor, Double> joinFactorThreshold;
+    public Threshold(){
+        majorityMinorityThreshold=0.5;
+        joinFactorThreshold=new HashMap<>();
+        joinFactorThreshold.put(JoinFactor.COMPACTNESS,0.5);
+        joinFactorThreshold.put(JoinFactor.EQUALPOPULATION,0.5);
+        joinFactorThreshold.put(JoinFactor.POLITICALFAIRNESS,0.5);
+        joinFactorThreshold.put(JoinFactor.SINGLECOUNTY,0.5);
+    }
     public double getMajorityMinorityThreshold() {
         return majorityMinorityThreshold;
     }
@@ -34,11 +42,11 @@ public class Threshold {
         this.blocThreshold = blocThreshold;
     }
 
-    public Map<JoinFactor, Float> getJoinFactorThreshold() {
+    public Map<JoinFactor, Double> getJoinFactorThreshold() {
         return joinFactorThreshold;
     }
 
-    public void setJoinFactorThreshold(Map<JoinFactor, Float> joinFactorThreshold) {
+    public void setJoinFactorThreshold(Map<JoinFactor, Double> joinFactorThreshold) {
         this.joinFactorThreshold = joinFactorThreshold;
     }
 }

@@ -19,7 +19,7 @@ public class AlgorithmService {
     StateService stateService;
     Algorithm algorithm;
 
-    public AlgorithmService(){
+    public AlgorithmService() {
         algorithm = new Algorithm();
         algorithm.setParameter(new Parameter());
     }
@@ -39,11 +39,11 @@ public class AlgorithmService {
         return result;
     }
 
-    public Result runPhase1() {
-        Parameter parameter = algorithm.getParameter();
-        Result phase1Result = algorithm.phase1(parameter);
-        return phase1Result;
-    }
+//    public Result runPhase1() {
+//        Parameter parameter = algorithm.getParameter();
+//        Result phase1Result = algorithm.phase1();
+//        return phase1Result;
+//    }
 
     public Result setPhase1(Parameter parameter) {
         algorithm.setPhase1(parameter);

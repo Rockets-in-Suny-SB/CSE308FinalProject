@@ -9,8 +9,9 @@ public class VoteId implements Serializable {
     private Election election;
     private Integer id;
 
-    public VoteId(){
+    public VoteId() {
     }
+
     public VoteId(Election election, Integer id) {
         this.election = election;
         this.id = id;
@@ -33,7 +34,7 @@ public class VoteId implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
         if (o == this) {
             return true;
         }

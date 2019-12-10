@@ -4,8 +4,8 @@ import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.Measure;
 
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
 
 public class Parameter {
 
@@ -25,12 +25,12 @@ public class Parameter {
     private Election election;
     private Set<Set<DemographicGroup>> combinedGroup;
 
-    public DemographicGroup getTargetMinorityPopulation(){
+    public DemographicGroup getTargetMinorityPopulation() {
         return targetMinorityPopulation;
     }
 
-    public void setTargetMinorityPopulation(DemographicGroup targetMinorityPopulation){
-        this.targetMinorityPopulation=targetMinorityPopulation;
+    public void setTargetMinorityPopulation(DemographicGroup targetMinorityPopulation) {
+        this.targetMinorityPopulation = targetMinorityPopulation;
     }
 
     public Election getElection() {

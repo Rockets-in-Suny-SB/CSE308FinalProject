@@ -1,17 +1,15 @@
 package com.example.cseproject.DataClasses;
 
-import com.example.cseproject.Algorithm.SetLib;
 import com.example.cseproject.Enum.DemographicGroup;
-import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.JoinFactor;
 import com.example.cseproject.Model.Edge;
 import com.example.cseproject.Model.Precinct;
-import com.example.cseproject.Model.Vote;
 import org.springframework.data.util.Pair;
 
 import java.util.*;
 
 public class Cluster {
+    public boolean paired;
     private Integer id;
     //private Vote vote;
     //private List<Edge> edges;
@@ -20,7 +18,6 @@ public class Cluster {
     private int population;
     private Map<DemographicGroup, Integer> minorityGroupPopulation;
     private Map<String, Integer> countyCount;
-    public boolean paired;
 
     //constructor
     public Cluster(Precinct precinct) {
@@ -168,19 +165,19 @@ public class Cluster {
 
     public double calculateFactorScore(Cluster c, JoinFactor factor) {
         //Todo:Calculate the combine score based on factor
-        double score=0;
-        switch (factor){
+        double score = 0;
+        switch (factor) {
             case COMPACTNESS:
-                score=0;
+                score = 0;
                 break;
             case SINGLECOUNTY:
-                score=0.25;
+                score = 0.25;
                 break;
             case EQUALPOPULATION:
-                score=0.5;
+                score = 0.5;
                 break;
             case POLITICALFAIRNESS:
-                score=0.75;
+                score = 0.75;
                 break;
         }
         return score;

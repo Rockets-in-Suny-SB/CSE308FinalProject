@@ -4,12 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Result {
-    private Map<String,Object> result;
-    public Result(){
-        result=new HashMap<>();
+    private Map<String, Object> result;
+
+    public Result() {
+        result = new HashMap<>();
     }
-    public void addResult(String name, Object obj){
-        result.put(name,obj);
+
+    public void addResult(String name, Object obj) {
+        result.put(name, obj);
     }
 
     public Map<String, Object> getResult() {

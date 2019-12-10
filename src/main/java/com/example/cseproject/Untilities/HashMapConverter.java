@@ -10,13 +10,13 @@ import java.util.Map;
 public class HashMapConverter implements AttributeConverter<Map<String, Object>, String> {
     @Override
     public String convertToDatabaseColumn(Map<String, Object> entityInfo) {
-       String entityInfoJson = null;
-       try {
-           ObjectMapper objectMapper = new ObjectMapper();
-           entityInfoJson = objectMapper.writeValueAsString(entityInfo);
-       } catch (JsonProcessingException e) {
-           e.printStackTrace();
-       }
+        String entityInfoJson = null;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            entityInfoJson = objectMapper.writeValueAsString(entityInfo);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
         return entityInfoJson;
     }
 

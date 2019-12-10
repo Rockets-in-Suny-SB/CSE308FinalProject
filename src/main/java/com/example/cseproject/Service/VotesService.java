@@ -12,14 +12,16 @@ import java.util.Optional;
 public class VotesService {
     private VotesRepository votesRepository;
 
-    private Iterable<Vote> getAllVotes(){ return votesRepository.findAll(); }
+    private Iterable<Vote> getAllVotes() {
+        return votesRepository.findAll();
+    }
 
-    public Optional<Vote> getVote(Integer id, Election election){
+    public Optional<Vote> getVote(Integer id, Election election) {
         return votesRepository.findById(new VoteId(election, id));
     }
 
 
-    public String deleteVote(Vote vote){
+    public String deleteVote(Vote vote) {
         votesRepository.delete(vote);
         return "Deleted";
     }
