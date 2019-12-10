@@ -10,6 +10,7 @@ import com.example.cseproject.Model.CompositeKeys.StateId;
 import com.example.cseproject.interfaces.StateInterface;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -29,7 +30,7 @@ public class State
     private Threshold threshold;
     private int population;
     @Transient
-    private Set<Cluster> clusters;
+    private Map<Integer,Cluster> clusters;
     @Enumerated
     @Transient
     private Election election;
@@ -45,7 +46,7 @@ public class State
     private Map<DemographicGroup, Integer> demographicGroups;
 
     public State() {
-        this.clusters=new HashSet<>();
+        //this.clusters=new HashSet<>();
     }
 
     public StateName getName() {
@@ -109,11 +110,11 @@ public class State
         this.population = population;
     }
 
-    public Set<Cluster> getClusters() {
+    public Map<Integer,Cluster> getClusters() {
         return this.clusters;
     }
 
-    public void setClusters(Set<Cluster> clusters) {
+    public void setClusters(Map<Integer,Cluster> clusters) {
         this.clusters = clusters;
     }
 
@@ -180,10 +181,10 @@ public class State
         return minorityPopulations;
     }
 
-    public void combine(Cluster c1, Cluster c2) {
+    public void combine(Cluster c1, Cluster c2, Map<Integer,Cluster> clusters) {
         c1.addClusterData(c2);
-        c1.combine(c2);
-        clusters.remove(c2);
+        c1.combine(c2,clusters);
+        //clusters.remove(c2);
     }
 
 

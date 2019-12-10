@@ -26,7 +26,7 @@ public class Precinct
     @ManyToOne(targetEntity = County.class)
     private Integer countyId;
     @Transient
-    private Cluster parentCluster;
+    private Integer parentCluster;
     @ElementCollection
     @CollectionTable(name = "precinct_votes",
             joinColumns = @JoinColumn(name = "precinct_id"))
@@ -98,11 +98,11 @@ public class Precinct
         this.neighborIds = neighborIds;
     }
 
-    public Cluster getParentCluster() {
+    public Integer getParentCluster() {
         return parentCluster;
     }
 
-    public void setParentCluster(Cluster parentCluster) {
+    public void setParentCluster(Integer parentCluster) {
         this.parentCluster = parentCluster;
     }
 
@@ -187,7 +187,7 @@ public class Precinct
         Pair<Boolean, EligibleBloc> votingResult = this.checkBlocThreshold(threshold, election);
         Boolean isEligible = populationResult.getFirst() && votingResult.getFirst();
         EligibleBloc eligibleBloc = votingResult.getSecond();
-        eligibleBloc.setDemographicGroup(populationResult.getSecond());
+        eligibleBloc.setDemographicGroup(populationResult.getSecond().toString());
         eligibleBloc.setEligible(isEligible);
         return eligibleBloc;
     }
