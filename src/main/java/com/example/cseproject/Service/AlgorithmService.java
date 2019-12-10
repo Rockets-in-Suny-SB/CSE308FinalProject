@@ -51,20 +51,38 @@ public class AlgorithmService {
         r.addResult("Status", "OK");
         return r;
     }
+    /* */
+    public Result runPhase2() {
+        Parameter parameter = algorithm.getParameter();
+        Result phase2Result = algorithm.phase2(parameter.getWeights());
+        return phase2Result;
+    }
+
+
 
     public String specifyMinorityPopulation(float maximumPercentage,
                                             float minimumPercentage,
                                             Set<String> minorityPopulations,
-                                            Boolean isCombined) {
+                                            Boolean isCombined,
+                                            Set<Set<String>> combinedGroup) {
         Parameter parameter = algorithm.getParameter();
         parameter.setCombined(isCombined);
         parameter.setMaximumPercentage(maximumPercentage);
         parameter.setMinimumPercentage(minimumPercentage);
         Set<DemographicGroup> demographicGroups = new HashSet<>();
+        Set<Set<DemographicGroup>> combinedDemGroup = new HashSet<>();
         for (String minority : minorityPopulations) {
             demographicGroups.add(DemographicGroup.valueOf(minority.toUpperCase()));
         }
+        for (Set<String> group : combinedGroup){
+            Set<DemographicGroup> demGroup = new HashSet<>();
+            for (String s : group) {
+                demGroup.add(DemographicGroup.valueOf(s.toUpperCase()));
+            }
+            combinedDemGroup.add(demGroup);
+        }
         parameter.setMinorityPopulations(demographicGroups);
+        parameter.setCombinedGroup(combinedDemGroup);
         algorithm.setParameter(parameter);
         return "successfully specify minority population";
     }

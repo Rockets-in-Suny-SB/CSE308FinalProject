@@ -2,7 +2,7 @@ package com.example.cseproject.DataClasses;
 
 import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Enum.Election;
-import com.example.cseproject.Enum.Weights;
+import com.example.cseproject.Enum.Measure;
 
 import java.util.Set;
 import java.util.Map;
@@ -11,7 +11,7 @@ public class Parameter {
 
     private String stateName;
     private int targetDistricts;
-    private Map<Weights, Float> weights;
+    private Map<Measure, Double> weights;
     private Boolean updateDiscrete;
 
 
@@ -23,6 +23,7 @@ public class Parameter {
     private float minimumPercentage;
     private Boolean isCombined;
     private Election election;
+    private Set<Set<DemographicGroup>> combinedGroup;
 
     public DemographicGroup getTargetMinorityPopulation(){
         return targetMinorityPopulation;
@@ -56,11 +57,11 @@ public class Parameter {
         this.targetDistricts = targetDistricts;
     }
 
-    public Map<Weights, Float> getWeights() {
+    public Map<Measure, Double> getWeights() {
         return weights;
     }
 
-    public void setWeights(Map<Weights, Float> weights) {
+    public void setWeights(Map<Measure, Double> weights) {
         this.weights = weights;
     }
 
@@ -102,5 +103,13 @@ public class Parameter {
 
     public void setCombined(Boolean combined) {
         isCombined = combined;
+    }
+
+    public Set<Set<DemographicGroup>> getCombinedGroup() {
+        return combinedGroup;
+    }
+
+    public void setCombinedGroup(Set<Set<DemographicGroup>> combinedGroup) {
+        this.combinedGroup = combinedGroup;
     }
 }

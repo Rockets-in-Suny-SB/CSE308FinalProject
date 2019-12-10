@@ -3,19 +3,19 @@ package com.example.cseproject.DataClasses;
 import com.example.cseproject.Enum.DemographicGroup;
 
 public class MinorityPopulation {
-    private DemographicGroup demographicGroup;
+    private String demographicGroup;
     private Float percentage;
     private Integer population;
 
-    public DemographicGroup getDemographicGroup() {
+    public String getDemographicGroup() {
         return demographicGroup;
     }
 
-    public void setDemographicGroup(DemographicGroup demographicGroup) {
+    public void setDemographicGroup(String demographicGroup) {
         this.demographicGroup = demographicGroup;
     }
 
-    public MinorityPopulation(DemographicGroup demographicGroup, Float percentage, Integer population) {
+    public MinorityPopulation(String demographicGroup, Float percentage, Integer population) {
         this.demographicGroup = demographicGroup;
         this.percentage = percentage;
         this.population = population;

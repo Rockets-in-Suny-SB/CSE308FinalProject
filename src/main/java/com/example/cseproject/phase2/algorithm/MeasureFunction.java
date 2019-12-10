@@ -1,7 +1,9 @@
 package com.example.cseproject.phase2.algorithm;
 
-import edu.stonybrook.politech.annealing.measures.DistrictInterface;
-import edu.stonybrook.politech.annealing.measures.PrecinctInterface;
+
+
+import com.example.cseproject.interfaces.DistrictInterface;
+import com.example.cseproject.interfaces.PrecinctInterface;
 
 import java.util.HashSet;
 import java.util.Set;

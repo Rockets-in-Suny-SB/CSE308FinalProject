@@ -1,8 +1,8 @@
 package com.example.cseproject.phase2;
 
-import com.example.cseproject.phase2.measures.DistrictInterface;
-import com.example.cseproject.phase2.measures.PrecinctInterface;
 
+import com.example.cseproject.interfaces.DistrictInterface;
+import com.example.cseproject.interfaces.PrecinctInterface;
 
 public class Move<Precinct extends PrecinctInterface, District extends DistrictInterface<Precinct>> {
 		private District to;
@@ -25,12 +25,12 @@ public class Move<Precinct extends PrecinctInterface, District extends DistrictI
             from.addPrecinct(precinct);
         }
 
-        public String toString() {
-            String toID = to!=null?to.getID():"NULL";
-            String fromID = from!=null?from.getID():"NULL";
-            String precinctID = precinct!=null?precinct.getID():"NULL";
-            return "{ "+"\"to\": \""+toID+"\", \"from\": \""+fromID+"\", \"precinct\": \""+precinctID+"\" }";
-        }
+//        public String toString() {
+//            String toID = to!=null?to.getID():"NULL";
+//            String fromID = from!=null?from.getID():"NULL";
+//            String precinctID = precinct!=null?precinct.getID():"NULL";
+//            return "{ "+"\"to\": \""+toID+"\", \"from\": \""+fromID+"\", \"precinct\": \""+precinctID+"\" }";
+//        }
 
         public District getTo() {
             return to;

@@ -1,21 +1,23 @@
 package com.example.cseproject.phase2.algorithm;
 
-import edu.stonybrook.politech.annealing.measures.DefaultMeasures;
-import edu.stonybrook.politech.annealing.models.concrete.District;
-import edu.stonybrook.politech.annealing.models.concrete.Precinct;
-import edu.stonybrook.politech.annealing.models.concrete.State;
+
+
+import com.example.cseproject.Enum.Measure;
+import com.example.cseproject.Model.District;
+import com.example.cseproject.Model.State;
+import com.example.cseproject.phase2.measures.DefaultMeasures;
 
 import java.util.Map;
 import java.util.Set;
 
-public class MyAlgorithm extends Algorithm {
+public class MyAlgorithm extends AlgorithmPhase2 {
 
     public MyAlgorithm(State state, DefaultMeasures measures) {
         super(state, measures);
     }
 
     public String describeDistrict(District d) {
-        String to_return = "{ \"ID\": \"" + d.getID() + "\", \"MEASURES\": [";
+        String to_return = "{ \"ID\": \"" + d.getId() + "\", \"MEASURES\": [";
         boolean first = true;
         Set<Measure> measures = (Set) getDistrictScoreFunction().subMeasures();
         for (Measure m : measures) {

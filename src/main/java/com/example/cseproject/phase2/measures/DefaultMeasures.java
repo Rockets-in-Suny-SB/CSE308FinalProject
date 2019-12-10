@@ -1,9 +1,10 @@
 package com.example.cseproject.phase2.measures;
 
-import edu.stonybrook.politech.annealing.algorithm.Measure;
-import edu.stonybrook.politech.annealing.algorithm.MeasureFunction;
-import edu.stonybrook.politech.annealing.models.concrete.District;
-import edu.stonybrook.politech.annealing.models.concrete.Precinct;
+
+import com.example.cseproject.Model.District;
+import com.example.cseproject.Model.Precinct;
+import com.example.cseproject.Enum.Measure;
+import com.example.cseproject.phase2.algorithm.MeasureFunction;
 
 import java.util.HashMap;
 import java.util.Map;

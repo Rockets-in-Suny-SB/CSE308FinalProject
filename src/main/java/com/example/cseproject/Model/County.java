@@ -5,10 +5,10 @@ import javax.persistence.Id;
 
 @Entity
 public class County {
+    @Id
     private Integer id;
     private String name;
 
-    @Id
     public Integer getId() {
         return id;
     }

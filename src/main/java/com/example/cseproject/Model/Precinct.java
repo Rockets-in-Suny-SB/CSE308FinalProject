@@ -6,33 +6,98 @@ import com.example.cseproject.DataClasses.Threshold;
 import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.PartyName;
+import com.example.cseproject.interfaces.PrecinctInterface;
+import org.locationtech.jts.geom.Geometry;
 import org.springframework.data.util.Pair;
 
-
 import javax.persistence.*;
-import java.util.*;
-
+import java.util.Map;
+import java.util.Set;
 
 @Entity
-public class Precinct {
-
+public class Precinct
+        implements PrecinctInterface {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "precinct_id")
     private Integer id;
     private String name;
     private Integer population;
     @ManyToOne(targetEntity = County.class)
     private Integer countyId;
+    @Transient
     private Cluster parentCluster;
+    @ElementCollection
+    @CollectionTable(name = "precinct_votes",
+            joinColumns = @JoinColumn(name = "precinct_id"))
+    @MapKeyColumn(name = "election")
+    @Column(name = "vote")
     private Map<Election, Vote> votes;
+    @OneToMany(targetEntity = Edge.class)
     private Set<Edge> precinctEdges;
     private String geoJson;
+    @ElementCollection
+    @CollectionTable(name = "minorityName_groupPopulation",
+            joinColumns = @JoinColumn(name = "precinct_id"))
+    @MapKeyColumn(name = "minorityName")
+    @Column(name = "groupPopulation")
     private Map<DemographicGroup, Integer> minorityGroupPopulation;
-    private DemographicGroup largestPopulationGroup;
-
-    public Precinct() {
-
-    }
 
     @Transient
+    private Integer originalDistrictID;
+    private Integer gop_vote;
+    private Integer dem_vote;
+    @Transient
+    private Set<Integer> neighborIds;
+    @Transient
+    private Geometry geometry;
+
+
+    @Override
+    public Integer getPopulation() {
+        return population;
+    }
+
+    public void setPopulation(Integer population) {
+        this.population = population;
+    }
+
+    @Override
+    public Integer getGop_Vote() {
+        return gop_vote;
+    }
+
+    public void setGop_vote(Integer gop_vote) {
+        this.gop_vote = gop_vote;
+    }
+
+    @Override
+    public Integer getDem_Vote() {
+        return dem_vote;
+    }
+
+    public void setDem_vote(Integer dem_vote) {
+        this.dem_vote = dem_vote;
+    }
+
+    @Override
+    public Integer getOriginalDistrictID() {
+        return this.originalDistrictID;
+    }
+
+    public void setOriginalDistrictID(Integer originalDistrictID) {
+        this.originalDistrictID = originalDistrictID;
+    }
+
+    @Override
+    public Set<Integer> getNeighborIds() {
+        return neighborIds;
+    }
+
+    public void setNeighborIds(Set<Integer> neighborIds) {
+        this.neighborIds = neighborIds;
+    }
+
     public Cluster getParentCluster() {
         return parentCluster;
     }
@@ -41,9 +106,7 @@ public class Precinct {
         this.parentCluster = parentCluster;
     }
 
-    @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    @Column(name = "precinct_id")
+
     public Integer getId() {
         return id;
     }
@@ -60,15 +123,6 @@ public class Precinct {
         this.name = name;
     }
 
-    public Integer getPopulation() {
-        return population;
-    }
-
-    public void setPopulation(Integer population) {
-        this.population = population;
-    }
-
-
     public Integer getCountyId() {
         return countyId;
     }
@@ -77,11 +131,15 @@ public class Precinct {
         this.countyId = countyId;
     }
 
-    @ElementCollection
-    @CollectionTable(name = "precinct_votes",
-            joinColumns = @JoinColumn(name = "precinct_id"))
-    @MapKeyColumn(name = "election")
-    @Column(name = "vote")
+    public Geometry getGeometry() {
+        return geometry;
+    }
+
+    public void setGeometry(Geometry geometry) {
+        this.geometry = geometry;
+    }
+
+
     public Map<Election, Vote> getVotes() {
         return votes;
     }
@@ -90,7 +148,6 @@ public class Precinct {
         this.votes = votes;
     }
 
-    @OneToMany(targetEntity = Edge.class)
     public Set<Edge> getPrecinctEdges() {
         return precinctEdges;
     }
@@ -107,11 +164,7 @@ public class Precinct {
         this.geoJson = geoJson;
     }
 
-    @ElementCollection
-    @CollectionTable(name = "minorityName_groupPopulation",
-            joinColumns = @JoinColumn(name = "precinct_id"))
-    @MapKeyColumn(name = "minorityName")
-    @Column(name = "groupPopulation")
+
     public Map<DemographicGroup, Integer> getMinorityGroupPopulation() {
         return minorityGroupPopulation;
     }
@@ -120,13 +173,22 @@ public class Precinct {
         this.minorityGroupPopulation = minorityGroupPopulation;
     }
 
+
+
+
+    public Double getPopulationDensity() {
+        if (geometry !=null && geometry.getArea() != 0)
+            return getPopulation() / geometry.getArea();
+        return (double) -1;
+    }
+
     public EligibleBloc doBlocAnalysis(Threshold threshold, Election election) {
         Pair<Boolean, DemographicGroup> populationResult = findLargestDemographicGroup(threshold);
         Pair<Boolean, EligibleBloc> votingResult = this.checkBlocThreshold(threshold, election);
         Boolean isEligible = populationResult.getFirst() && votingResult.getFirst();
         EligibleBloc eligibleBloc = votingResult.getSecond();
         eligibleBloc.setDemographicGroup(populationResult.getSecond());
-        eligibleBloc.setEligibleBloc(isEligible);
+        eligibleBloc.setEligible(isEligible);
         return eligibleBloc;
     }
 
@@ -163,7 +225,7 @@ public class Precinct {
         }
         EligibleBloc eligibleBloc = new EligibleBloc();
         String winningPartyName = winningPartyValue.name();
-        String winningPartyResult = winningPartyName.substring(0,1).toUpperCase() + winningPartyName.substring(1);
+        String winningPartyResult = winningPartyName.substring(0, 1).toUpperCase() + winningPartyName.substring(1);
         eligibleBloc.setWinningParty(winningPartyResult);
         eligibleBloc.setWinningVotes(winningVotes);
         eligibleBloc.setTotalVotes(totalVotes);
@@ -175,5 +237,4 @@ public class Precinct {
         }
         return Pair.of(isEligible, eligibleBloc);
     }
-
 }

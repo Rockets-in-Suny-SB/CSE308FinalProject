@@ -11,7 +11,7 @@ public class EligibleBloc {
     private Integer totalVotes;
     private String winningParty;
     private Float percentage;
-    private Boolean isEligibleBloc;
+    private Boolean isEligible;
 
     public EligibleBloc() {
     }
@@ -72,11 +72,12 @@ public class EligibleBloc {
         this.percentage = percentage;
     }
 
-    public Boolean getEligibleBloc() {
-        return isEligibleBloc;
+    public Boolean getEligible() {
+        return isEligible;
     }
 
-    public void setEligibleBloc(Boolean eligibleBloc) {
-        isEligibleBloc = eligibleBloc;
+    public void setEligible(Boolean eligible) {
+        isEligible = eligible;
     }
+
 }

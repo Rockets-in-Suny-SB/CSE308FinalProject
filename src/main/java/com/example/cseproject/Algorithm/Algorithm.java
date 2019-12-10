@@ -1,14 +1,15 @@
 package com.example.cseproject.Algorithm;
 
 import com.example.cseproject.DataClasses.*;
-import com.example.cseproject.Enum.Election;
-import com.example.cseproject.Enum.JoinFactor;
-import com.example.cseproject.Enum.StateName;
-import com.example.cseproject.Enum.State_Status;
+import com.example.cseproject.Enum.*;
+import com.example.cseproject.Model.District;
 import com.example.cseproject.Model.Precinct;
 import com.example.cseproject.Model.State;
 import com.example.cseproject.Service.PrecinctService;
 import com.example.cseproject.Service.StateService;
+import com.example.cseproject.Enum.Measure;
+import com.example.cseproject.phase2.algorithm.MyAlgorithm;
+import com.example.cseproject.phase2.measures.DefaultMeasures;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 
@@ -54,6 +55,21 @@ public class Algorithm {
         r.addResult("clusters", clusters);
         return r;
     }
+
+    public Result phase2(Map<Measure, Double> weights) {
+        MyAlgorithm myAlgorithm = new MyAlgorithm(this.targetState, DefaultMeasures.defaultMeasuresWithWeights(weights));
+        while (true) {
+            if (myAlgorithm.makeMove() == null) {
+                break;
+            }
+        }
+        Result result = new Result();
+        Set<District> districts = targetState.getDistricts();
+        result.addResult("districts", districts);
+        return  result;
+    }
+
+
 
     public boolean combineIteration(Set<Cluster> clusters) {
         boolean isFinalIteration = false;

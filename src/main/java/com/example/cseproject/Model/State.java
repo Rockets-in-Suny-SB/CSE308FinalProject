@@ -7,6 +7,7 @@ import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.StateName;
 import com.example.cseproject.Enum.State_Status;
 import com.example.cseproject.Model.CompositeKeys.StateId;
+import com.example.cseproject.interfaces.StateInterface;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -15,24 +16,25 @@ import java.util.Set;
 
 @Entity
 @IdClass(StateId.class)
-public class State {
+public class State
+    implements StateInterface<Precinct, District> {
 
     @Id
     private StateName name;
     @Id
     private State_Status status;
-    @ManyToMany(targetEntity = District.class)
-    private Set<District> districts;
+    @ManyToMany(targetEntity = Precinct.class)
+    private Map<Integer, Precinct> precincts;
     @Transient
     private Threshold threshold;
-    private Integer population;
+    private int population;
     @Transient
     private Set<Cluster> clusters;
     @Enumerated
     @Transient
     private Election election;
-    @ManyToMany(targetEntity = Precinct.class)
-    private Set<Precinct> precincts;
+    @ManyToMany(targetEntity = District.class)
+    private Map<Integer, District> districts;
 
     @ElementCollection
     @CollectionTable(name = "state_demographicGroup",
@@ -64,12 +66,23 @@ public class State {
         this.status = status;
     }
 
-    public Set<District> getDistricts() {
-        return districts;
+    public Set<Precinct> getPrecincts() {
+        return new HashSet<>(precincts.values());
     }
 
-    public void setDistricts(Set<District> districts) {
-        this.districts = districts;
+    public Set<District> getDistricts() {
+        return new HashSet<>(districts.values());
+    }
+
+
+    @Override
+    public Precinct getPrecinct(Integer precinctId) {
+        return this.precincts.get(precinctId);
+    }
+
+    @Override
+    public District getDistrict(Integer districtId) {
+        return this.districts.get(districtId);
     }
 
     public Threshold getThreshold() {
@@ -88,20 +101,12 @@ public class State {
         this.election = election;
     }
 
-    public Integer getPopulation() {
+    public int getPopulation() {
         return population;
     }
 
     public void setPopulation(Integer population) {
         this.population = population;
-    }
-
-    public Set<Precinct> getPrecincts() {
-        return precincts;
-    }
-
-    public void setPrecincts(Set<Precinct> precincts) {
-        this.precincts = precincts;
     }
 
     public Set<Cluster> getClusters() {
@@ -133,29 +138,43 @@ public class State {
 
     /* Use case 43*/
     public Set<MinorityPopulation> getPopulationDistribution(Parameter parameter) {
-        Float minimumPercentage = parameter.getMinimumPercentage();
-        Float maximumPercentage = parameter.getMaximumPercentage();
+        float minimumPercentage = parameter.getMinimumPercentage();
+        float maximumPercentage = parameter.getMaximumPercentage();
         Set<DemographicGroup> demographicGroups = parameter.getMinorityPopulations();
+        demographicGroups.add(DemographicGroup.WHITE);
         Set<MinorityPopulation> minorityPopulations = new HashSet<>();
-        /* add white population */
-        Integer whitePopulation = this.getDemographicGroups().get(DemographicGroup.WHITE);
-        System.out.println(this.getDemographicGroups());
-        if (whitePopulation != null){
-            Float whitePercentage = (float) whitePopulation / this.population;
-            MinorityPopulation whitePopulationData = new MinorityPopulation(DemographicGroup.WHITE,
-                    whitePercentage, whitePopulation);
-            minorityPopulations.add(whitePopulationData);
-        }
+        Boolean isCombined  = parameter.getCombined();
+        Set<Set<DemographicGroup>> combinedGroup = parameter.getCombinedGroup();
         for (DemographicGroup demographicGroup : demographicGroups) {
             Integer population = this.demographicGroups.get(demographicGroup);
             System.out.println(population);
             if (population != null) {
                 Float percentage = (float) population / this.population;
                 if (population >= minimumPercentage && population <= maximumPercentage) {
-                    MinorityPopulation minorityPopulation = new MinorityPopulation(demographicGroup,
+                    MinorityPopulation minorityPopulation = new MinorityPopulation(demographicGroup.toString(),
                                                                 percentage, population);
                     minorityPopulations.add(minorityPopulation);
                 }
+            }
+        }
+        if (!isCombined) {
+            return minorityPopulations;
+        }
+        for (Set<DemographicGroup> group : combinedGroup) {
+            Integer groupPopulation = 0;
+            String groupNames = "";
+            for (DemographicGroup demographicGroup : group) {
+                Integer population = this.demographicGroups.get(demographicGroup);
+                if (population != null) {
+                    groupPopulation += population;
+                }
+                groupNames += demographicGroup.toString()+", ";
+            }
+            Float percentage = (float) population / this.population;
+            if (population >= minimumPercentage && population <= maximumPercentage) {
+                MinorityPopulation minorityPopulation = new MinorityPopulation(
+                        groupNames.substring(0, groupNames.length()-2), percentage, population);
+                minorityPopulations.add(minorityPopulation);
             }
         }
         return minorityPopulations;

@@ -1,4 +1,4 @@
-package com.example.cseproject.phase2.measures;
+package com.example.cseproject.interfaces;
 
 
 import java.util.Set;
@@ -9,9 +9,9 @@ public interface StateInterface<
     Set<Precinct> getPrecincts();
     Set<District> getDistricts();
 
-    Precinct getPrecinct(String precinctId);
+    Precinct getPrecinct(Integer precinctId);
 
-    District getDistrict(String precinctId);
+    District getDistrict(Integer districtId);
 
     default int getPopulation() {
         return 0;
