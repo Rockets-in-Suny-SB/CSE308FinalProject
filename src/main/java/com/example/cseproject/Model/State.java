@@ -11,6 +11,7 @@ import com.example.cseproject.interfaces.StateInterface;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -66,7 +67,7 @@ public class State
     public void setStatus(State_Status status) {
         this.status = status;
     }
-
+    public void setPrecincts(HashMap<Integer,Precinct> precincts){this.precincts=precincts;}
     public Set<Precinct> getPrecincts() {
         return new HashSet<>(precincts.values());
     }

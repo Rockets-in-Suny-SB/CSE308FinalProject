@@ -46,7 +46,7 @@ public class AlgorithmService {
     }
 
     public Result setPhase1(Parameter parameter) {
-        algorithm.setPhase1(parameter);
+        algorithm.setPhase1(parameter,stateService);
         Result r = new Result();
         r.addResult("Status", "OK");
         return r;

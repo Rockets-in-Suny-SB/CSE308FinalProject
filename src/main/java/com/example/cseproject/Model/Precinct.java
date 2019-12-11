@@ -24,7 +24,7 @@ public class Precinct
     private String name;
     private Integer population;
     @ManyToOne(targetEntity = County.class)
-    private Integer countyId;
+    private County countyId;
     @Transient
     private Integer parentCluster;
     @ElementCollection
@@ -123,11 +123,11 @@ public class Precinct
         this.name = name;
     }
 
-    public Integer getCountyId() {
+    public County getCountyId() {
         return countyId;
     }
 
-    public void setCountyId(Integer countyId) {
+    public void setCountyId(County countyId) {
         this.countyId = countyId;
     }
 
