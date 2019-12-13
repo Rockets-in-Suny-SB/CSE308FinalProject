@@ -8,6 +8,7 @@ import com.example.cseproject.Model.State;
 import com.example.cseproject.Service.PrecinctService;
 import com.example.cseproject.Service.StateService;
 import com.example.cseproject.Enum.Measure;
+import com.example.cseproject.phase2.Move;
 import com.example.cseproject.phase2.algorithm.MyAlgorithm;
 import com.example.cseproject.phase2.measures.DefaultMeasures;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -25,6 +26,8 @@ public class Algorithm {
     private JoinFactor joinFactor;
     private Parameter parameter;
     private State targetState;
+    private Map<Integer, Cluster> phase1Cluster;
+    private Queue<Result> phase2Results;
     //@Autowired
     //private StateService stateService;
     @Autowired
@@ -33,7 +36,7 @@ public class Algorithm {
         this.parameter = parameter;
         State targetState = stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW).get();
         this.targetState = targetState;
-        /*this.targetState=new State();
+//        this.targetState=new State();
         try {
             ObjectMapper mapper = new ObjectMapper();
             Map<Integer,Cluster> clusters = mapper.readValue(ResourceUtils.getFile("classpath:cluster2.json"), new TypeReference<>(){});
@@ -42,8 +45,8 @@ public class Algorithm {
             System.out.println("Read success");
         }catch (Exception e){
             System.out.println(e);
-        }*/
-        initializeClusters(this.targetState);
+        }
+//        initializeClusters(this.targetState);
     }
     public Result phase1(Parameter parameter) {
         this.resultPairs = new HashSet<>();
@@ -78,6 +81,7 @@ public class Algorithm {
             resultSet.put(c.getId(),precinctIdSet);
 
         }
+        this.phase1Cluster = clusters;
         r.addResult("clusters", resultSet);
         /*Set<Set<Integer>> resultSet=new HashSet<>();
         for(Cluster c:clusters.values()){
@@ -94,17 +98,79 @@ public class Algorithm {
         return r;
     }
 
-    public Result phase2(Map<Measure, Double> weights) {
-        MyAlgorithm myAlgorithm = new MyAlgorithm(this.targetState, DefaultMeasures.defaultMeasuresWithWeights(weights));
-        while (true) {
-            if (myAlgorithm.makeMove() == null) {
-                break;
+    public Queue<Result> phase2(Map<Measure, Double> weights) {
+        if (this.phase1Cluster == null) {
+            System.out.println("Run phase 1 first");
+            return null;
+        }
+        Map<Integer, Precinct> totalPrecincts = new HashMap<>();
+        for (Map.Entry<Integer, Cluster> entry : this.phase1Cluster.entrySet()){
+            Cluster cluster = entry.getValue();
+            for (Precinct precinct : cluster.getPrecincts()) {
+                totalPrecincts.put(precinct.getId(), precinct);
             }
         }
-        Result result = new Result();
-        Set<District> districts = targetState.getDistricts();
-        result.addResult("districts", districts);
-        return  result;
+        Map<Integer, District> districts = new HashMap<>();
+        for (Map.Entry<Integer, Cluster> entry : this.phase1Cluster.entrySet()) {
+            District district = new District();
+            Cluster cluster = entry.getValue();
+            district.setPopulation(cluster.getPopulation());
+            district.setId(cluster.getId());
+            Map<Integer, Precinct> precinctMap = new HashMap<>();
+            Set<Precinct> precincts = cluster.getPrecincts();
+            Set<Precinct> borderPrecincts = new HashSet<>();
+            for (Precinct precinct : precincts) {
+                //set precinct borderPrecincts
+                precinct.calculateNeighborId();
+                Set<Integer> neighborIds = precinct.getNeighborIds();
+                for (Integer id : neighborIds) {
+                    Precinct neighborPrecinct = totalPrecincts.get(id);
+                    if(precinct.getParentCluster() != neighborPrecinct.getParentCluster()) {
+                        borderPrecincts.add(neighborPrecinct);
+                        break;
+                    }
+                }
+
+                precinctMap.put(precinct.getId(), precinct);
+            }
+            district.setBorderPrecincts(borderPrecincts);
+            district.setPrecincts(precinctMap);
+            district.setElection(parameter.getElection());
+            district.setState(targetState);
+            districts.put(district.getId(), district);
+        }
+
+        targetState.setDistricts(districts);
+
+        MyAlgorithm myAlgorithm = new MyAlgorithm(this.targetState, DefaultMeasures.defaultMeasuresWithWeights(weights));
+        Queue<Result> results = new LinkedList<>();
+        Move previousMove = null;
+        while (true) {
+//            if (myAlgorithm.makeMove() == null) {
+//                break;
+//            }
+//            System.out.println("make a move");
+            Move move = myAlgorithm.makeMove();
+            if (move == null || move.equal(previousMove)) {
+                break;
+            }
+            previousMove = move;
+            System.out.println(move.toString());
+            Result result = new Result();
+            Set<District> resultDistricts = targetState.getDistricts();
+            Map<Integer, Set<Integer>> districtPrecinctMap = new HashMap<>();
+            for (District district : resultDistricts) {
+                Set<Integer> precinctIDs = new HashSet<>();
+                for (Precinct p : district.getPrecincts()) {
+                    precinctIDs.add(p.getId());
+                }
+                districtPrecinctMap.put(district.getId(),precinctIDs);
+            }
+            result.addResult("districts", districtPrecinctMap);
+            results.add(result);
+        }
+        this.phase2Results = results;
+        return results;
     }
 
 
@@ -254,6 +320,30 @@ public class Algorithm {
             c.paired = false;
         }
     }
+
+    public void initPrecincts(State state) {
+        Set<Precinct> precincts = state.getPrecincts();
+        Map<Integer, Precinct> precinctMap = new HashMap<>();
+        for (Precinct precinct : precincts) {
+            precinctMap.put(precinct.getId(), precinct);
+        }
+        try {
+            File file = new File(getClass().getClassLoader().getResource(".").getFile() + "/precincts.json");
+            if (file.createNewFile()) {
+                System.out.println("File is created!");
+            } else {
+                System.out.println("File already exists.");
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(file, precinctMap);
+            System.out.println("Write Success.");
+        }catch (Exception e){
+            System.out.println("Write failed.");
+            System.out.println(e);
+        }
+
+    }
+
     public void initializeClusters(State state){
         state.setClusters(new HashMap<>());
         Map<Integer,Cluster> clusters=state.getClusters();
@@ -300,5 +390,22 @@ public class Algorithm {
         }
 
     }
-//    public void move(Cluster c){}
+
+    public State getTargetState() {
+        return targetState;
+    }
+
+    public void setTargetState(State targetState) {
+        this.targetState = targetState;
+    }
+
+    public Queue<Result> getPhase2Results() {
+        return phase2Results;
+    }
+
+    public void setPhase2Results(Queue<Result> phase2Results) {
+        this.phase2Results = phase2Results;
+    }
+
+    //    public void move(Cluster c){}
 }

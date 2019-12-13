@@ -1,6 +1,7 @@
 package com.example.cseproject.Model;
 
 import com.example.cseproject.Enum.DemographicGroup;
+import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.PartyName;
 import com.example.cseproject.interfaces.DistrictInterface;
 import org.locationtech.jts.algorithm.MinimumBoundingCircle;
@@ -38,6 +39,8 @@ public class District
     private String geoJson;
     @Transient
     private Map<Integer, Precinct> precincts;
+    @Transient
+    private Election election;
 
 
 
@@ -107,8 +110,8 @@ public class District
     public void addPrecinct(Precinct p) {
         precincts.put(p.getId(), p);
         population += p.getPopulation();
-        gop_vote += p.getGop_Vote();
-        dem_vote += p.getDem_Vote();
+        gop_vote += p.calculateGopVotes(this.election);
+        dem_vote += p.calculateDEmVotes(this.election);
         borderPrecincts.add(p);
         Set<Precinct> newInternalNeighbors = getInternalNeighbors(p);
         int newInternalEdges = newInternalNeighbors.size();
@@ -140,6 +143,8 @@ public class District
         return this.borderPrecincts;
     }
 
+
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -168,6 +173,21 @@ public class District
         this.partyVotes = partyVotes;
     }
 
+    public void setPrecincts(Map<Integer, Precinct> precincts) {
+        this.precincts = precincts;
+    }
+
+    public Election getElection() {
+        return election;
+    }
+
+    public void setElection(Election election) {
+        this.election = election;
+    }
+
+    public void setBorderPrecincts(Set<Precinct> borderPrecincts) {
+        this.borderPrecincts = borderPrecincts;
+    }
 
     public Map<DemographicGroup, Integer> getMinorityGroupPopulation() {
         return minorityGroupPopulation;
@@ -244,6 +264,9 @@ public class District
         return this.state;
     }
 
+    public void setState(State state) {
+        this.state = state;
+    }
 
     public int getGOPVote() {
         return this.gop_vote;

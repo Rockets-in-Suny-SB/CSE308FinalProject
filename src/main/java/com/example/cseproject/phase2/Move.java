@@ -25,12 +25,21 @@ public class Move<Precinct extends PrecinctInterface, District extends DistrictI
             from.addPrecinct(precinct);
         }
 
-//        public String toString() {
-//            String toID = to!=null?to.getID():"NULL";
-//            String fromID = from!=null?from.getID():"NULL";
-//            String precinctID = precinct!=null?precinct.getID():"NULL";
-//            return "{ "+"\"to\": \""+toID+"\", \"from\": \""+fromID+"\", \"precinct\": \""+precinctID+"\" }";
-//        }
+
+        public Boolean equal(Move move) {
+            if (move == null) {
+                return false;
+            }
+            return move.getTo().getId() == this.to.getId() &&
+                    move.getFrom().getId() == this.from.getId();
+        }
+
+        public String toString() {
+            String toID = to!=null?to.getId().toString():"NULL";
+            String fromID = from!=null?from.getId().toString():"NULL";
+            String precinctID = precinct!=null?precinct.getId().toString():"NULL";
+            return "{ "+"\"to\": \""+toID+"\", \"from\": \""+fromID+"\", \"precinct\": \""+precinctID+"\" }";
+        }
 
         public District getTo() {
             return to;

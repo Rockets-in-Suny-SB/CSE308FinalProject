@@ -6,11 +6,18 @@ import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.StateName;
 import com.example.cseproject.Enum.State_Status;
+import com.example.cseproject.Model.Precinct;
 import com.example.cseproject.Model.State;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 @Service
@@ -33,6 +40,16 @@ public class AlgorithmService {
         threshold.setPopulationThreshold(populationThreshold);
         threshold.setBlocThreshold(blocThreshold);
         targetState.setThreshold(threshold);
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Map<Integer, Precinct> precincts = mapper.readValue(ResourceUtils.getFile("classpath:precincts.json"), new TypeReference<>(){});
+            System.out.println(precincts.values().size());
+            targetState.setPrecinctsJson(precincts);
+            System.out.println("Read success");
+        }catch (Exception e){
+            System.out.println(e);
+        }
+//        algorithm.initPrecincts(targetState);
         Set<EligibleBloc> eligibleBlocs = targetState.findEligibleBlocs();
         Result result = new Result();
         result.addResult("Eligible Blocs", eligibleBlocs);
@@ -40,9 +57,9 @@ public class AlgorithmService {
     }
 
     public Result runPhase1() {
-       Parameter parameter = algorithm.getParameter();
-       Result phase1Result = algorithm.phase1(parameter);
-       return phase1Result;
+        Parameter parameter = algorithm.getParameter();
+        Result phase1Result = algorithm.phase1(parameter);
+        return phase1Result;
     }
 
     public Result setPhase1(Parameter parameter) {
@@ -52,29 +69,35 @@ public class AlgorithmService {
         return r;
     }
     /* */
-    public Result runPhase2() {
+    public Queue<Result> runPhase2() {
         Parameter parameter = algorithm.getParameter();
-        Result phase2Result = algorithm.phase2(parameter.getWeights());
+        Queue<Result> phase2Result = algorithm.phase2(parameter.getWeights());
         return phase2Result;
     }
 
+    public Result getOneMove() {
+        if (algorithm.getPhase2Results().isEmpty()) {
+            return null;
+        }
+        return algorithm.getPhase2Results().remove();
+    }
 
 
-    public String specifyMinorityPopulation(float maximumPercentage,
-                                            float minimumPercentage,
-                                            Set<String> minorityPopulations,
-                                            Boolean isCombined,
-                                            Set<Set<String>> combinedGroup) {
+    public String specifyMinorityPopulation(PopulationDistribution populationDistribution) {
         Parameter parameter = algorithm.getParameter();
-        parameter.setCombined(isCombined);
-        parameter.setMaximumPercentage(maximumPercentage);
-        parameter.setMinimumPercentage(minimumPercentage);
+        parameter.setCombined(populationDistribution.getIsCombined());
+        parameter.setMaximumPercentage(populationDistribution.getMaximumPercentage());
+        parameter.setMinimumPercentage(populationDistribution.getMinimumPercentage());
         Set<DemographicGroup> demographicGroups = new HashSet<>();
         Set<Set<DemographicGroup>> combinedDemGroup = new HashSet<>();
-        for (String minority : minorityPopulations) {
+        for (String minority : populationDistribution.getMinorityPopulations()) {
             demographicGroups.add(DemographicGroup.valueOf(minority.toUpperCase()));
         }
-        for (Set<String> group : combinedGroup){
+        if (!populationDistribution.getIsCombined()) {
+            parameter.setMinorityPopulations(demographicGroups);
+            return null;
+        }
+        for (Set<String> group : populationDistribution.getCombinedGroup()){
             Set<DemographicGroup> demGroup = new HashSet<>();
             for (String s : group) {
                 demGroup.add(DemographicGroup.valueOf(s.toUpperCase()));
@@ -87,13 +110,12 @@ public class AlgorithmService {
         return "successfully specify minority population";
     }
 
-    public Result getMinorityPopulation(String stateName, String status) {
+    public Result getMinorityPopulation(StateName stateName, State_Status state_status) {
         Parameter parameter = algorithm.getParameter();
-        State targetState = stateService.getState(StateName.valueOf(stateName.toUpperCase()),
-                State_Status.valueOf(status.toUpperCase())).get();
-        System.out.println(targetState);
+        State targetState = stateService.getState(stateName, state_status).get();
         Set<MinorityPopulation> minorityPopulationResult = targetState.getPopulationDistribution(parameter);
         Result result = new Result();
+        System.out.println(minorityPopulationResult);
         result.addResult("Minority Population Distribution Table", minorityPopulationResult);
         return result;
     }

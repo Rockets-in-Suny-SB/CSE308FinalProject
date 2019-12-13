@@ -36,4 +36,13 @@ public class MinorityPopulation {
     public void setPopulation(Integer population) {
         this.population = population;
     }
+
+    @Override
+    public String toString() {
+        return "MinorityPopulation{" +
+                "demographicGroup='" + demographicGroup + '\'' +
+                ", percentage=" + percentage +
+                ", population=" + population +
+                '}';
+    }
 }

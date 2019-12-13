@@ -2,12 +2,16 @@ package com.example.cseproject.Controller;
 
 
 import com.example.cseproject.DataClasses.Parameter;
+import com.example.cseproject.DataClasses.PopulationDistribution;
 import com.example.cseproject.DataClasses.Result;
+import com.example.cseproject.Enum.StateName;
+import com.example.cseproject.Enum.State_Status;
 import com.example.cseproject.Service.AlgorithmService;
 import com.example.cseproject.Service.StateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Queue;
 import java.util.Set;
 
 @RestController
@@ -17,7 +21,7 @@ public class AlgorithmController {
     AlgorithmService algorithmService;
     @Autowired
     StateService stateService;
-    @RequestMapping(value = "/phase0", method = RequestMethod.GET)
+    @RequestMapping(value = "/phase0", method = RequestMethod.POST)
     public @ResponseBody Result runPhase0(@RequestParam String stateName,
                                           @RequestParam String election,
                                           @RequestParam Float populationThreshold,
@@ -38,23 +42,30 @@ public class AlgorithmController {
 
     @RequestMapping(value = "/phase2", method = RequestMethod.POST)
     public @ResponseBody Result runPhase2() {
-        Result result = algorithmService.runPhase2();
-        return  result;
+
+        while (true) {
+            Queue<Result> results = algorithmService.runPhase2();
+            System.out.println(results.size());
+            if (!results.isEmpty()){
+                Result result = results.remove();
+                return result;
+            }
+        }
+
+    }
+
+    @RequestMapping(value = "/phase2Move", method = RequestMethod.POST)
+    public @ResponseBody Result getOneMove() {
+        return algorithmService.getOneMove();
     }
 
 
-
-    @RequestMapping(value="/specifyMinorityPopulation",method = RequestMethod.GET)
-    public @ResponseBody Result specifyMinorityPopulation( @RequestParam String stateName,
-                                                        @RequestParam String status ,
-                                                        @RequestParam Float maximumPercentage,
-                                                        @RequestParam Float minimumPercentage,
-                                                        @RequestParam Set<String> minorityPopulations,
-                                                        @RequestParam Boolean isCombined,
-                                                        @RequestParam Set<Set<String>> combinedGroup){
-        algorithmService.specifyMinorityPopulation(maximumPercentage, minimumPercentage,
-                                                        minorityPopulations, isCombined, combinedGroup);
-        Result minorityPopulationResult = algorithmService.getMinorityPopulation(stateName, status);
+    @RequestMapping(value = "/specifyMinorityPopulation", method = RequestMethod.POST)
+    public @ResponseBody Result specifyMinorityPopulation(@RequestBody PopulationDistribution populationDistribution) {
+        algorithmService.specifyMinorityPopulation(populationDistribution);
+        StateName stateName = StateName.valueOf(populationDistribution.getStateName().toUpperCase());
+        State_Status state_status = State_Status.valueOf(populationDistribution.getStatus().toUpperCase());
+        Result minorityPopulationResult = algorithmService.getMinorityPopulation(stateName,state_status);
         return minorityPopulationResult;
     }
 
