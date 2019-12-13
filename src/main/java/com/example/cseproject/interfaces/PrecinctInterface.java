@@ -13,7 +13,7 @@ public interface PrecinctInterface {
 
     Integer getPopulation();
 
-    Integer getGop_Vote();
+    Integer getGopVote();
 
-    Integer getDem_Vote();
+    Integer getDemVote();
 }

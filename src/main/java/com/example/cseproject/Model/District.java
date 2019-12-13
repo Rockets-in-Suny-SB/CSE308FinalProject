@@ -50,9 +50,9 @@ public class District
     @Transient
     private static final int MINY = 3;
     @Transient
-    private int gop_vote;
+    private int gopVote;
     @Transient
-    private int dem_vote;
+    private int demVote;
     @Transient
     private int internalEdges = 0;
     @Transient
@@ -107,8 +107,8 @@ public class District
     public void addPrecinct(Precinct p) {
         precincts.put(p.getId(), p);
         population += p.getPopulation();
-        gop_vote += p.getGop_Vote();
-        dem_vote += p.getDem_Vote();
+        gopVote += p.getGopVote();
+        demVote += p.getDemVote();
         borderPrecincts.add(p);
         Set<Precinct> newInternalNeighbors = getInternalNeighbors(p);
         int newInternalEdges = newInternalNeighbors.size();
@@ -246,11 +246,11 @@ public class District
 
 
     public int getGOPVote() {
-        return this.gop_vote;
+        return this.gopVote;
     }
 
     public int getDEMVote() {
-        return this.dem_vote;
+        return this.demVote;
     }
 
     public int getInternalEdges() {

@@ -4,6 +4,7 @@ import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Enum.JoinFactor;
 import com.example.cseproject.Model.Edge;
 import com.example.cseproject.Model.Precinct;
+import com.example.cseproject.Model.Vote;
 import org.springframework.data.util.Pair;
 
 import java.util.*;
@@ -27,6 +28,25 @@ public class Cluster {
     private Map<DemographicGroup, Integer> minorityGroupPopulation;
     private Map<String, Integer> countyCount;
     public boolean paired;
+
+    public int getGopVotes() {
+        return gopVotes;
+    }
+
+    public void setGopVotes(int gopVotes) {
+        this.gopVotes = gopVotes;
+    }
+
+    public int getDemVotes() {
+        return demVotes;
+    }
+
+    public void setDemVotes(int demVotes) {
+        this.demVotes = demVotes;
+    }
+
+    private int gopVotes;
+    private int demVotes;
     public Cluster(){}
     //constructor
     public Cluster(Precinct precinct) {
@@ -44,6 +64,8 @@ public class Cluster {
         //this.countyCount.put(precinct.getCountyId(),1);
         this.precincts.add(precinct);
         this.paired = false;
+        this.demVotes+=precinct.getDemVote();
+        this.gopVotes+=precinct.getGopVote();
 
     }
 
@@ -70,6 +92,13 @@ public class Cluster {
     public void addClusterData(Cluster c) {
         addAllPopulation(c);
         addAllMinorityPopulation(c);
+        addAllVotes(c);
+    }
+    public void addAllVotes(Cluster c){
+        for(Precinct p:c.getPrecincts()){
+            demVotes+=p.getDemVote();
+            gopVotes+=p.getGopVote();
+        }
     }
 
     public void combine(Cluster c2, Map<Integer, Cluster> clusters) {
@@ -262,20 +291,23 @@ public class Cluster {
         for (Integer nId : neighbors) {
             Cluster n=clusters.get(nId);
             if(!n.paired) {
-                candidateScore = n.calculateMajorityMinorityScore(n, d);
+                /*candidateScore = n.calculateMajorityMinorityScore(n, d);
                 //System.out.println(candidateScore);
                 if (candidateScore > bestScore) {
                     //System.out.println("MM5:"+candidateScore);
                     bestScore = candidateScore;
                     bestNeighbor = n;
-                }
+                }*/
+                this.paired = true;
+                n.paired = true;
+                return Pair.of(this, bestNeighbor);
             }
 
         }
         //neighbors.removeAll(unremovedNeighbors);
         Threshold t = new Threshold();
 
-        double threshold = t.getMajorityMinorityThreshold();
+       /* double threshold = t.getMajorityMinorityThreshold();
         //System.out.println("Th:"+threshold);
         if (bestScore > threshold && bestNeighbor != null) {
             //System.out.println("CombineScore:"+bestScore);
@@ -285,7 +317,8 @@ public class Cluster {
             return Pair.of(this, bestNeighbor);
         } else {
             return null;
-        }
+        }*/
+       return null;
     }
 
     public Pair<Cluster, Cluster> findBestPairBasedOnFactor(JoinFactor factor, Map<Integer,Cluster> clusters) {

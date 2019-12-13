@@ -27,7 +27,7 @@ public class Precinct
     private County countyId;
     @Transient
     private Integer parentCluster;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "precinct_votes",
             joinColumns = @JoinColumn(name = "precinct_id"))
     @MapKeyColumn(name = "election")
@@ -45,13 +45,14 @@ public class Precinct
 
     @Transient
     private Integer originalDistrictID;
-    private Integer gop_vote;
-    private Integer dem_vote;
+    private Integer gopVote;
+    private Integer demVote;
     @Transient
     private Set<Integer> neighborIds;
     @Transient
     private Geometry geometry;
-
+    @Transient
+    private Double populationDensity;
 
     @Override
     public Integer getPopulation() {
@@ -63,21 +64,21 @@ public class Precinct
     }
 
     @Override
-    public Integer getGop_Vote() {
-        return gop_vote;
+    public Integer getGopVote() {
+        return gopVote;
     }
 
-    public void setGop_vote(Integer gop_vote) {
-        this.gop_vote = gop_vote;
+    public void setGopVote(Integer gopVote) {
+        this.gopVote = gopVote;
     }
 
     @Override
-    public Integer getDem_Vote() {
-        return dem_vote;
+    public Integer getDemVote() {
+        return demVote;
     }
 
-    public void setDem_vote(Integer dem_vote) {
-        this.dem_vote = dem_vote;
+    public void setDemVote(Integer demVote) {
+        this.demVote = demVote;
     }
 
     @Override

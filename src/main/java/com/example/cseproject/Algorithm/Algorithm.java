@@ -31,25 +31,25 @@ public class Algorithm {
     private PrecinctService precinctService;
     public void setPhase1(Parameter parameter, StateService stateService){
         this.parameter = parameter;
-        State targetState = stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW).get();
-        this.targetState = targetState;
-        /*this.targetState=new State();
+        //State targetState = stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW).get();
+       // this.targetState = targetState;
+        this.targetState=new State();
         try {
             ObjectMapper mapper = new ObjectMapper();
-            Map<Integer,Cluster> clusters = mapper.readValue(ResourceUtils.getFile("classpath:cluster2.json"), new TypeReference<>(){});
+            Map<Integer,Cluster> clusters = mapper.readValue(ResourceUtils.getFile("classpath:cluster3.json"), new TypeReference<>(){});
             this.targetState.setClusters(clusters);
             //System.out.println(clusters);
             System.out.println("Read success");
         }catch (Exception e){
             System.out.println(e);
-        }*/
-        initializeClusters(this.targetState);
+        }
+        //initializeClusters(this.targetState);
     }
     public Result phase1(Parameter parameter) {
         this.resultPairs = new HashSet<>();
         Map<Integer,Cluster> clusters = targetState.getClusters();
 
-        boolean isFinalIteration = false;
+        boolean isFinalIteration = true;
         if (parameter.getUpdateDiscrete()) {
             isFinalIteration = combineIteration(clusters);
         } else {
@@ -126,28 +126,46 @@ public class Algorithm {
     public void finalCombineIteration(Map<Integer,Cluster> clusters) {
         //System.out.println("Final iteration");
         PriorityQueue<Cluster> minPriorityQueue = new PriorityQueue<>(Comparator.comparingInt(Cluster::getPopulation));
+        PriorityQueue<Cluster> removedPriorityQueue = new PriorityQueue<>(Comparator.comparingInt(Cluster::getPopulation));
         minPriorityQueue.addAll(clusters.values());
         int targetDistricts = parameter.getTargetDistricts();
-
-        while (!minPriorityQueue.isEmpty()&&clusters.size()>targetDistricts) {
+        int t=0;
+        for(Cluster c:clusters.values()){
+            t+=c.getPopulation();
+        }
+        int originalCS=clusters.size();
+        int multiplier=2;
+        int sl=t/(clusters.size()/multiplier);
+        while (/*!minPriorityQueue.isEmpty()&&!removedPriorityQueue.isEmpty()&&*/clusters.size()>targetDistricts) {
             Cluster c1 = minPriorityQueue.poll();
+            if(c1==null){
+                if(removedPriorityQueue==null)
+                    break;
+                minPriorityQueue.addAll(removedPriorityQueue);
+                c1=minPriorityQueue.poll();
+                multiplier*=2;
+                sl=t/(clusters.size()/multiplier);
+                originalCS/=2;
+            }
             Set<Integer> c1Neighbors=c1.getNeighbors();
             int minPopulation=Integer.MAX_VALUE;
             Cluster minCluster=null;
 
             for (Integer nId : c1Neighbors) {
-                Cluster n = clusters.get(nId);
 
-                if (n.getPopulation() < minPopulation) {
+                Cluster n = clusters.get(nId);
+                if(n.getPopulation()+c1.getPopulation()<sl) {
+                /*if (n.getPopulation() +c1.getPopulation()< minPopulation) {
                     minCluster = n;
                     minPopulation = n.getPopulation();
+                }*/
+                    minCluster = n;
+                    break;
                 }
-
-
             }
 
             if(minCluster!=null) {
-                //System.out.println("Combined");
+                System.out.println("Combined");
                 //targetState.combine(c1, minCluster, clusters);
                 resultPairs=new HashSet<>();
                 resultPairs.add(Pair.of(c1,minCluster));
@@ -160,13 +178,24 @@ public class Algorithm {
                 /*if (clusters.remove(minCluster.getId())!=null){
                     System.out.println("Not removed from clusters set!");
                 }*/
+                //minPriorityQueue.addAll(removedPriorityQueue);
+                //removedPriorityQueue.removeAll(removedPriorityQueue);
             }else {
-                //System.out.println("Not combined");
+
+                //minPriorityQueue.add(c1);
+                System.out.println("Not combined");
                 minPriorityQueue.remove(c1);
+                removedPriorityQueue.add(c1);
                 //minPriorityQueue.remove(minCluster);
             }
+            if(clusters.size()<originalCS/2){
+                multiplier*=2;
+                sl=t/(clusters.size()/multiplier);
+                originalCS/=2;
+            }
             //System.out.println("q size"+minPriorityQueue.size());
-
+            System.out.println("Cluster size:"+ clusters.size());
+            System.out.println("sl:"+sl);
         }
         /*int psizeAfter=0;
         for(Cluster c:clusters.values()){
@@ -174,6 +203,7 @@ public class Algorithm {
             psizeAfter += c.getPrecincts().size();
 
         }*/
+
         //System.out.println("P size After final:"+psizeAfter);
     }
 
@@ -224,11 +254,26 @@ public class Algorithm {
             Cluster c2=p.getSecond();
             targetState.combine(c1, c2, clusters);
             removed.add(c2.getId());
+            //Add all c2's neighbors to c1
+            c1.getNeighbors().addAll(c2.getNeighbors());
+            //Remove c1 from neighbors
+            c1.getNeighbors().remove(c1.getId());
+            //Remove c2 from neighbors and c1
+            Set<Integer> c1Neighbors=c1.getNeighbors();
+            for(Integer n:c1Neighbors){
+                clusters.get(n).getNeighbors().remove(c2.getId());
+            }
+            clusters.get(c1.getId()).getNeighbors().remove(c2.getId());
+            //Add connection between c1 and neighbors
+            for(Integer n:c1Neighbors){
+                clusters.get(n).getNeighbors().add(c1.getId());
+                c1.getNeighbors().add(n);
+            }
         }
         for(Integer i:removed){
             clusters.remove(i);
         }
-        for (Pair<Cluster, Cluster> p : pairs) {
+        /*for (Pair<Cluster, Cluster> p : pairs) {
             Set<Integer> n=p.getSecond().getNeighbors();
             p.getFirst().getNeighbors().addAll(n);
             Set<Integer> removedI=new HashSet<>();
@@ -246,7 +291,7 @@ public class Algorithm {
         }
         for(Cluster c:clusters.values()){
             c.getNeighbors().remove(c.getId());
-        }
+        }*/
     }
 
     public void clearPaired(Map<Integer,Cluster> clusters) {
