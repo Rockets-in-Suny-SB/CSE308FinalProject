@@ -135,7 +135,7 @@ public class State
     }
 
     public void setPrecinctsJson(Map<Integer, Precinct> precinctsJson) {
-        this.precinctsJson = precinctsJson;
+        this.precincts = precinctsJson;
     }
 
     public void setDistricts(Map<Integer, District> districts) {
@@ -145,7 +145,7 @@ public class State
     /* phase 0 */
     public Set<EligibleBloc> findEligibleBlocs() {
         Set<EligibleBloc> result = new HashSet<>();
-        for (Precinct precinct : this.getPrecinctsJson().values()) {
+        for (Precinct precinct : this.getPrecinctMap().values()) {
             EligibleBloc eligibleBloc = precinct.doBlocAnalysis(this.threshold, this.election);
             if (eligibleBloc != null)
                 result.add(eligibleBloc);

@@ -110,7 +110,9 @@ public class Algorithm {
         for (Map.Entry<Integer, Cluster> entry : this.phase1Cluster.entrySet()){
             Cluster cluster = entry.getValue();
             for (Precinct precinct : cluster.getPrecincts()) {
+                precinct.setOriginalDistrictID(cluster.getId());
                 totalPrecincts.put(precinct.getId(), precinct);
+
             }
         }
         Map<Integer, District> districts = new HashMap<>();
@@ -142,8 +144,8 @@ public class Algorithm {
             district.setState(targetState);
             districts.put(district.getId(), district);
         }
-
-        targetState.setDistricts(districts);
+        this.targetState.setPrecinctsJson(totalPrecincts);
+        this.targetState.setDistricts(districts);
 
         MyAlgorithm myAlgorithm = new MyAlgorithm(this.targetState, DefaultMeasures.defaultMeasuresWithWeights(weights));
         Queue<Result> results = new LinkedList<>();
@@ -158,7 +160,7 @@ public class Algorithm {
                 break;
             }
             previousMove = move;
-            System.out.println(move.toString());
+//            System.out.println(move.toString());
             Result result = new Result();
             Set<District> resultDistricts = targetState.getDistricts();
             Map<Integer, Set<Integer>> districtPrecinctMap = new HashMap<>();
