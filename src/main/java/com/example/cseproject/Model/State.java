@@ -25,7 +25,7 @@ public class State
     private StateName name;
     @Id
     private State_Status status;
-    @ManyToMany(targetEntity = Precinct.class)
+    @ManyToMany(targetEntity = Precinct.class, fetch = FetchType.EAGER)
     private Map<Integer, Precinct> precincts;
     @Transient
     private Threshold threshold;
@@ -45,6 +45,9 @@ public class State
     @MapKeyColumn(name = "demographic_group")
     @Column(name = "population")
     private Map<DemographicGroup, Integer> demographicGroups;
+
+    @Transient
+    private Map<Integer, Precinct> precinctsJson;
 
     public State() {
         //this.clusters=new HashSet<>();
@@ -67,7 +70,7 @@ public class State
     public void setStatus(State_Status status) {
         this.status = status;
     }
-    public void setPrecincts(HashMap<Integer,Precinct> precincts){this.precincts=precincts;}
+    public void setPrecincts(Map<Integer,Precinct> precincts){this.precincts=precincts;}
     public Set<Precinct> getPrecincts() {
         return new HashSet<>(precincts.values());
     }
@@ -127,10 +130,22 @@ public class State
         this.demographicGroups = demographicGroups;
     }
 
+    public Map<Integer, Precinct> getPrecinctsJson() {
+        return precinctsJson;
+    }
+
+    public void setPrecinctsJson(Map<Integer, Precinct> precinctsJson) {
+        this.precinctsJson = precinctsJson;
+    }
+
+    public void setDistricts(Map<Integer, District> districts) {
+        this.districts = districts;
+    }
+
     /* phase 0 */
     public Set<EligibleBloc> findEligibleBlocs() {
         Set<EligibleBloc> result = new HashSet<>();
-        for (Precinct precinct : this.getPrecincts()) {
+        for (Precinct precinct : this.getPrecinctsJson().values()) {
             EligibleBloc eligibleBloc = precinct.doBlocAnalysis(this.threshold, this.election);
             if (eligibleBloc != null)
                 result.add(eligibleBloc);
@@ -143,6 +158,7 @@ public class State
         float minimumPercentage = parameter.getMinimumPercentage();
         float maximumPercentage = parameter.getMaximumPercentage();
         Set<DemographicGroup> demographicGroups = parameter.getMinorityPopulations();
+        System.out.println(demographicGroups);
         demographicGroups.add(DemographicGroup.WHITE);
         Set<MinorityPopulation> minorityPopulations = new HashSet<>();
         Boolean isCombined  = parameter.getCombined();
@@ -152,7 +168,8 @@ public class State
             System.out.println(population);
             if (population != null) {
                 Float percentage = (float) population / this.population;
-                if (population >= minimumPercentage && population <= maximumPercentage) {
+                System.out.println(percentage);
+                if (percentage >= minimumPercentage && percentage <= maximumPercentage) {
                     MinorityPopulation minorityPopulation = new MinorityPopulation(demographicGroup.toString(),
                                                                 percentage, population);
                     minorityPopulations.add(minorityPopulation);
@@ -172,10 +189,11 @@ public class State
                 }
                 groupNames += demographicGroup.toString()+", ";
             }
-            Float percentage = (float) population / this.population;
-            if (population >= minimumPercentage && population <= maximumPercentage) {
+            Float percentage = (float) groupPopulation / this.population;
+            System.out.println(percentage);
+            if (percentage >= minimumPercentage && percentage <= maximumPercentage) {
                 MinorityPopulation minorityPopulation = new MinorityPopulation(
-                        groupNames.substring(0, groupNames.length()-2), percentage, population);
+                        groupNames.substring(0, groupNames.length()-2), percentage, groupPopulation);
                 minorityPopulations.add(minorityPopulation);
             }
         }
@@ -188,6 +206,9 @@ public class State
         //clusters.remove(c2);
     }
 
+    public Map<Integer, Precinct> getPrecinctMap () {
+        return this.precincts;
+    }
 
 }
 

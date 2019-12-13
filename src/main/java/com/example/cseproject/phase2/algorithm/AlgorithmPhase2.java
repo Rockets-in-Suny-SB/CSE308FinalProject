@@ -223,7 +223,29 @@ public class AlgorithmPhase2
     public Move getMoveFromDistrict(District startDistrict) {
         Set<Precinct> precincts = startDistrict.getBorderPrecincts();
         //Set<Precinct> precincts = startDistrict.getPrecincts();
-        for (Precinct p : precincts) {
+//        for (Precinct p : precincts) {
+//            Set<Integer> neighborIds = p.getNeighborIds();
+//            for (Integer n : neighborIds) {
+//                if (startDistrict.getPrecinct(n) == null) {
+//                    District neighborDistrict = state.getDistrict(precinctDistrictMap.get(n));
+//                    //System.out.println("Start district: " + startDistrict.getId() + ", Neighbor District: " + neighborDistrict.getId() + ", Precinct: " + p.getId());
+//                    Move move = testMove(neighborDistrict, startDistrict, p);
+//                    if (move != null) {
+//                        System.out.println("Moving p to neighborDistrict(neighborId = " + n + ")");
+//                        currentDistrict = startDistrict;
+//                        return move;
+//                    }
+//                    move = testMove(startDistrict, neighborDistrict, neighborDistrict.getPrecinct(n));
+//                    if (move != null) {
+//                        System.out.println("Moving n to Start district: " + startDistrict.getId());
+//                        currentDistrict = startDistrict;
+//                        return move;
+//                    }
+//                }
+//            }
+//        }
+        for (Iterator<Precinct> it = startDistrict.getPrecincts().iterator(); it.hasNext();) {
+            Precinct p = it.next();
             Set<Integer> neighborIds = p.getNeighborIds();
             for (Integer n : neighborIds) {
                 if (startDistrict.getPrecinct(n) == null) {
