@@ -35,12 +35,12 @@ public class Algorithm {
     public void setPhase1(Parameter parameter, StateService stateService){
         this.parameter = parameter;
         //State targetState = stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW).get();
-       // this.targetState = targetState;
+       //this.targetState = targetState;
         this.targetState=new State();
 
         try {
             ObjectMapper mapper = new ObjectMapper();
-            Map<Integer,Cluster> clusters = mapper.readValue(ResourceUtils.getFile("classpath:cluster3.json"), new TypeReference<>(){});
+            Map<Integer,Cluster> clusters = mapper.readValue(ResourceUtils.getFile("classpath:cluster5.json"), new TypeReference<>(){});
             this.targetState.setClusters(clusters);
             //System.out.println(clusters);
             System.out.println("Read success");
@@ -259,7 +259,8 @@ public class Algorithm {
             }
             if(clusters.size()<originalCS/2){
                 multiplier*=2;
-                sl=t/(clusters.size()/multiplier);
+                int divider=(clusters.size()/multiplier)==0?1:(clusters.size()/multiplier);
+                sl=t/divider;
                 originalCS/=2;
             }
             //System.out.println("q size"+minPriorityQueue.size());
@@ -423,7 +424,7 @@ public class Algorithm {
             });
         }*/
         try {
-            File file = new File(getClass().getClassLoader().getResource(".").getFile() + "/cluster3.json");
+            File file = new File(getClass().getClassLoader().getResource(".").getFile() + "/cluster5.json");
             if (file.createNewFile()) {
                 System.out.println("File is created!");
             } else {
