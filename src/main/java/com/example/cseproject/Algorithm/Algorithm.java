@@ -206,7 +206,8 @@ public class Algorithm {
         }
         int originalCS=clusters.size();
         int multiplier=2;
-        int sl=t/(clusters.size()/multiplier);
+        int div=(clusters.size()/multiplier)==0?1:(clusters.size()/multiplier);
+        int sl=t/div;
         while (/*!minPriorityQueue.isEmpty()&&!removedPriorityQueue.isEmpty()&&*/clusters.size()>targetDistricts) {
             Cluster c1 = minPriorityQueue.poll();
             if(c1==null){
