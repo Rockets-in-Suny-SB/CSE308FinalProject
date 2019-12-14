@@ -58,10 +58,13 @@ public class Algorithm {
     public Result phase1(Parameter parameter) {
         this.resultPairs = new HashSet<>();
         Map<Integer,Cluster> clusters = targetState.getClusters();
-
+        int i=0;
         //boolean isFinalIteration = false;
         if (parameter.getUpdateDiscrete()&&!isFinalIteration) {
-            isFinalIteration = combineIteration(clusters);
+            while(i<100) {
+                isFinalIteration = combineIteration(clusters);
+                i++;
+            }
         } else {
             while (clusters.size() > parameter.getTargetDistricts() && !isFinalIteration) {
                 isFinalIteration = combineIteration(clusters);
@@ -85,7 +88,10 @@ public class Algorithm {
                 if(!finalIterationSet){
                     setFinalCombineIteration(clusters);
                 }
-                finalCombineIteration(clusters,r);
+                while (i<100) {
+                    finalCombineIteration(clusters, r);
+                    i++;
+                }
             }else{
                 r.addResult("isFinal", true);
             }
