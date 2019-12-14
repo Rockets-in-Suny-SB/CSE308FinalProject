@@ -56,7 +56,7 @@ public class Algorithm {
         Map<Integer,Cluster> clusters = targetState.getClusters();
 
         boolean isFinalIteration = true;
-        if (parameter.getUpdateDiscrete()) {
+        if (parameter.getUpdateDiscrete()&&!isFinalIteration) {
             isFinalIteration = combineIteration(clusters);
         } else {
             while (clusters.size() > parameter.getTargetDistricts() && !isFinalIteration) {
