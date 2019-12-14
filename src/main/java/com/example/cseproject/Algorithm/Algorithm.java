@@ -32,6 +32,7 @@ public class Algorithm {
     private Queue<Result> phase2Results;
     //private Map<Integer,Set<Integer>> changeMap;
     private boolean isFinalIteration;
+    private int realTargetSize;
     //@Autowired
     //private StateService stateService;
     @Autowired
@@ -52,6 +53,7 @@ public class Algorithm {
             System.out.println(e);
         }
         isFinalIteration=false;
+        realTargetSize=(int)((targetState.getClusters().size()/parameter.getTargetDistricts())*0.75);
         //initializeClusters(this.targetState);
 
     }
@@ -110,8 +112,18 @@ public class Algorithm {
             resultSet.put(c.getId(),precinctIdSet);
 
         }
+
         this.phase1Cluster = clusters;
         r.addResult("clusters", resultSet);
+        int count=0;
+        for(Cluster c:clusters.values()){
+            if(c.getPrecincts().size()>realTargetSize){
+                count++;
+            }
+        }
+        if(count>=parameter.getTargetDistricts()){
+            r.addResult("isFinal",true);
+        }
         //r.addResult("changeMap",changeMap);
         return r;
     }
