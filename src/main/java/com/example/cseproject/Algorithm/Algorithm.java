@@ -20,6 +20,8 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
+
 @Service
 public class Algorithm {
     private Set<Pair<Cluster, Cluster>> resultPairs;
@@ -28,6 +30,7 @@ public class Algorithm {
     private State targetState;
     private Map<Integer, Cluster> phase1Cluster;
     private Queue<Result> phase2Results;
+    private Map<Integer,Set<Integer>> changeMap;
     //@Autowired
     //private StateService stateService;
     @Autowired
@@ -102,7 +105,7 @@ public class Algorithm {
         }
         this.phase1Cluster = clusters;
         r.addResult("clusters", resultSet);
-
+        r.addResult("changeMap",changeMap);
         return r;
     }
 
@@ -322,6 +325,7 @@ public class Algorithm {
 
     public void combinePairs(Set<Pair<Cluster, Cluster>> pairs, Map<Integer,Cluster> clusters) {
         Set<Integer> removed=new HashSet<>();
+        changeMap=new HashMap<>();
         for (Pair<Cluster, Cluster> p : pairs) {
             Cluster c1=p.getFirst();
             Cluster c2=p.getSecond();
@@ -342,6 +346,14 @@ public class Algorithm {
                 clusters.get(n).getNeighbors().add(c1.getId());
                 c1.getNeighbors().add(n);
             }
+            //Add to changed map
+            if(changeMap.get(c1.getId())==null){
+                changeMap.put(c1.getId(),new HashSet<>());
+                changeMap.get(c1.getId()).addAll(c2.getPrecincts().stream().map(Precinct::getId).collect(Collectors.toSet()));
+            }else{
+                changeMap.get(c1.getId()).addAll(c2.getPrecincts().stream().map(Precinct::getId).collect(Collectors.toSet()));
+            }
+
         }
         for(Integer i:removed){
             clusters.remove(i);
