@@ -24,13 +24,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class Algorithm {
-    private Set<Pair<Cluster, Cluster>> resultPairs;
+    private ArrayList<Pair<Cluster, Cluster>> resultPairs;
     private JoinFactor joinFactor;
     private Parameter parameter;
     private State targetState;
     private Map<Integer, Cluster> phase1Cluster;
     private Queue<Result> phase2Results;
-    private Map<Integer,Set<Integer>> changeMap;
+    //private Map<Integer,Set<Integer>> changeMap;
     private boolean isFinalIteration;
     //@Autowired
     //private StateService stateService;
@@ -56,12 +56,12 @@ public class Algorithm {
 
     }
     public Result phase1(Parameter parameter) {
-        this.resultPairs = new HashSet<>();
+        this.resultPairs = new ArrayList<>();
         Map<Integer,Cluster> clusters = targetState.getClusters();
         int i=0;
         //boolean isFinalIteration = false;
         if (parameter.getUpdateDiscrete()&&!isFinalIteration) {
-            while(i<100) {
+            while(i<200) {
                 isFinalIteration = combineIteration(clusters);
                 i++;
             }
@@ -88,7 +88,7 @@ public class Algorithm {
                 if(!finalIterationSet){
                     setFinalCombineIteration(clusters);
                 }
-                while (i<100) {
+                while (i<200) {
                     finalCombineIteration(clusters, r);
                     i++;
                 }
@@ -112,7 +112,7 @@ public class Algorithm {
         }
         this.phase1Cluster = clusters;
         r.addResult("clusters", resultSet);
-        r.addResult("changeMap",changeMap);
+        //r.addResult("changeMap",changeMap);
         return r;
     }
 
@@ -262,7 +262,7 @@ public class Algorithm {
             if(minCluster!=null) {
                 System.out.println("Combined");
                 //targetState.combine(c1, minCluster, clusters);
-                resultPairs=new HashSet<>();
+                resultPairs=new ArrayList<>();
                 resultPairs.add(Pair.of(c1,minCluster));
                 combinePairs(resultPairs,clusters);
                 minPriorityQueue.add(c1);
@@ -330,9 +330,9 @@ public class Algorithm {
         }
     }
 
-    public void combinePairs(Set<Pair<Cluster, Cluster>> pairs, Map<Integer,Cluster> clusters) {
+    public void combinePairs(ArrayList<Pair<Cluster, Cluster>> pairs, Map<Integer,Cluster> clusters) {
         Set<Integer> removed=new HashSet<>();
-        changeMap=new HashMap<>();
+        //changeMap=new HashMap<>();
         for (Pair<Cluster, Cluster> p : pairs) {
             Cluster c1=p.getFirst();
             Cluster c2=p.getSecond();
@@ -353,15 +353,8 @@ public class Algorithm {
                 clusters.get(n).getNeighbors().add(c1.getId());
                 c1.getNeighbors().add(n);
             }
-            //Add to changed map
-            if(changeMap.get(c1.getId())==null){
-                changeMap.put(c1.getId(),new HashSet<>());
-                changeMap.get(c1.getId()).addAll(c2.getPrecincts().stream().map(Precinct::getId).collect(Collectors.toSet()));
-            }else{
-                changeMap.get(c1.getId()).addAll(c2.getPrecincts().stream().map(Precinct::getId).collect(Collectors.toSet()));
-            }
-
         }
+
         for(Integer i:removed){
             clusters.remove(i);
         }
