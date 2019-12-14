@@ -31,6 +31,7 @@ public class Algorithm {
     private Map<Integer, Cluster> phase1Cluster;
     private Queue<Result> phase2Results;
     private Map<Integer,Set<Integer>> changeMap;
+    private boolean isFinalIteration;
     //@Autowired
     //private StateService stateService;
     @Autowired
@@ -50,7 +51,7 @@ public class Algorithm {
         }catch (Exception e){
             System.out.println(e);
         }
-
+        isFinalIteration=false;
         //initializeClusters(this.targetState);
 
     }
@@ -58,7 +59,7 @@ public class Algorithm {
         this.resultPairs = new HashSet<>();
         Map<Integer,Cluster> clusters = targetState.getClusters();
 
-        boolean isFinalIteration = false;
+        //boolean isFinalIteration = false;
         if (parameter.getUpdateDiscrete()&&!isFinalIteration) {
             isFinalIteration = combineIteration(clusters);
         } else {
