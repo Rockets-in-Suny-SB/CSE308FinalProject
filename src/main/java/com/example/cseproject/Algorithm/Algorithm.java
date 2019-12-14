@@ -61,7 +61,7 @@ public class Algorithm {
         int i=0;
         //boolean isFinalIteration = false;
         if (parameter.getUpdateDiscrete()&&!isFinalIteration) {
-            while(i<200) {
+            while(i<50) {
                 isFinalIteration = combineIteration(clusters);
                 i++;
             }
@@ -88,7 +88,7 @@ public class Algorithm {
                 if(!finalIterationSet){
                     setFinalCombineIteration(clusters);
                 }
-                while (i<200) {
+                while (i<50) {
                     finalCombineIteration(clusters, r);
                     i++;
                 }
