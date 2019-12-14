@@ -55,7 +55,7 @@ public class Algorithm {
         this.resultPairs = new HashSet<>();
         Map<Integer,Cluster> clusters = targetState.getClusters();
 
-        boolean isFinalIteration = true;
+        boolean isFinalIteration = false;
         if (parameter.getUpdateDiscrete()&&!isFinalIteration) {
             isFinalIteration = combineIteration(clusters);
         } else {
@@ -64,12 +64,28 @@ public class Algorithm {
             }
         }
         Result r = new Result();
-        if (isFinalIteration) {
+        r.addResult("isFinal",false);
+        if (isFinalIteration&& !parameter.getUpdateDiscrete()) {
             if(clusters.size() > parameter.getTargetDistricts()){
-                finalCombineIteration(clusters);
+                if(!finalIterationSet){
+                    setFinalCombineIteration(clusters);
+                }
+                while (!((Boolean) r.getResult().get("isFinal")))
+                    finalCombineIteration(clusters,r);
+            }else{
+                r.addResult("isFinal", true);
             }
-            r.addResult("isFinal", true);
-        }else{
+
+        }else if(isFinalIteration ){
+            if(clusters.size() > parameter.getTargetDistricts()){
+                if(!finalIterationSet){
+                    setFinalCombineIteration(clusters);
+                }
+                finalCombineIteration(clusters,r);
+            }else{
+                r.addResult("isFinal", true);
+            }
+        } else{
             r.addResult("isFinal", false);
         }
         //Return result
@@ -86,18 +102,7 @@ public class Algorithm {
         }
         this.phase1Cluster = clusters;
         r.addResult("clusters", resultSet);
-        /*Set<Set<Integer>> resultSet=new HashSet<>();
-        for(Cluster c:clusters.values()){
 
-            Set<Integer> precinctIdSet = new HashSet<>();
-            Set<Precinct> precincts = c.getPrecincts();
-            for (Precinct p : precincts) {
-                precinctIdSet.add(p.getId());
-            }
-            resultSet.add(precinctIdSet);
-
-        }
-        r.addResult("clusters", resultSet);*/
         return r;
     }
 
@@ -193,26 +198,38 @@ public class Algorithm {
         clearPaired(clusters);
         return isFinalIteration;
     }
-
-    public void finalCombineIteration(Map<Integer,Cluster> clusters) {
-        //System.out.println("Final iteration");
-        PriorityQueue<Cluster> minPriorityQueue = new PriorityQueue<>(Comparator.comparingInt(Cluster::getPopulation));
-        PriorityQueue<Cluster> removedPriorityQueue = new PriorityQueue<>(Comparator.comparingInt(Cluster::getPopulation));
-        minPriorityQueue.addAll(clusters.values());
-        int targetDistricts = parameter.getTargetDistricts();
-        int t=0;
+    int t;
+    int originalCS;
+    int multiplier;
+    int div;
+    int sl;
+    PriorityQueue<Cluster> minPriorityQueue ;
+    PriorityQueue<Cluster> removedPriorityQueue;
+    boolean finalIterationSet=false;
+    public void setFinalCombineIteration(Map<Integer,Cluster> clusters){
+        t=0;
         for(Cluster c:clusters.values()){
             t+=c.getPopulation();
         }
-        int originalCS=clusters.size();
-        int multiplier=2;
-        int div=(clusters.size()/multiplier)==0?1:(clusters.size()/multiplier);
-        int sl=t/div;
-        while (/*!minPriorityQueue.isEmpty()&&!removedPriorityQueue.isEmpty()&&*/clusters.size()>targetDistricts) {
+        originalCS=clusters.size();
+        multiplier=2;
+        div=(clusters.size()/multiplier)==0?1:(clusters.size()/multiplier);
+        sl=t/div;
+        minPriorityQueue = new PriorityQueue<>(Comparator.comparingInt(Cluster::getPopulation));
+        removedPriorityQueue = new PriorityQueue<>(Comparator.comparingInt(Cluster::getPopulation));
+        minPriorityQueue.addAll(clusters.values());
+        finalIterationSet=true;
+    }
+    public void finalCombineIteration(Map<Integer,Cluster> clusters, Result r) {
+        int targetDistricts = parameter.getTargetDistricts();
+        if (clusters.size()>targetDistricts) {
             Cluster c1 = minPriorityQueue.poll();
             if(c1==null){
-                if(removedPriorityQueue==null)
-                    break;
+                if(removedPriorityQueue==null) {
+                    r.addResult("isFinal",true);
+                    finalIterationSet=false;
+                    return;
+                }
                 minPriorityQueue.addAll(removedPriorityQueue);
                 c1=minPriorityQueue.poll();
                 multiplier*=2;
@@ -227,10 +244,6 @@ public class Algorithm {
 
                 Cluster n = clusters.get(nId);
                 if(n.getPopulation()+c1.getPopulation()<sl) {
-                /*if (n.getPopulation() +c1.getPopulation()< minPopulation) {
-                    minCluster = n;
-                    minPopulation = n.getPopulation();
-                }*/
                     minCluster = n;
                     break;
                 }
@@ -243,15 +256,7 @@ public class Algorithm {
                 resultPairs.add(Pair.of(c1,minCluster));
                 combinePairs(resultPairs,clusters);
                 minPriorityQueue.add(c1);
-                if(minPriorityQueue.remove(minCluster)){
-                    //System.out.println(minCluster);
-                    //System.out.println("Removed min Cluster");
-                }
-                /*if (clusters.remove(minCluster.getId())!=null){
-                    System.out.println("Not removed from clusters set!");
-                }*/
-                //minPriorityQueue.addAll(removedPriorityQueue);
-                //removedPriorityQueue.removeAll(removedPriorityQueue);
+                minPriorityQueue.remove(minCluster);
             }else {
 
                 //minPriorityQueue.add(c1);
@@ -266,18 +271,13 @@ public class Algorithm {
                 sl=t/divider;
                 originalCS/=2;
             }
-            //System.out.println("q size"+minPriorityQueue.size());
-            System.out.println("Cluster size:"+ clusters.size());
-            System.out.println("sl:"+sl);
+            r.addResult("isFinal",false);
+        }else{
+            r.addResult("isFinal",true);
+            finalIterationSet=false;
+            return;
         }
-        /*int psizeAfter=0;
-        for(Cluster c:clusters.values()){
 
-            psizeAfter += c.getPrecincts().size();
-
-        }*/
-
-        //System.out.println("P size After final:"+psizeAfter);
     }
 
 
