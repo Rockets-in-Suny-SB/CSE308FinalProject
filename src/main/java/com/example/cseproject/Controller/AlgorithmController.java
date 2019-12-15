@@ -21,6 +21,16 @@ public class AlgorithmController {
     AlgorithmService algorithmService;
     @Autowired
     StateService stateService;
+
+
+    @RequestMapping(value = "/preprocess", method = RequestMethod.GET)
+    public @ResponseBody Result preprocess () {
+        //pre-load data here
+        Result result = new Result();
+        return result;
+    }
+
+
     @RequestMapping(value = "/phase0", method = RequestMethod.POST)
     public @ResponseBody Result runPhase0(@RequestParam String stateName,
                                           @RequestParam String election,
@@ -50,6 +60,10 @@ public class AlgorithmController {
             System.out.println(results.size());
             if (!results.isEmpty()){
                 Result result = results.remove();
+                Boolean isFinal = false;
+                if (results.isEmpty())
+                    isFinal = true;
+                result.addResult("isFinal", isFinal);
                 return result;
             }
         }
@@ -70,6 +84,7 @@ public class AlgorithmController {
         Result minorityPopulationResult = algorithmService.getMinorityPopulation(stateName,state_status);
         return minorityPopulationResult;
     }
+
     //Must call phase 2 before calling this method;
     @RequestMapping(value = "/DisplayMajorityMinorityResult", method = RequestMethod.GET)
     public @ResponseBody Result DisplayMajorityMinorityResult() {
@@ -79,6 +94,20 @@ public class AlgorithmController {
     public @ResponseBody Result getPhaseTime(){
         return algorithmService.getPhaseTime();
     }
+
+
+    @RequestMapping(value = "/gerrymandering", method = RequestMethod.POST)
+    public @ResponseBody Result gerrymandering(){
+        return algorithmService.gerrymanderingScore();
+    }
+
+    @RequestMapping(value = "/newPopulationDistribution", method = RequestMethod.POST)
+    public @ResponseBody Result displayNewPopulationDistribution() {
+        return algorithmService.displayNewPopulationDistribution();
+    }
+
+
+
 
 }
 

@@ -3,6 +3,8 @@ package com.example.cseproject.Model;
 import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.PartyName;
 import com.example.cseproject.Model.CompositeKeys.VoteId;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.data.repository.cdi.Eager;
 
 import javax.persistence.*;
 import java.util.Map;
@@ -20,12 +22,13 @@ public class Vote {
     private Integer winningVotes;
     private Float winningPartyPercentage;
 
-    @ElementCollection
+    @ElementCollection (fetch = FetchType.EAGER)
     @CollectionTable(name = "vote_partyVotes",
             joinColumns = {@JoinColumn(name = "election"),
                     @JoinColumn(name = "vote_id")})
     @MapKeyColumn(name = "partyName")
     @Column(name = "partyVotes")
+//    @JsonIgnore
     private Map<PartyName, Integer> partyVotes;
 
     public Election getElection() {

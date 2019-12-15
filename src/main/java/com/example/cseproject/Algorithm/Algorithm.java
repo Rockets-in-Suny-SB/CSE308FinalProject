@@ -34,6 +34,7 @@ public class Algorithm {
     private State targetState;
     private Map<Integer, Cluster> phase1Cluster;
     private Queue<Result> phase2Results;
+
     //private Map<Integer,Set<Integer>> changeMap;
     private boolean isFinalIteration;
     private int realTargetSize;
@@ -43,6 +44,11 @@ public class Algorithm {
     public double phase2Time;
     //@Autowired
     //private StateService stateService;
+
+
+    @Autowired
+    private StateService stateService;
+
     @Autowired
     private PrecinctService precinctService;
 
@@ -50,7 +56,7 @@ public class Algorithm {
 
         this.parameter = parameter;
         //State targetState = stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW).get();
-       //this.targetState = targetState;
+        //this.targetState = targetState;
         this.targetState=new State();
 
         try {
@@ -186,6 +192,7 @@ public class Algorithm {
             District district = new District();
             Cluster cluster = entry.getValue();
             district.setPopulation(cluster.getPopulation());
+            district.setMinorityGroupPopulation(cluster.getMinorityGroupPopulation());
             district.setId(cluster.getId());
             Map<Integer, Precinct> precinctMap = new HashMap<>();
             Set<Precinct> precincts = cluster.getPrecincts();
@@ -504,6 +511,105 @@ public class Algorithm {
         }
     }
 
+    public Result gerrymanderingScore() {
+        Set<District> districts = this.targetState.getDistricts();
+        Result result = new Result();
+        for (District district : districts){
+            double efficiencyGap = Measure.EFFICIENCY_GAP.calculateMeasure(district);
+            double gerrymanderDemocrat = Measure.GERRYMANDER_DEMOCRAT.calculateMeasure(district);
+            double gerrymanderRepublican = Measure.GERRYMANDER_REPUBLICAN.calculateMeasure(district);
+            GerrymanerScore gerrymanerScore = new GerrymanerScore();
+            gerrymanerScore.setEfficiencyGap(efficiencyGap);
+            gerrymanerScore.setGerrymanderDemocrat(gerrymanderDemocrat);
+            gerrymanerScore.setGerrymanderRepublican(gerrymanderRepublican);
+            result.addResult(district.getId().toString(), gerrymanerScore);
+        }
+        return result;
+    }
+
+    public Result displayNewPopulationDistribution() {
+        Result result = new Result();
+        if (phase2Results == null) {
+            result.addResult("status", "Have not run phase2");
+            return result;
+        }
+        this.parameter = new Parameter();
+        Set<DemographicGroup> d = new HashSet<>();
+        d.add(DemographicGroup.WHITE);
+        parameter.setMinorityPopulations(d);
+        parameter.setStateName("OHIO");
+        Map<Integer, District> oldDistrictsMap = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            System.out.println("here");
+            System.out.println(parameter.getStateName());
+            oldDistrictsMap = mapper.readValue(ResourceUtils.getFile(
+                    "classpath:"+parameter.getStateName() +"_Districts.json"), new TypeReference<>(){});
+            System.out.println("Read success");
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        for(Map.Entry<Integer, District> entry : targetState.getDistrictMap().entrySet()) {
+            Integer districtId = entry.getKey();
+            District oldDistrict;
+            Map<DemographicGroup,Integer> oldDistrictData;
+            while (true) {
+                oldDistrict = (District) this.getRandomObject(oldDistrictsMap.values());
+                oldDistrictData= oldDistrict.demographicGroups(this.parameter);
+                if (oldDistrictData != null) {
+                    break;
+                }
+            }
+            Integer oldDistrictPopulation = oldDistrict.getPopulation();
+            District newDistrict = entry.getValue();
+            Map<DemographicGroup,Integer> newDistrictData = newDistrict.demographicGroups(this.parameter);
+            Integer newDistrictPopulation = newDistrict.getPopulation();
+            Map<DemographicGroup, DistrictComparison> selectedDemoComparision = new HashMap<>();
+            for (Map.Entry<DemographicGroup, Integer> demEntry : newDistrictData.entrySet()) {
+                DemographicGroup demographicGroup = demEntry.getKey();
+                Integer newPopulation = demEntry.getValue();
+                Integer oldPopulation = oldDistrictData.get(demographicGroup);
+                if (oldPopulation == null)
+                    oldPopulation = 0;
+                Float oldPercentage = (float) oldPopulation / oldDistrictPopulation;
+                Float newPercentage = (float) newPopulation / newDistrictPopulation;
+                Boolean increaseMoreThanTenPercent = false;
+                if ((float) (newPopulation - oldPopulation)/oldDistrictPopulation > 0.1) {
+                    increaseMoreThanTenPercent = true;
+                }
+                DistrictComparison districtComparison = new DistrictComparison(oldPopulation,newPopulation,
+                                                    oldPercentage,newPercentage, increaseMoreThanTenPercent);
+                selectedDemoComparision.put(demographicGroup,districtComparison);
+            }
+            DemoDistrictComparision demoDistrictComparision = new DemoDistrictComparision(districtId, selectedDemoComparision);
+            result.addResult( districtId.toString(), demoDistrictComparision);
+        }
+        return result;
+
+    }
+    public void initDistrict(State state) {
+        Map<Integer, District> districtMap = state.getDistrictMap();
+        System.out.println(state.getName());
+        try {
+            File file = new File(getClass().getClassLoader().getResource(".").getFile() + "/"
+                                                    + state.getName().toString()+"_Districts" + ".json");
+            if (file.createNewFile()) {
+                System.out.println("File is created!");
+            } else {
+                System.out.println("File already exists.");
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(file, districtMap);
+            System.out.println("Write Success.");
+        }catch (Exception e){
+            System.out.println("Write failed.");
+            System.out.println(e);
+        }
+
+    }
+
+
+
     public void initPrecincts(State state) {
         Set<Precinct> precincts = state.getPrecincts();
         Map<Integer, Precinct> precinctMap = new HashMap<>();
@@ -511,7 +617,8 @@ public class Algorithm {
             precinctMap.put(precinct.getId(), precinct);
         }
         try {
-            File file = new File(getClass().getClassLoader().getResource(".").getFile() + "/precincts.json");
+            File file = new File(getClass().getClassLoader().getResource(".").getFile() + "/"
+                                                                    + state.getName().toString() + "_precincts.json");
             if (file.createNewFile()) {
                 System.out.println("File is created!");
             } else {
@@ -590,5 +697,10 @@ public class Algorithm {
         this.phase2Results = phase2Results;
     }
 
+    private Object getRandomObject(Collection from) {
+        Random rnd = new Random();
+        int i = rnd.nextInt(from.size());
+        return from.toArray()[i];
+    }
     //    public void move(Cluster c){}
 }
