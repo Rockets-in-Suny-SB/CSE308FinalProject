@@ -77,7 +77,7 @@ public class Algorithm {
     }
     public Result phase1(Parameter parameter) {
         //Timer start
-        long startTime = System.nanoTime();
+//        long startTime = System.nanoTime();
         this.resultPairs = new ArrayList<>();
         Map<Integer,Cluster> clusters = targetState.getClusters();
         int i=0;
@@ -143,37 +143,37 @@ public class Algorithm {
         if(count>=parameter.getTargetDistricts()){
             r.addResult("isFinal",true);
         }
-        //Timer End
-        long endTime = System.nanoTime();
-        long elapsedTime = endTime-startTime;
-        double seconds = TimeUnit.SECONDS.convert(elapsedTime, TimeUnit.NANOSECONDS);
-        phase1Time=seconds;
-        //Log time
-        Logger logger = Logger.getLogger("MyLog");
-        FileHandler fh;
-
-        try {
-
-            // This block configure the logger with handler and formatter
-            fh = new FileHandler((getClass().getClassLoader().getResource(".").getFile() + "/log/MyLogFile.log").replaceFirst("/",""));
-            logger.addHandler(fh);
-            SimpleFormatter formatter = new SimpleFormatter();
-            fh.setFormatter(formatter);
-
-            // the following statement is used to log any messages
-            logger.info("Phase 1 time:"+seconds);
-
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        //Timer End
+//        long endTime = System.nanoTime();
+//        long elapsedTime = endTime-startTime;
+//        double seconds = TimeUnit.SECONDS.convert(elapsedTime, TimeUnit.NANOSECONDS);
+//        phase1Time=seconds;
+//        //Log time
+//        Logger logger = Logger.getLogger("MyLog");
+//        FileHandler fh;
+//
+//        try {
+//
+//            // This block configure the logger with handler and formatter
+//            fh = new FileHandler((getClass().getClassLoader().getResource(".").getFile() + "/log/MyLogFile.log").replaceFirst("/",""));
+//            logger.addHandler(fh);
+//            SimpleFormatter formatter = new SimpleFormatter();
+//            fh.setFormatter(formatter);
+//
+//            // the following statement is used to log any messages
+//            logger.info("Phase 1 time:"+seconds);
+//
+//        } catch (SecurityException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         return r;
     }
 
     public Queue<Result> phase2(Map<Measure, Double> weights) {
         //Timer start
-        long startTime = System.nanoTime();
+//        long startTime = System.nanoTime();
         if (this.phase1Cluster == null) {
             System.out.println("Run phase 1 first");
             return null;
@@ -249,31 +249,31 @@ public class Algorithm {
         }
 
         this.phase2Results = results;
-        //Timer End
-        long endTime = System.nanoTime();
-        long elapsedTime = endTime-startTime;
-        double seconds = TimeUnit.SECONDS.convert(elapsedTime, TimeUnit.NANOSECONDS);
-        phase2Time=seconds;
-        //Log time
-        Logger logger = Logger.getLogger("MyLog");
-        FileHandler fh;
-
-        try {
-
-            // This block configure the logger with handler and formatter
-            fh = new FileHandler((getClass().getClassLoader().getResource(".").getFile() + "/log/MyLogFile.log").replaceFirst("/",""));
-            logger.addHandler(fh);
-            SimpleFormatter formatter = new SimpleFormatter();
-            fh.setFormatter(formatter);
-
-            // the following statement is used to log any messages
-            logger.info("Phase 2 time:"+seconds);
-
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        //Timer End
+//        long endTime = System.nanoTime();
+//        long elapsedTime = endTime-startTime;
+//        double seconds = TimeUnit.SECONDS.convert(elapsedTime, TimeUnit.NANOSECONDS);
+//        phase2Time=seconds;
+//        //Log time
+//        Logger logger = Logger.getLogger("MyLog");
+//        FileHandler fh;
+//
+//        try {
+//
+//            // This block configure the logger with handler and formatter
+//            fh = new FileHandler((getClass().getClassLoader().getResource(".").getFile() + "/log/MyLogFile.log").replaceFirst("/",""));
+//            logger.addHandler(fh);
+//            SimpleFormatter formatter = new SimpleFormatter();
+//            fh.setFormatter(formatter);
+//
+//            // the following statement is used to log any messages
+//            logger.info("Phase 2 time:"+seconds);
+//
+//        } catch (SecurityException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         return results;
     }
     //Must call phase 2 before calling this method;
