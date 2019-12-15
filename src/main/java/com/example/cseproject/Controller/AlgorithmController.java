@@ -60,6 +60,10 @@ public class AlgorithmController {
             System.out.println(results.size());
             if (!results.isEmpty()){
                 Result result = results.remove();
+                Boolean isFinal = false;
+                if (results.isEmpty())
+                    isFinal = true;
+                result.addResult("isFinal", isFinal);
                 return result;
             }
         }

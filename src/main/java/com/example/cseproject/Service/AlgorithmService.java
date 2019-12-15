@@ -86,9 +86,13 @@ public class AlgorithmService {
 
     public Result getOneMove() {
         if (algorithm.getPhase2Results().isEmpty()) {
-            return null;
+            Result result = new Result();
+            result.addResult("isFinal",true);
+            return result;
         }
-        return algorithm.getPhase2Results().remove();
+        Result result = algorithm.getPhase2Results().remove();
+        result.addResult("isFinal", false);
+        return result;
     }
 
 
