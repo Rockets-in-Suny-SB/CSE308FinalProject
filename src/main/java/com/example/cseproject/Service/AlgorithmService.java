@@ -67,31 +67,31 @@ public class AlgorithmService {
         Set<EligibleBloc> eligibleBlocs = targetState.findEligibleBlocs();
         Result result = new Result();
         result.addResult("Eligible Blocs", eligibleBlocs);
-        //Timer End
-        long endTime = System.nanoTime();
-        long elapsedTime = endTime-startTime;
-        double seconds = TimeUnit.SECONDS.convert(elapsedTime, TimeUnit.NANOSECONDS);
-        phase0Time=seconds;
-        //Log time
-        Logger logger = Logger.getLogger("MyLog");
-        FileHandler fh;
-
-        try {
-
-            // This block configure the logger with handler and formatter
-            fh = new FileHandler((getClass().getClassLoader().getResource(".").getFile() + "/log/MyLogFile.log").replaceFirst("/",""));
-            logger.addHandler(fh);
-            SimpleFormatter formatter = new SimpleFormatter();
-            fh.setFormatter(formatter);
-
-            // the following statement is used to log any messages
-            logger.info("Phase 0 time:"+seconds);
-
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        //Timer End
+//        long endTime = System.nanoTime();
+//        long elapsedTime = endTime-startTime;
+//        double seconds = TimeUnit.SECONDS.convert(elapsedTime, TimeUnit.NANOSECONDS);
+//        phase0Time=seconds;
+//        //Log time
+//        Logger logger = Logger.getLogger("MyLog");
+//        FileHandler fh;
+//
+//        try {
+//
+//            // This block configure the logger with handler and formatter
+//            fh = new FileHandler((getClass().getClassLoader().getResource(".").getFile() + "/log/MyLogFile.log").replaceFirst("/",""));
+//            logger.addHandler(fh);
+//            SimpleFormatter formatter = new SimpleFormatter();
+//            fh.setFormatter(formatter);
+//
+//            // the following statement is used to log any messages
+//            logger.info("Phase 0 time:"+seconds);
+//
+//        } catch (SecurityException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
 
         return result;
