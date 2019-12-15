@@ -11,6 +11,15 @@ public class DistrictData {
     private Integer population;
 
     private Map<PartyName, Integer> partyVotes;
+
+    public Map<DemographicGroup, Integer> getMinorityGroupPopulation() {
+        return minorityGroupPopulation;
+    }
+
+    public void setMinorityGroupPopulation(Map<DemographicGroup, Integer> minorityGroupPopulation) {
+        this.minorityGroupPopulation = minorityGroupPopulation;
+    }
+
     private Map<DemographicGroup, Integer> minorityGroupPopulation;
 
     public DistrictData(District district) {

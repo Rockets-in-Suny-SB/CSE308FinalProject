@@ -15,17 +15,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 @Service
 public class AlgorithmService {
     @Autowired
     StateService stateService;
     Algorithm algorithm;
-
+    double phase0Time;
     public AlgorithmService() {
         algorithm = new Algorithm();
         algorithm.setParameter(new Parameter());
@@ -33,6 +38,8 @@ public class AlgorithmService {
 
 
     public Result runPhase0(String stateName, String election, Float populationThreshold, Float blocThreshold) {
+        //Timer start
+        long startTime = System.nanoTime();
         State targetState = stateService.getState(StateName.valueOf(stateName.toUpperCase()),
                 State_Status.OLD).get();
         targetState.setElection(Election.valueOf(election.toUpperCase()));
@@ -53,6 +60,31 @@ public class AlgorithmService {
         Set<EligibleBloc> eligibleBlocs = targetState.findEligibleBlocs();
         Result result = new Result();
         result.addResult("Eligible Blocs", eligibleBlocs);
+        //Timer End
+        long endTime = System.nanoTime();
+        long elapsedTime = endTime-startTime;
+        double seconds = TimeUnit.SECONDS.convert(elapsedTime, TimeUnit.NANOSECONDS);
+        phase0Time=seconds;
+        //Log time
+        Logger logger = Logger.getLogger("MyLog");
+        FileHandler fh;
+
+        try {
+
+            // This block configure the logger with handler and formatter
+            fh = new FileHandler((getClass().getClassLoader().getResource(".").getFile() + "/log/MyLogFile.log").replaceFirst("/",""));
+            logger.addHandler(fh);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fh.setFormatter(formatter);
+
+            // the following statement is used to log any messages
+            logger.info("Phase 0 time:"+seconds);
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return result;
     }
 
@@ -119,6 +151,14 @@ public class AlgorithmService {
         result.addResult("Minority Population Distribution Table", minorityPopulationResult);
         return result;
     }
-
-
+    public Result DisplayMajorityMinorityResult() {
+        return algorithm.calculateMajorityMinorityDistrictData(stateService);
+    }
+    public Result getPhaseTime(){
+        Result r=new Result();
+        r.addResult("p0Time",phase0Time);
+        r.addResult("p1Time",algorithm.phase1Time);
+        r.addResult("p2Time",algorithm.phase2Time);
+        return r;
+    }
 }

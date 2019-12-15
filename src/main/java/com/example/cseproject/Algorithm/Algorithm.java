@@ -19,8 +19,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 @Service
 public class Algorithm {
@@ -33,11 +37,17 @@ public class Algorithm {
     //private Map<Integer,Set<Integer>> changeMap;
     private boolean isFinalIteration;
     private int realTargetSize;
+    private Result majorityMinorityResult;
+    private Result r;
+    public  double phase1Time;
+    public double phase2Time;
     //@Autowired
     //private StateService stateService;
     @Autowired
     private PrecinctService precinctService;
+
     public void setPhase1(Parameter parameter, StateService stateService){
+
         this.parameter = parameter;
         //State targetState = stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()), State_Status.NEW).get();
        //this.targetState = targetState;
@@ -54,27 +64,30 @@ public class Algorithm {
         }
         isFinalIteration=false;
         realTargetSize=(int)((targetState.getClusters().size()/parameter.getTargetDistricts())*0.75);
+        r=new Result();
+        r.addResult("isFinal",false);
         //initializeClusters(this.targetState);
 
     }
     public Result phase1(Parameter parameter) {
+        //Timer start
+        long startTime = System.nanoTime();
         this.resultPairs = new ArrayList<>();
         Map<Integer,Cluster> clusters = targetState.getClusters();
         int i=0;
         //boolean isFinalIteration = false;
-        if (parameter.getUpdateDiscrete()&&!isFinalIteration) {
+        if (parameter.getUpdateDiscrete()&&!isFinalIteration&&!((Boolean) r.getResult().get("isFinal"))) {
             while(i<50) {
                 isFinalIteration = combineIteration(clusters);
                 i++;
             }
-        } else {
+        } else if (!((Boolean) r.getResult().get("isFinal"))){
             while (clusters.size() > parameter.getTargetDistricts() && !isFinalIteration) {
                 isFinalIteration = combineIteration(clusters);
             }
         }
-        Result r = new Result();
-        r.addResult("isFinal",false);
-        if (isFinalIteration&& !parameter.getUpdateDiscrete()) {
+
+        if (isFinalIteration&& !parameter.getUpdateDiscrete()&&!((Boolean) r.getResult().get("isFinal"))) {
             if(clusters.size() > parameter.getTargetDistricts()){
                 if(!finalIterationSet){
                     setFinalCombineIteration(clusters);
@@ -85,7 +98,7 @@ public class Algorithm {
                 r.addResult("isFinal", true);
             }
 
-        }else if(isFinalIteration ){
+        }else if(isFinalIteration&&!((Boolean) r.getResult().get("isFinal")) ){
             if(clusters.size() > parameter.getTargetDistricts()){
                 if(!finalIterationSet){
                     setFinalCombineIteration(clusters);
@@ -124,11 +137,37 @@ public class Algorithm {
         if(count>=parameter.getTargetDistricts()){
             r.addResult("isFinal",true);
         }
-        //r.addResult("changeMap",changeMap);
+        //Timer End
+        long endTime = System.nanoTime();
+        long elapsedTime = endTime-startTime;
+        double seconds = TimeUnit.SECONDS.convert(elapsedTime, TimeUnit.NANOSECONDS);
+        phase1Time=seconds;
+        //Log time
+        Logger logger = Logger.getLogger("MyLog");
+        FileHandler fh;
+
+        try {
+
+            // This block configure the logger with handler and formatter
+            fh = new FileHandler((getClass().getClassLoader().getResource(".").getFile() + "/log/MyLogFile.log").replaceFirst("/",""));
+            logger.addHandler(fh);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fh.setFormatter(formatter);
+
+            // the following statement is used to log any messages
+            logger.info("Phase 1 time:"+seconds);
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return r;
     }
 
     public Queue<Result> phase2(Map<Measure, Double> weights) {
+        //Timer start
+        long startTime = System.nanoTime();
         if (this.phase1Cluster == null) {
             System.out.println("Run phase 1 first");
             return null;
@@ -201,10 +240,78 @@ public class Algorithm {
             result.addResult("districts", districtPrecinctMap);
             results.add(result);
         }
+
         this.phase2Results = results;
+        //Timer End
+        long endTime = System.nanoTime();
+        long elapsedTime = endTime-startTime;
+        double seconds = TimeUnit.SECONDS.convert(elapsedTime, TimeUnit.NANOSECONDS);
+        phase2Time=seconds;
+        //Log time
+        Logger logger = Logger.getLogger("MyLog");
+        FileHandler fh;
+
+        try {
+
+            // This block configure the logger with handler and formatter
+            fh = new FileHandler((getClass().getClassLoader().getResource(".").getFile() + "/log/MyLogFile.log").replaceFirst("/",""));
+            logger.addHandler(fh);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fh.setFormatter(formatter);
+
+            // the following statement is used to log any messages
+            logger.info("Phase 2 time:"+seconds);
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return results;
     }
-
+    //Must call phase 2 before calling this method;
+    public Result calculateMajorityMinorityDistrictData(StateService stateService){
+        Set<District> newDistrict=targetState.getDistricts();
+        Set<District> oldDistrict=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()),State_Status.OLD).get().getDistricts();
+        ArrayList<DistrictData> oldDistrictData=new ArrayList<>();
+        ArrayList<DistrictData> newDistrictData=new ArrayList<>();
+        for(District d:oldDistrict){
+            oldDistrictData.add(new DistrictData(d));
+        }
+        for(District d:newDistrict){
+            newDistrictData.add(new DistrictData(d));
+        }
+        oldDistrictData.sort(((o1, o2) -> {
+            Random random=new Random();
+            double o1mmp=random.nextDouble(),o2mmp=random.nextDouble();
+            if(o1.getMinorityGroupPopulation()!=null)
+                o1mmp=o1.getMinorityGroupPopulation().get(parameter.getTargetMinorityPopulation())*1.0/o1.getPopulation();
+            if(o2.getMinorityGroupPopulation()!=null)
+                o2mmp=o2.getMinorityGroupPopulation().get(parameter.getTargetMinorityPopulation())*1.0/o2.getPopulation();
+            if(o1mmp>o2mmp){
+                return 1;
+            }else {
+                return -1;
+            }
+        }));
+        newDistrictData.sort(((o1, o2) -> {
+            Random random=new Random();
+            double o1mmp=random.nextDouble(),o2mmp=random.nextDouble();
+            if(o1.getMinorityGroupPopulation()!=null)
+                o1mmp=o1.getMinorityGroupPopulation().get(parameter.getTargetMinorityPopulation())*1.0/o1.getPopulation();
+            if(o2.getMinorityGroupPopulation()!=null)
+                o2mmp=o2.getMinorityGroupPopulation().get(parameter.getTargetMinorityPopulation())*1.0/o2.getPopulation();
+            if(o1mmp>o2mmp){
+                return 1;
+            }else {
+                return -1;
+            }
+        }));
+        Result r=new Result();
+        r.addResult("oldDistrictData",oldDistrictData);
+        r.addResult("newDistrictData",newDistrictData);
+        return r;
+    }
 
 
     public boolean combineIteration(Map<Integer,Cluster> clusters) {

@@ -70,8 +70,15 @@ public class AlgorithmController {
         Result minorityPopulationResult = algorithmService.getMinorityPopulation(stateName,state_status);
         return minorityPopulationResult;
     }
-
-
+    //Must call phase 2 before calling this method;
+    @RequestMapping(value = "/DisplayMajorityMinorityResult", method = RequestMethod.GET)
+    public @ResponseBody Result DisplayMajorityMinorityResult() {
+        return algorithmService.DisplayMajorityMinorityResult();
+    }
+    @RequestMapping(value = "/GetPhaseTime", method = RequestMethod.GET)
+    public @ResponseBody Result getPhaseTime(){
+        return algorithmService.getPhaseTime();
+    }
 
 }
 
