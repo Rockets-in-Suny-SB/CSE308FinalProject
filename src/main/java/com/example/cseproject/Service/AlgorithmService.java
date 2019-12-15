@@ -35,33 +35,34 @@ public class AlgorithmService {
 
     public Result runPhase0(String stateName, String election, Float populationThreshold, Float blocThreshold) {
         System.out.println("before state");
-//        State targetState = stateService.getState(StateName.valueOf(stateName.toUpperCase()),
-//                State_Status.OLD).get();
+        State targetState = stateService.getState(StateName.valueOf(stateName.toUpperCase()),
+                State_Status.OLD).get();
 
-//        algorithm.initDistrict(targetState);
-//        algorithm.initPrecincts(targetState);
-        State targetState = new State();
-        System.out.println("before districts");
-        targetState.setElection(Election.valueOf(election.toUpperCase()));
-        targetState.setName(StateName.valueOf(stateName.toUpperCase()));
-        Threshold threshold = new Threshold();
-        threshold.setPopulationThreshold(populationThreshold);
-        threshold.setBlocThreshold(blocThreshold);
-        targetState.setThreshold(threshold);
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            Map<Integer, Precinct> precincts = mapper.readValue(ResourceUtils.getFile("classpath:"
-                                      + targetState.getName().toString()+"_precincts.json"), new TypeReference<>(){});
-            System.out.println(precincts.values().size());
-            targetState.setPrecinctsJson(precincts);
-            System.out.println("Read success");
-        }catch (Exception e){
-            System.out.println(e);
-        }
-        Set<EligibleBloc> eligibleBlocs = targetState.findEligibleBlocs();
-        Result result = new Result();
-        result.addResult("Eligible Blocs", eligibleBlocs);
-        return result;
+        algorithm.initDistrict(targetState);
+        algorithm.initPrecincts(targetState);
+//        State targetState = new State();
+//        System.out.println("before districts");
+//        targetState.setElection(Election.valueOf(election.toUpperCase()));
+//        targetState.setName(StateName.valueOf(stateName.toUpperCase()));
+//        Threshold threshold = new Threshold();
+//        threshold.setPopulationThreshold(populationThreshold);
+//        threshold.setBlocThreshold(blocThreshold);
+//        targetState.setThreshold(threshold);
+//        try {
+//            ObjectMapper mapper = new ObjectMapper();
+//            Map<Integer, Precinct> precincts = mapper.readValue(ResourceUtils.getFile("classpath:"
+//                                      + targetState.getName().toString()+"_precincts.json"), new TypeReference<>(){});
+//            System.out.println(precincts.values().size());
+//            targetState.setPrecinctsJson(precincts);
+//            System.out.println("Read success");
+//        }catch (Exception e){
+//            System.out.println(e);
+//        }
+//        Set<EligibleBloc> eligibleBlocs = targetState.findEligibleBlocs();
+//        Result result = new Result();
+//        result.addResult("Eligible Blocs", eligibleBlocs);
+//        return result;
+        return  null;
     }
 
     public Result runPhase1() {
