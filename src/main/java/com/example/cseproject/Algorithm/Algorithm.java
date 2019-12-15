@@ -244,7 +244,7 @@ public class Algorithm {
                 }
                 districtPrecinctMap.put(district.getId(),precinctIDs);
             }
-            result.addResult("districts", districtPrecinctMap);
+            result.addResult("clusters", districtPrecinctMap);
             results.add(result);
         }
 
