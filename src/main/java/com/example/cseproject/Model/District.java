@@ -1,9 +1,11 @@
 package com.example.cseproject.Model;
 
+import com.example.cseproject.DataClasses.Parameter;
 import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.PartyName;
 import com.example.cseproject.interfaces.DistrictInterface;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.locationtech.jts.algorithm.MinimumBoundingCircle;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -11,10 +13,7 @@ import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class District
@@ -24,7 +23,7 @@ public class District
     @GeneratedValue
     @Column(name = "district_id")
     private Integer id;
-    @Transient
+    @Transient @JsonIgnore
     private String color;
     private String name;
     private Integer population;
@@ -37,44 +36,42 @@ public class District
             joinColumns = @JoinColumn(name = "district_id"))
     private Map<DemographicGroup, Integer> minorityGroupPopulation;
     private String geoJson;
-    @Transient
+    @Transient @JsonIgnore
     private Map<Integer, Precinct> precincts;
-    @Transient
+    @Transient @JsonIgnore
     private Election election;
 
-
-
-    @Transient
+    @Transient @JsonIgnore
     private static final int MAXX = 0;
-    @Transient
+    @Transient @JsonIgnore
     private static final int MAXY = 1;
-    @Transient
+    @Transient @JsonIgnore
     private static final int MINX = 2;
-    @Transient
+    @Transient @JsonIgnore
     private static final int MINY = 3;
-    @Transient
+    @Transient @JsonIgnore
     private int gopVote;
-    @Transient
+    @Transient @JsonIgnore
     private int demVote;
-    @Transient
+    @Transient @JsonIgnore
     private int internalEdges = 0;
-    @Transient
+    @Transient @JsonIgnore
     private int externalEdges = 0;
-    @Transient
+    @Transient @JsonIgnore
     private Set<Precinct> borderPrecincts;
-    @Transient
+    @Transient @JsonIgnore
     private MultiPolygon multiPolygon;
-    @Transient
+    @Transient @JsonIgnore
     private Geometry boundingCircle;
-    @Transient
+    @Transient @JsonIgnore
     private Geometry convexHull;
-    @Transient
+    @Transient @JsonIgnore
     private boolean boundingCircleUpdated=false;
-    @Transient
+    @Transient @JsonIgnore
     private boolean multiPolygonUpdated=false;
-    @Transient
+    @Transient @JsonIgnore
     private boolean convexHullUpdated=false;
-    @Transient
+    @Transient @JsonIgnore
     private State state;
     /*
     private String districtAttributeJSON;
@@ -98,6 +95,7 @@ public class District
     }
 
     @Override
+    @JsonIgnore
     public Set<Precinct> getPrecincts() {
         return new HashSet<>(precincts.values());
     }
@@ -140,6 +138,24 @@ public class District
         return false;
     }
 
+    public Map<DemographicGroup, Integer> demographicGroups(Parameter parameter) {
+        if (this.minorityGroupPopulation == null)
+            return null;
+        Set<DemographicGroup> demographicGroups = parameter.getMinorityPopulations();
+        Map<DemographicGroup,Integer> resultMap = new HashMap<>();
+        for (DemographicGroup demographicGroup : demographicGroups) {
+            Integer demoPopulation = this.minorityGroupPopulation.get(demographicGroup);
+            if (demoPopulation == null) {
+                resultMap.put(demographicGroup, 0);
+            }
+            else {
+                resultMap.put(demographicGroup, demoPopulation);
+            }
+        }
+        return resultMap;
+    }
+
+
     @Override
     public Set<Precinct> getBorderPrecincts() {
         return this.borderPrecincts;
@@ -175,6 +191,7 @@ public class District
         this.partyVotes = partyVotes;
     }
 
+    @JsonIgnore
     public void setPrecincts(Map<Integer, Precinct> precincts) {
         this.precincts = precincts;
     }
@@ -240,12 +257,13 @@ public class District
         return mp;
     }
 
+    @JsonIgnore
     public MultiPolygon getMulti() {
         if (this.multiPolygonUpdated && this.multiPolygon != null)
             return this.multiPolygon;
         return computeMulti();
     }
-
+    @JsonIgnore
     public Geometry getConvexHull() {
         if (convexHullUpdated && convexHull !=null)
             return convexHull;
@@ -253,7 +271,7 @@ public class District
         this.convexHullUpdated = true;
         return convexHull;
     }
-
+    @JsonIgnore
     public Geometry getBoundingCircle() {
         if (boundingCircleUpdated && boundingCircle !=null)
             return boundingCircle;
@@ -269,11 +287,11 @@ public class District
     public void setState(State state) {
         this.state = state;
     }
-
+    @JsonIgnore
     public int getGOPVote() {
         return this.gopVote;
     }
-
+    @JsonIgnore
     public int getDEMVote() {
         return this.demVote;
     }
@@ -284,5 +302,12 @@ public class District
 
     public int getExternalEdges() {
         return this.externalEdges;
+    }
+
+    @Override
+    public String toString() {
+        return "District{" +
+                "minorityGroupPopulation=" + minorityGroupPopulation +
+                '}';
     }
 }

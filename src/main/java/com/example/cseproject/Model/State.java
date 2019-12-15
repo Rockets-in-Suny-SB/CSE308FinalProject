@@ -158,6 +158,9 @@ public class State
         float minimumPercentage = parameter.getMinimumPercentage();
         float maximumPercentage = parameter.getMaximumPercentage();
         Set<DemographicGroup> demographicGroups = parameter.getMinorityPopulations();
+        if (demographicGroups == null) {
+            demographicGroups = new HashSet<>();
+        }
         System.out.println(demographicGroups);
         demographicGroups.add(DemographicGroup.WHITE);
         Set<MinorityPopulation> minorityPopulations = new HashSet<>();
@@ -209,7 +212,9 @@ public class State
     public Map<Integer, Precinct> getPrecinctMap () {
         return this.precincts;
     }
-
+    public Map<Integer, District> getDistrictMap () {
+        return this.districts;
+    }
 }
 
 

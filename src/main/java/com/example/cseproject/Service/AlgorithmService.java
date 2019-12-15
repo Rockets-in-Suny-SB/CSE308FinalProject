@@ -6,6 +6,7 @@ import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Enum.Election;
 import com.example.cseproject.Enum.StateName;
 import com.example.cseproject.Enum.State_Status;
+import com.example.cseproject.Model.District;
 import com.example.cseproject.Model.Precinct;
 import com.example.cseproject.Model.State;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -33,23 +34,30 @@ public class AlgorithmService {
 
 
     public Result runPhase0(String stateName, String election, Float populationThreshold, Float blocThreshold) {
-        State targetState = stateService.getState(StateName.valueOf(stateName.toUpperCase()),
-                State_Status.OLD).get();
+        System.out.println("before state");
+//        State targetState = stateService.getState(StateName.valueOf(stateName.toUpperCase()),
+//                State_Status.OLD).get();
+
+//        algorithm.initDistrict(targetState);
+//        algorithm.initPrecincts(targetState);
+        State targetState = new State();
+        System.out.println("before districts");
         targetState.setElection(Election.valueOf(election.toUpperCase()));
+        targetState.setName(StateName.valueOf(stateName.toUpperCase()));
         Threshold threshold = new Threshold();
         threshold.setPopulationThreshold(populationThreshold);
         threshold.setBlocThreshold(blocThreshold);
         targetState.setThreshold(threshold);
         try {
             ObjectMapper mapper = new ObjectMapper();
-            Map<Integer, Precinct> precincts = mapper.readValue(ResourceUtils.getFile("classpath:precincts.json"), new TypeReference<>(){});
+            Map<Integer, Precinct> precincts = mapper.readValue(ResourceUtils.getFile("classpath:"
+                                      + targetState.getName().toString()+"_precincts.json"), new TypeReference<>(){});
             System.out.println(precincts.values().size());
             targetState.setPrecinctsJson(precincts);
             System.out.println("Read success");
         }catch (Exception e){
             System.out.println(e);
         }
-//        algorithm.initPrecincts(targetState);
         Set<EligibleBloc> eligibleBlocs = targetState.findEligibleBlocs();
         Result result = new Result();
         result.addResult("Eligible Blocs", eligibleBlocs);
@@ -120,5 +128,12 @@ public class AlgorithmService {
         return result;
     }
 
+    public Result gerrymanderingScore() {
+        return algorithm.gerrymanderingScore();
+    }
+
+    public Result displayNewPopulationDistribution() {
+        return algorithm.displayNewPopulationDistribution();
+    }
 
 }

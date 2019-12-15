@@ -14,13 +14,14 @@ import org.springframework.data.repository.cdi.Eager;
 import org.springframework.data.util.Pair;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 @Entity
 public class Precinct
-        implements PrecinctInterface {
+        implements PrecinctInterface, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "precinct_id")

@@ -21,6 +21,16 @@ public class AlgorithmController {
     AlgorithmService algorithmService;
     @Autowired
     StateService stateService;
+
+
+    @RequestMapping(value = "/preprocess", method = RequestMethod.GET)
+    public @ResponseBody Result preprocess () {
+        //pre-load data here
+        Result result = new Result();
+        return result;
+    }
+
+
     @RequestMapping(value = "/phase0", method = RequestMethod.POST)
     public @ResponseBody Result runPhase0(@RequestParam String stateName,
                                           @RequestParam String election,
@@ -69,6 +79,16 @@ public class AlgorithmController {
         State_Status state_status = State_Status.valueOf(populationDistribution.getStatus().toUpperCase());
         Result minorityPopulationResult = algorithmService.getMinorityPopulation(stateName,state_status);
         return minorityPopulationResult;
+    }
+
+    @RequestMapping(value = "/gerrymandering", method = RequestMethod.POST)
+    public @ResponseBody Result gerrymandering(){
+        return algorithmService.gerrymanderingScore();
+    }
+
+    @RequestMapping(value = "/newPopulationDistribution", method = RequestMethod.POST)
+    public @ResponseBody Result displayNewPopulationDistribution() {
+        return algorithmService.displayNewPopulationDistribution();
     }
 
 

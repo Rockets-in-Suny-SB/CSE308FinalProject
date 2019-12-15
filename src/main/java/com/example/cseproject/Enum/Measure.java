@@ -230,5 +230,6 @@ public enum Measure implements MeasureFunction<Precinct, District> {
 			return 1.0 - ((inefficient_V * 1.0) / tv);
 		}
 	};
+
 	public abstract double calculateMeasure(District district);
 }
