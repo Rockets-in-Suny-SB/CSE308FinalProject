@@ -124,8 +124,14 @@ public class AlgorithmService {
             result.addResult("isFinal",true);
             return result;
         }
+
         Result result = algorithm.getPhase2Results().remove();
-        result.addResult("isFinal", false);
+        if (algorithm.getPhase2Results().isEmpty()) {
+            result.addResult("isFinal", true);
+        }
+        else {
+            result.addResult("isFinal", false);
+        }
         return result;
     }
 
