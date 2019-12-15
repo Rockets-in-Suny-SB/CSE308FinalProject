@@ -2,12 +2,14 @@ package com.example.cseproject.DataClasses;
 
 import com.example.cseproject.Enum.DemographicGroup;
 import com.example.cseproject.Enum.JoinFactor;
+import com.example.cseproject.Model.County;
 import com.example.cseproject.Model.Edge;
 import com.example.cseproject.Model.Precinct;
 import com.example.cseproject.Model.Vote;
 import org.springframework.data.util.Pair;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Cluster {
     public Integer getId() {
@@ -180,10 +182,45 @@ public class Cluster {
 
 
     public double calculateMajorityMinorityScore(Cluster c, DemographicGroup d) {
+        //MM Score
         int totalPopulation=c.getPopulation() + this.getPopulation();
         int totalMinorityPopulation=(c.getMinorityGroupPopulation().get(d) + this.getMinorityGroupPopulation().get(d));
-        double score = totalPopulation==0?0: totalMinorityPopulation / (totalPopulation*1.0);
-        return score;
+        double score= totalPopulation==0?0: totalMinorityPopulation / (totalPopulation*1.0);
+        /*double mmScore = totalPopulation==0?0: totalMinorityPopulation / (totalPopulation*1.0);
+        //County Score
+        Map<Integer,Integer> countyMap=new HashMap<>();
+        List<County> thisCountyList=this.getPrecincts().stream().map(precinct -> precinct.getCountyId()).collect(Collectors.toList());
+        List<County> mergeCountyList=c.getPrecincts().stream().map(precinct -> precinct.getCountyId()).collect(Collectors.toList());
+
+        for(County county: thisCountyList){
+            if(countyMap.containsKey(county.getId())){
+                countyMap.put(county.getId(),countyMap.get(county.getId())+1);
+            }else{
+                countyMap.put(county.getId(),1);
+            }
+        }
+        for(County county: mergeCountyList){
+            if(countyMap.containsKey(county.getId())){
+                countyMap.put(county.getId(),countyMap.get(county.getId())+1);
+            }else{
+                countyMap.put(county.getId(),1);
+            }
+        }
+        int largestCounty=0;
+        for(Map.Entry<Integer,Integer> e :countyMap.entrySet()){
+            int eValue=e.getValue();
+            if(eValue>largestCounty){
+                largestCounty=eValue;
+            }
+        }
+        double countyScore=largestCounty*1.0/(thisCountyList.size()+mergeCountyList.size());
+        //Political Fairness
+        int demVote=getDemVotes();
+        int gopVote=getGopVotes();
+        double ppScore=Math.abs(demVote-gopVote)*1.0/(demVote+gopVote);*/
+        //Compactness
+        //Equal pop
+       return score;
     }
 
     public Map<DemographicGroup, Integer> getMinorityGroupPopulation() {
