@@ -102,7 +102,7 @@ public class Algorithm {
     }
     public Result phase1(Parameter parameter) {
         //Timer start
-        long startTime = System.nanoTime();
+//        long startTime = System.nanoTime();
         this.resultPairs = new ArrayList<>();
         Map<Integer,Cluster> clusters = targetState.getClusters();
         int i=0;
@@ -167,8 +167,10 @@ public class Algorithm {
         }
         if(count>=parameter.getTargetDistricts()){
             r.addResult("isFinal",true);
+
         }*/
-        //Timer End
+//        //Timer End
+
 //        long endTime = System.nanoTime();
 //        long elapsedTime = endTime-startTime;
 //        double seconds = TimeUnit.SECONDS.convert(elapsedTime, TimeUnit.NANOSECONDS);
@@ -198,7 +200,7 @@ public class Algorithm {
 
     public Queue<Result> phase2(Map<Measure, Double> weights) {
         //Timer start
-        long startTime = System.nanoTime();
+//        long startTime = System.nanoTime();
         if (this.phase1Cluster == null) {
             System.out.println("Run phase 1 first");
             return null;
@@ -269,7 +271,7 @@ public class Algorithm {
                 }
                 districtPrecinctMap.put(district.getId(),precinctIDs);
             }
-            result.addResult("districts", districtPrecinctMap);
+            result.addResult("clusters", districtPrecinctMap);
             results.add(result);
         }
 

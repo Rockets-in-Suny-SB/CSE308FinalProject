@@ -39,7 +39,7 @@ public class AlgorithmService {
 
 
     public Result runPhase0(String stateName, String election, Float populationThreshold, Float blocThreshold) {
-        long startTime = System.nanoTime();
+//        long startTime = System.nanoTime();
 //        System.out.println("before state");
 //        State targetState = stateService.getState(StateName.valueOf(stateName.toUpperCase()),
 //                State_Status.OLD).get();
