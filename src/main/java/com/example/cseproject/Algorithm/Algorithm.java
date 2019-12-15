@@ -25,6 +25,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import java.util.stream.Collectors;
+
+import static com.example.cseproject.Enum.StateName.ILLINOIS;
 
 @Service
 public class Algorithm {
@@ -42,6 +45,9 @@ public class Algorithm {
     private Result r;
     public  double phase1Time;
     public double phase2Time;
+    private final int OHTotalPopulation=11306259;
+    private final int ORTotalPopulation=3837339;
+    private final int ILtotalPopulation=12768497;
     //@Autowired
     //private StateService stateService;
 
@@ -61,13 +67,32 @@ public class Algorithm {
 
         try {
             ObjectMapper mapper = new ObjectMapper();
-            Map<Integer,Cluster> clusters = mapper.readValue(ResourceUtils.getFile("classpath:cluster5.json"), new TypeReference<>(){});
+            Map<Integer,Cluster> clusters;
+            switch (StateName.valueOf(parameter.getStateName().toUpperCase())){
+                case ILLINOIS:
+                    clusters= mapper.readValue(ResourceUtils.getFile("classpath:ILLINOIS_clusters.json"), new TypeReference<>(){});
+                    this.targetState.setPopulation(ILtotalPopulation);
+                    break;
+                case OHIO:
+                    clusters= mapper.readValue(ResourceUtils.getFile("classpath:OHIO_clusters.json"), new TypeReference<>(){});
+                    this.targetState.setPopulation(OHTotalPopulation);
+                    break;
+                case OREGON:
+                    clusters= mapper.readValue(ResourceUtils.getFile("classpath:OREGON_clusters.json"), new TypeReference<>(){});
+                    this.targetState.setPopulation(ORTotalPopulation);
+                    break;
+                default:
+                    System.out.println("State Not Specified!");
+                    clusters= mapper.readValue(ResourceUtils.getFile("classpath:OREGON_clusters.json"), new TypeReference<>(){});
+            }
             this.targetState.setClusters(clusters);
             //System.out.println(clusters);
             System.out.println("Read success");
         }catch (Exception e){
             System.out.println(e);
         }
+
+        //Other attr.
         isFinalIteration=false;
         realTargetSize=(int)((targetState.getClusters().size()/parameter.getTargetDistricts())*0.75);
         r=new Result();
@@ -134,7 +159,7 @@ public class Algorithm {
 
         this.phase1Cluster = clusters;
         r.addResult("clusters", resultSet);
-        int count=0;
+        /*int count=0;
         for(Cluster c:clusters.values()){
             if(c.getPrecincts().size()>realTargetSize){
                 count++;
@@ -142,7 +167,7 @@ public class Algorithm {
         }
         if(count>=parameter.getTargetDistricts()){
             r.addResult("isFinal",true);
-        }
+        }*/
         //Timer End
         long endTime = System.nanoTime();
         long elapsedTime = endTime-startTime;
@@ -279,7 +304,18 @@ public class Algorithm {
     //Must call phase 2 before calling this method;
     public Result calculateMajorityMinorityDistrictData(StateService stateService){
         Set<District> newDistrict=targetState.getDistricts();
-        Set<District> oldDistrict=stateService.getState(StateName.valueOf(parameter.getStateName().toUpperCase()),State_Status.OLD).get().getDistricts();
+        Map<Integer, District> oldDistrictsMap = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            System.out.println("here");
+            System.out.println(parameter.getStateName());
+            oldDistrictsMap = mapper.readValue(ResourceUtils.getFile(
+                    "classpath:"+parameter.getStateName() +"_Districts.json"), new TypeReference<>(){});
+            System.out.println("Read success");
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        Set<District> oldDistrict=oldDistrictsMap.values().stream().collect(Collectors.toSet());
         ArrayList<DistrictData> oldDistrictData=new ArrayList<>();
         ArrayList<DistrictData> newDistrictData=new ArrayList<>();
         for(District d:oldDistrict){
@@ -295,7 +331,7 @@ public class Algorithm {
                 o1mmp=o1.getMinorityGroupPopulation().get(parameter.getTargetMinorityPopulation())*1.0/o1.getPopulation();
             if(o2.getMinorityGroupPopulation()!=null)
                 o2mmp=o2.getMinorityGroupPopulation().get(parameter.getTargetMinorityPopulation())*1.0/o2.getPopulation();
-            if(o1mmp>o2mmp){
+            if(o1mmp<o2mmp){
                 return 1;
             }else {
                 return -1;
@@ -304,11 +340,11 @@ public class Algorithm {
         newDistrictData.sort(((o1, o2) -> {
             Random random=new Random();
             double o1mmp=random.nextDouble(),o2mmp=random.nextDouble();
-            if(o1.getMinorityGroupPopulation()!=null)
+            //if(o1.getMinorityGroupPopulation()!=null)
                 o1mmp=o1.getMinorityGroupPopulation().get(parameter.getTargetMinorityPopulation())*1.0/o1.getPopulation();
-            if(o2.getMinorityGroupPopulation()!=null)
+            //if(o2.getMinorityGroupPopulation()!=null)
                 o2mmp=o2.getMinorityGroupPopulation().get(parameter.getTargetMinorityPopulation())*1.0/o2.getPopulation();
-            if(o1mmp>o2mmp){
+            if(o1mmp<o2mmp){
                 return 1;
             }else {
                 return -1;
@@ -448,7 +484,7 @@ public class Algorithm {
     public void combineBasedOnMajorityMinority(Map<Integer,Cluster> clusters) {
         for (Cluster c : clusters.values()) {
             if (!c.paired) {
-                Pair<Cluster, Cluster> p = c.findBestMajorityMinorityPair(parameter.getTargetMinorityPopulation(),clusters);
+                Pair<Cluster, Cluster> p = c.findBestMajorityMinorityPair(parameter.getTargetMinorityPopulation(),clusters,this.targetState.getPopulation());
                 if (p != null) {
                     resultPairs.add(p);
                 }
@@ -665,7 +701,7 @@ public class Algorithm {
             });
         }*/
         try {
-            File file = new File(getClass().getClassLoader().getResource(".").getFile() + "/cluster5.json");
+            File file = new File(getClass().getClassLoader().getResource(".").getFile() + "/OREGON_clusters.json");
             if (file.createNewFile()) {
                 System.out.println("File is created!");
             } else {

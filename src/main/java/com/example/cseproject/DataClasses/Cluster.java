@@ -119,7 +119,7 @@ public class Cluster {
     private void addEdges(List<Edge> edges) {
     }
 
-    public Pair<Cluster, Cluster> findBestMajorityMinorityPair(DemographicGroup d, Map<Integer,Cluster> clusters) {
+    public Pair<Cluster, Cluster> findBestMajorityMinorityPair(DemographicGroup d, Map<Integer,Cluster> clusters, int totalPop) {
         double bestScore = 0;
         Cluster bestNeighbor = null;
         double candidateScore = 0;
@@ -127,7 +127,7 @@ public class Cluster {
         for (Integer nId : neighbors) {
             Cluster n=clusters.get(nId);
             if(!n.paired) {
-                candidateScore = n.calculateMajorityMinorityScore(n, d);
+                candidateScore = n.calculateMajorityMinorityScore(n, d,totalPop,clusters.size());
 
                 if (candidateScore > bestScore) {
                     //System.out.println("MM5:"+candidateScore);
@@ -181,9 +181,10 @@ public class Cluster {
 
 
 
-    public double calculateMajorityMinorityScore(Cluster c, DemographicGroup d) {
+    public double calculateMajorityMinorityScore(Cluster c, DemographicGroup d, int totalPop,int clusterSize) {
         //MM Score
-        int totalPopulation=c.getPopulation() + this.getPopulation();
+        //int totalPopulation=c.getPopulation() + this.getPopulation();
+        int totalPopulation=c.getMinorityGroupPopulation().get(DemographicGroup.WHITE) + this.getMinorityGroupPopulation().get(DemographicGroup.WHITE);
         int totalMinorityPopulation=(c.getMinorityGroupPopulation().get(d) + this.getMinorityGroupPopulation().get(d));
         double score= totalPopulation==0?0: totalMinorityPopulation / (totalPopulation*1.0);
         /*double mmScore = totalPopulation==0?0: totalMinorityPopulation / (totalPopulation*1.0);
@@ -217,9 +218,13 @@ public class Cluster {
         //Political Fairness
         int demVote=getDemVotes();
         int gopVote=getGopVotes();
-        double ppScore=Math.abs(demVote-gopVote)*1.0/(demVote+gopVote);*/
-        //Compactness
+        double ppScore=Math.abs(demVote-gopVote)*1.0/(demVote+gopVote);
         //Equal pop
+        int popScore=0;
+        if(this.getPopulation()+c.getPopulation()<(totalPop/clusterSize)){
+            popScore=1;
+        }*/
+        //Compactness
        return score;
     }
 
@@ -236,13 +241,13 @@ public class Cluster {
     }
 
     public void addAllMinorityPopulation(Cluster c) {
-        for (Precinct p : c.getPrecincts()) {
-            for (DemographicGroup k : this.minorityGroupPopulation.keySet()) {
-                this.minorityGroupPopulation.put(k,
-                        p.getMinorityGroupPopulation().get(k)
-                                + this.minorityGroupPopulation.get(k));
-            }
+        //for (Precinct p : c.getPrecincts()) {
+        for (DemographicGroup k : this.minorityGroupPopulation.keySet()) {
+            this.minorityGroupPopulation.put(k,
+                    c.getMinorityGroupPopulation().get(k)
+                            + this.minorityGroupPopulation.get(k));
         }
+        //}
     }
 
 
