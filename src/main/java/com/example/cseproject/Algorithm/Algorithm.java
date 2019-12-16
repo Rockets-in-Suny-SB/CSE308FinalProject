@@ -357,6 +357,7 @@ public class Algorithm {
         Result r=new Result();
         r.addResult("oldDistrictData",oldDistrictData);
         r.addResult("newDistrictData",newDistrictData);
+        r.addResult("target",parameter.getTargetMinorityPopulation());
         return r;
     }
 
