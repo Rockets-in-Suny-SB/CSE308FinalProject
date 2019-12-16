@@ -96,7 +96,7 @@ public class AlgorithmController {
     }
 
 
-    @RequestMapping(value = "/gerrymandering", method = RequestMethod.POST)
+    @RequestMapping(value = "/gerrymandering", method = RequestMethod.GET)
     public @ResponseBody Result gerrymandering(){
         return algorithmService.gerrymanderingScore();
     }

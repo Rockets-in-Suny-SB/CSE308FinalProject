@@ -72,11 +72,11 @@ public class Algorithm {
             Map<Integer,Cluster> clusters;
             switch (StateName.valueOf(parameter.getStateName().toUpperCase())){
                 case ILLINOIS:
-                    clusters= mapper.readValue(ResourceUtils.getFile("classpath:ILLINOIS_clusters.json"), new TypeReference<>(){});
+                    clusters= mapper.readValue(ResourceUtils.getFile("classpath:ILLINOIS_clusters2.json"), new TypeReference<>(){});
                     this.targetState.setPopulation(ILtotalPopulation);
                     break;
                 case OHIO:
-                    clusters= mapper.readValue(ResourceUtils.getFile("classpath:OHIO_clusters.json"), new TypeReference<>(){});
+                    clusters= mapper.readValue(ResourceUtils.getFile("classpath:OHIO_clusters2.json"), new TypeReference<>(){});
                     this.targetState.setPopulation(OHTotalPopulation);
                     break;
                 case OREGON:
@@ -110,10 +110,10 @@ public class Algorithm {
         int i=0;
         //boolean isFinalIteration = false;
         if (parameter.getUpdateDiscrete()&&!isFinalIteration&&!((Boolean) r.getResult().get("isFinal"))) {
-            while(i<50) {
+            //while(i<50) {
                 isFinalIteration = combineIteration(clusters);
                 i++;
-            }
+            //}
         } else if (!((Boolean) r.getResult().get("isFinal"))){
             while (clusters.size() > parameter.getTargetDistricts() && !isFinalIteration) {
                 isFinalIteration = combineIteration(clusters);
@@ -136,10 +136,10 @@ public class Algorithm {
                 if(!finalIterationSet){
                     setFinalCombineIteration(clusters);
                 }
-                while (i<50) {
+                //while (i<50) {
                     finalCombineIteration(clusters, r);
                     i++;
-                }
+                //}
             }else{
                 r.addResult("isFinal", true);
             }
