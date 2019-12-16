@@ -39,7 +39,7 @@ public class Algorithm {
     private State targetState;
     private Map<Integer, Cluster> phase1Cluster;
     private Queue<Result> phase2Results;
-
+    private int iternum;
     //private Map<Integer,Set<Integer>> changeMap;
     private boolean isFinalIteration;
     private int realTargetSize;
@@ -74,14 +74,17 @@ public class Algorithm {
                 case ILLINOIS:
                     clusters= mapper.readValue(ResourceUtils.getFile("classpath:ILLINOIS_clusters2.json"), new TypeReference<>(){});
                     this.targetState.setPopulation(ILtotalPopulation);
+                    iternum=100;
                     break;
                 case OHIO:
                     clusters= mapper.readValue(ResourceUtils.getFile("classpath:OHIO_clusters2.json"), new TypeReference<>(){});
                     this.targetState.setPopulation(OHTotalPopulation);
+                    iternum=100;
                     break;
                 case OREGON:
                     clusters= mapper.readValue(ResourceUtils.getFile("classpath:OREGON_clusters3.json"), new TypeReference<>(){});
                     this.targetState.setPopulation(ORTotalPopulation);
+                    iternum=20;
                     break;
                 default:
                     System.out.println("State Not Specified!");
@@ -110,7 +113,7 @@ public class Algorithm {
         int i=0;
         //boolean isFinalIteration = false;
         if (parameter.getUpdateDiscrete()&&!isFinalIteration&&!((Boolean) r.getResult().get("isFinal"))) {
-            while(i<20) {
+            while(i<iternum) {
                 isFinalIteration = combineIteration(clusters);
                 i++;
             }
@@ -136,7 +139,7 @@ public class Algorithm {
                 if(!finalIterationSet){
                     setFinalCombineIteration(clusters);
                 }
-                while (i<20) {
+                while (i<iternum) {
                     finalCombineIteration(clusters, r);
                     i++;
                 }
