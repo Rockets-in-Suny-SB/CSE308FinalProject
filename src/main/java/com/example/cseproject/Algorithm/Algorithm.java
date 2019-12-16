@@ -540,7 +540,7 @@ public class Algorithm {
                     clusters.get(n).getNeighbors().remove(c2.getId());
                 }
             }
-            clusters.get(c1.getId()).getNeighbors().remove(c2.getId());
+            c1.getNeighbors().remove(c2.getId());
             //Add connection between c1 and neighbors
             for(Integer n:c1Neighbors){
                 if(clusters.get(n)!=null) {
