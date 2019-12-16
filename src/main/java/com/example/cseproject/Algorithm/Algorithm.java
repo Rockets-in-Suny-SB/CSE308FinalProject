@@ -146,6 +146,7 @@ public class Algorithm {
         }
         //Return result
         Map<Integer,Set<Integer>> resultSet=new HashMap<>();
+        Map<Integer,ClusterData> resultDataSet=new HashMap<>();
         for(Cluster c:clusters.values()){
 
             Set<Integer> precinctIdSet = new HashSet<>();
@@ -154,35 +155,11 @@ public class Algorithm {
                 precinctIdSet.add(p.getId());
             }
             resultSet.put(c.getId(),precinctIdSet);
-
+            resultDataSet.put(c.getId(),new ClusterData(c));
         }
 
         this.phase1Cluster = clusters;
-//        ArrayList<Pair<Cluster,Cluster>> pairs=new ArrayList<>();
-//        while(clusters.size()>parameter.getTargetDistricts()){
-//            for(Cluster c:clusters.values()){
-//                for(Integer n:c.getNeighbors()){
-//                    Cluster neighbor=clusters.get(n);
-//                    if(!neighbor.paired&&!c.paired){
-//                        pairs.add(Pair.of(c,neighbor));
-//                        break;
-//                    }
-//                }
-//            }
-//            combinePairs(pairs,clusters);
-//            clearPaired(clusters);
-//        }
-//        Map<Integer,Set<Integer>> resultSet=new HashMap<>();
-//        for(Cluster c:clusters.values()){
-//
-//            Set<Integer> precinctIdSet = new HashSet<>();
-//            Set<Precinct> precincts = c.getPrecincts();
-//            for (Precinct p : precincts) {
-//                precinctIdSet.add(p.getId());
-//            }
-//            resultSet.put(c.getId(),precinctIdSet);
-//
-//        }
+        r.addResult("clustersData",resultDataSet);
         r.addResult("clusters", resultSet);
         /*int count=0;
         for(Cluster c:clusters.values()){
@@ -449,7 +426,9 @@ public class Algorithm {
                     }
                 }
             }
-
+            if(minCluster==null){
+                minCluster=minPriorityQueue.poll();
+            }
             if(minCluster!=null) {
                 System.out.println("Combined");
                 //targetState.combine(c1, minCluster, clusters);
