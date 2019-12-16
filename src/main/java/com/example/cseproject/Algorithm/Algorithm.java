@@ -158,6 +158,31 @@ public class Algorithm {
         }
 
         this.phase1Cluster = clusters;
+//        ArrayList<Pair<Cluster,Cluster>> pairs=new ArrayList<>();
+//        while(clusters.size()>parameter.getTargetDistricts()){
+//            for(Cluster c:clusters.values()){
+//                for(Integer n:c.getNeighbors()){
+//                    Cluster neighbor=clusters.get(n);
+//                    if(!neighbor.paired&&!c.paired){
+//                        pairs.add(Pair.of(c,neighbor));
+//                        break;
+//                    }
+//                }
+//            }
+//            combinePairs(pairs,clusters);
+//            clearPaired(clusters);
+//        }
+//        Map<Integer,Set<Integer>> resultSet=new HashMap<>();
+//        for(Cluster c:clusters.values()){
+//
+//            Set<Integer> precinctIdSet = new HashSet<>();
+//            Set<Precinct> precincts = c.getPrecincts();
+//            for (Precinct p : precincts) {
+//                precinctIdSet.add(p.getId());
+//            }
+//            resultSet.put(c.getId(),precinctIdSet);
+//
+//        }
         r.addResult("clusters", resultSet);
         /*int count=0;
         for(Cluster c:clusters.values()){
@@ -417,9 +442,11 @@ public class Algorithm {
             for (Integer nId : c1Neighbors) {
 
                 Cluster n = clusters.get(nId);
-                if(n.getPopulation()+c1.getPopulation()<sl) {
-                    minCluster = n;
-                    break;
+                if(n!=null&&c1!=null) {
+                    if (n.getPopulation() + c1.getPopulation() < sl) {
+                        minCluster = n;
+                        break;
+                    }
                 }
             }
 
