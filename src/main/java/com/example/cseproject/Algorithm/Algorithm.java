@@ -110,10 +110,10 @@ public class Algorithm {
         int i=0;
         //boolean isFinalIteration = false;
         if (parameter.getUpdateDiscrete()&&!isFinalIteration&&!((Boolean) r.getResult().get("isFinal"))) {
-            //while(i<50) {
+            while(i<20) {
                 isFinalIteration = combineIteration(clusters);
                 i++;
-            //}
+            }
         } else if (!((Boolean) r.getResult().get("isFinal"))){
             while (clusters.size() > parameter.getTargetDistricts() && !isFinalIteration) {
                 isFinalIteration = combineIteration(clusters);
@@ -136,10 +136,10 @@ public class Algorithm {
                 if(!finalIterationSet){
                     setFinalCombineIteration(clusters);
                 }
-                //while (i<50) {
+                while (i<20) {
                     finalCombineIteration(clusters, r);
                     i++;
-                //}
+                }
             }else{
                 r.addResult("isFinal", true);
             }
@@ -362,7 +362,7 @@ public class Algorithm {
 
     public boolean combineIteration(Map<Integer,Cluster> clusters) {
         boolean isFinalIteration = false;
-        combineBasedOnMajorityMinority(clusters);
+        //combineBasedOnMajorityMinority(clusters);
         //combineBasedOnJoinFactor(clusters);
         if (resultPairs.size() > 0) {
             combinePairs(resultPairs,clusters);
