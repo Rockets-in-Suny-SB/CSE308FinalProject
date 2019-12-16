@@ -80,12 +80,12 @@ public class Algorithm {
                     this.targetState.setPopulation(OHTotalPopulation);
                     break;
                 case OREGON:
-                    clusters= mapper.readValue(ResourceUtils.getFile("classpath:OREGON_clusters.json"), new TypeReference<>(){});
+                    clusters= mapper.readValue(ResourceUtils.getFile("classpath:OREGON_clusters3.json"), new TypeReference<>(){});
                     this.targetState.setPopulation(ORTotalPopulation);
                     break;
                 default:
                     System.out.println("State Not Specified!");
-                    clusters= mapper.readValue(ResourceUtils.getFile("classpath:OREGON_clusters.json"), new TypeReference<>(){});
+                    clusters= mapper.readValue(ResourceUtils.getFile("classpath:OREGON_clusters3.json"), new TypeReference<>(){});
             }
             this.targetState.setClusters(clusters);
             //System.out.println(clusters);
@@ -100,7 +100,7 @@ public class Algorithm {
         r=new Result();
         r.addResult("isFinal",false);
         //initializeClusters(this.targetState);
-
+        System.out.println("Initial cluster size:"+targetState.getClusters().size());
     }
     public Result phase1(Parameter parameter) {
         //Timer start
@@ -163,6 +163,7 @@ public class Algorithm {
         this.phase1Cluster = clusters;
         r.addResult("clustersData",resultDataSet);
         r.addResult("clusters", resultSet);
+
         /*int count=0;
         for(Cluster c:clusters.values()){
             if(c.getPrecincts().size()>realTargetSize){
@@ -219,6 +220,7 @@ public class Algorithm {
 
             }
         }
+        //System.out.println(this.phase1Cluster.size());
         Map<Integer, District> districts = new HashMap<>();
         for (Map.Entry<Integer, Cluster> entry : this.phase1Cluster.entrySet()) {
             District district = new District();
@@ -235,6 +237,7 @@ public class Algorithm {
                 Set<Integer> neighborIds = precinct.getNeighborIds();
                 for (Integer id : neighborIds) {
                     Precinct neighborPrecinct = totalPrecincts.get(id);
+
                     if(precinct.getParentCluster() != neighborPrecinct.getParentCluster()) {
                         borderPrecincts.add(neighborPrecinct);
                         break;
@@ -405,7 +408,8 @@ public class Algorithm {
                 minPriorityQueue.addAll(removedPriorityQueue);
                 c1=minPriorityQueue.poll();
                 multiplier*=2;
-                sl=t/(clusters.size()/multiplier);
+                int mp=(clusters.size()/multiplier)==0?1:(clusters.size()/multiplier);
+                sl=t/mp;
                 originalCS/=2;
             }
             Set<Integer> c1Neighbors=c1.getNeighbors();
@@ -422,9 +426,9 @@ public class Algorithm {
                     }
                 }
             }
-            if(minCluster==null){
+            /*if(minCluster==null){
                 minCluster=minPriorityQueue.poll();
-            }
+            }*/
             if(minCluster!=null) {
                 System.out.println("Combined");
                 //targetState.combine(c1, minCluster, clusters);
