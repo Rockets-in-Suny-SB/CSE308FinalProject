@@ -536,13 +536,17 @@ public class Algorithm {
             //Remove c2 from neighbors and c1
             Set<Integer> c1Neighbors=c1.getNeighbors();
             for(Integer n:c1Neighbors){
-                clusters.get(n).getNeighbors().remove(c2.getId());
+                if(clusters.get(n)!=null) {
+                    clusters.get(n).getNeighbors().remove(c2.getId());
+                }
             }
             clusters.get(c1.getId()).getNeighbors().remove(c2.getId());
             //Add connection between c1 and neighbors
             for(Integer n:c1Neighbors){
-                clusters.get(n).getNeighbors().add(c1.getId());
-                c1.getNeighbors().add(n);
+                if(clusters.get(n)!=null) {
+                    clusters.get(n).getNeighbors().add(c1.getId());
+                    c1.getNeighbors().add(n);
+                }
             }
         }
 
