@@ -555,10 +555,11 @@ public class Algorithm {
         }
     }
 
-    public Result gerrymanderingScore() {
+    public Result gerrymanderingScore(State oldState) {
         Set<District> districts = this.targetState.getDistricts();
         Result result = new Result();
         for (District district : districts){
+            double medianMean = Measure.COMPETITIVENESS.calculateMeasure(district);
             double efficiencyGap = Measure.EFFICIENCY_GAP.calculateMeasure(district);
             double gerrymanderDemocrat = Measure.GERRYMANDER_DEMOCRAT.calculateMeasure(district);
             double gerrymanderRepublican = Measure.GERRYMANDER_REPUBLICAN.calculateMeasure(district);
@@ -566,6 +567,8 @@ public class Algorithm {
             gerrymanerScore.setEfficiencyGap(efficiencyGap);
             gerrymanerScore.setGerrymanderDemocrat(gerrymanderDemocrat);
             gerrymanerScore.setGerrymanderRepublican(gerrymanderRepublican);
+            gerrymanerScore.setMedieanMean(medianMean);
+
             result.addResult(district.getId().toString(), gerrymanerScore);
         }
         return result;

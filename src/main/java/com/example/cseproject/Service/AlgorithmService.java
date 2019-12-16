@@ -2,10 +2,7 @@ package com.example.cseproject.Service;
 
 import com.example.cseproject.Algorithm.Algorithm;
 import com.example.cseproject.DataClasses.*;
-import com.example.cseproject.Enum.DemographicGroup;
-import com.example.cseproject.Enum.Election;
-import com.example.cseproject.Enum.StateName;
-import com.example.cseproject.Enum.State_Status;
+import com.example.cseproject.Enum.*;
 import com.example.cseproject.Model.District;
 import com.example.cseproject.Model.Precinct;
 import com.example.cseproject.Model.State;
@@ -114,6 +111,15 @@ public class AlgorithmService {
     /* */
     public Queue<Result> runPhase2() {
         Parameter parameter = algorithm.getParameter();
+        Map<Measure, Double> weights = parameter.getWeights();
+        Set<Measure> badMeasures = new HashSet<>();
+        for (Map.Entry<Measure, Double> entry : weights.entrySet()) {
+            if (entry.getValue() <= 0)
+                badMeasures.add(entry.getKey());
+        }
+        for (Measure m : badMeasures){
+            weights.remove(m);
+        }
         Queue<Result> phase2Result = algorithm.phase2(parameter.getWeights());
         return phase2Result;
     }
@@ -186,7 +192,8 @@ public class AlgorithmService {
 
 
     public Result gerrymanderingScore() {
-        return algorithm.gerrymanderingScore();
+        State state = stateService.getState(StateName.valueOf(algorithm.getParameter().getStateName().toUpperCase()), State_Status.OLD).get();
+        return algorithm.gerrymanderingScore(state);
     }
 
     public Result displayNewPopulationDistribution() {

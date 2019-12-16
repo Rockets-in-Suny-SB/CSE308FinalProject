@@ -6,7 +6,7 @@ public class GerrymanerScore {
     private double efficiencyGap;
     private double gerrymanderDemocrat;
     private double gerrymanderRepublican;
-
+    private double medieanMean;
     public GerrymanerScore() {
     }
 
@@ -32,5 +32,13 @@ public class GerrymanerScore {
 
     public void setGerrymanderRepublican(double gerrymanderRepublican) {
         this.gerrymanderRepublican = gerrymanderRepublican;
+    }
+
+    public double getMedieanMean() {
+        return medieanMean;
+    }
+
+    public void setMedieanMean(double medieanMean) {
+        this.medieanMean = medieanMean;
     }
 }

@@ -2,6 +2,9 @@ package com.example.cseproject.phase2.algorithm;
 
 
 
+import com.example.cseproject.DataClasses.ClusterData;
+import com.example.cseproject.DataClasses.DistrictData;
+import com.example.cseproject.DataClasses.DistrictResult;
 import com.example.cseproject.DataClasses.Result;
 import com.example.cseproject.Model.District;
 import com.example.cseproject.Model.Precinct;
@@ -277,18 +280,20 @@ public class AlgorithmPhase2
         double initial_score = currentScores.get(to) + currentScores.get(from);
         m.execute();
         Result result = new Result();
-
+        Map<Integer, DistrictResult> resultDataSet=new HashMap<>();
         State s = to.getState();
         Queue<Result> results = s.getResults();
         Set<District> districts = s.getDistricts();
         Map<Integer, Set<Integer>> districtPrecinctMap = new HashMap<>();
-        for (District district : districts) {
+        for (District d : districts) {
             Set<Integer> precinctIDs = new HashSet<>();
-            for (Precinct dp : district.getPrecincts()) {
+            for (Precinct dp : d.getPrecincts()) {
                 precinctIDs.add(dp.getId());
             }
-            districtPrecinctMap.put(district.getId(),precinctIDs);
+            districtPrecinctMap.put(d.getId(),precinctIDs);
+            resultDataSet.put(d.getId(),new DistrictResult(d));
         }
+        result.addResult("clustersData", resultDataSet);
         result.addResult("clusters", districtPrecinctMap);
         results.add(result);
         if (!checkContiguity(p, from)) {
@@ -327,7 +332,7 @@ public class AlgorithmPhase2
         double initial_score = currentScores.get(to) + currentScores.get(from);
         m.execute();
         Result result = new Result();
-
+        Map<Integer, DistrictResult> resultDataSet=new HashMap<>();
         State s = to.getState();
         Queue<Result> results = s.getResults();
         Set<District> districts = s.getDistricts();
@@ -338,7 +343,9 @@ public class AlgorithmPhase2
                 precinctIDs.add(dp.getId());
             }
             districtPrecinctMap.put(d.getId(),precinctIDs);
+            resultDataSet.put(d.getId(),new DistrictResult(d));
         }
+        result.addResult("clustersData", resultDataSet);
         result.addResult("clusters", districtPrecinctMap);
         results.add(result);
         double to_score = rateDistrict(to);
