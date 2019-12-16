@@ -555,7 +555,7 @@ public class Algorithm {
         }
     }
 
-    public Result gerrymanderingScore(State oldState) {
+    public Result gerrymanderingScore() {
         Set<District> districts = this.targetState.getDistricts();
         Result result = new Result();
         for (District district : districts){

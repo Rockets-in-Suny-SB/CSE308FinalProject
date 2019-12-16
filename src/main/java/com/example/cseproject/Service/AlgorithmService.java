@@ -192,8 +192,7 @@ public class AlgorithmService {
 
 
     public Result gerrymanderingScore() {
-        State state = stateService.getState(StateName.valueOf(algorithm.getParameter().getStateName().toUpperCase()), State_Status.OLD).get();
-        return algorithm.gerrymanderingScore(state);
+        return algorithm.gerrymanderingScore();
     }
 
     public Result displayNewPopulationDistribution() {
