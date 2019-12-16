@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -120,7 +117,10 @@ public class AlgorithmService {
         for (Measure m : badMeasures){
             weights.remove(m);
         }
-        Queue<Result> phase2Result = algorithm.phase2(parameter.getWeights());
+        System.out.println(weights.size());
+        Map<Measure, Double> r = new HashMap<>();
+        r.put(Measure.CONVEX_HULL_COMPACTNESS, 0.6);
+        Queue<Result> phase2Result = algorithm.phase2(r);
         return phase2Result;
     }
 
