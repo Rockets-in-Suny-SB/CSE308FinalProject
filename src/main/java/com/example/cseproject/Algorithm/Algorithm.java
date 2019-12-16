@@ -13,6 +13,8 @@ import com.example.cseproject.phase2.algorithm.MyAlgorithm;
 import com.example.cseproject.phase2.measures.DefaultMeasures;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.locationtech.jts.geom.*;
+import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -203,6 +205,7 @@ public class Algorithm {
     public Queue<Result> phase2(Map<Measure, Double> weights) {
         //Timer start
 //        long startTime = System.nanoTime();
+        targetState.setResults(new LinkedList<>());
         if (this.phase1Cluster == null) {
             System.out.println("Run phase 1 first");
             return null;
@@ -240,6 +243,7 @@ public class Algorithm {
 
                 precinctMap.put(precinct.getId(), precinct);
             }
+            district.setName(cluster.getId().toString());
             district.setBorderPrecincts(borderPrecincts);
             district.setPrecincts(precinctMap);
             district.setElection(parameter.getElection());
@@ -249,8 +253,12 @@ public class Algorithm {
         this.targetState.setPrecinctsJson(totalPrecincts);
         this.targetState.setDistricts(districts);
 
+
+        totalPrecincts = this.readPrecinctJson(parameter.getStateName(),totalPrecincts);
+        this.targetState.setPrecinctsJson(totalPrecincts);
+        this.targetState.setDistricts(districts);
+
         MyAlgorithm myAlgorithm = new MyAlgorithm(this.targetState, DefaultMeasures.defaultMeasuresWithWeights(weights));
-        Queue<Result> results = new LinkedList<>();
         Move previousMove = null;
         while (true) {
 //            if (myAlgorithm.makeMove() == null) {
@@ -262,21 +270,8 @@ public class Algorithm {
                 break;
             }
             previousMove = move;
-//            System.out.println(move.toString());
-            Result result = new Result();
-            Set<District> resultDistricts = targetState.getDistricts();
-            Map<Integer, Set<Integer>> districtPrecinctMap = new HashMap<>();
-            for (District district : resultDistricts) {
-                Set<Integer> precinctIDs = new HashSet<>();
-                for (Precinct p : district.getPrecincts()) {
-                    precinctIDs.add(p.getId());
-                }
-                districtPrecinctMap.put(district.getId(),precinctIDs);
-            }
-            result.addResult("clusters", districtPrecinctMap);
-            results.add(result);
         }
-
+        Queue<Result> results = targetState.getResults();
         this.phase2Results = results;
 //        //Timer End
 //        long endTime = System.nanoTime();
@@ -751,5 +746,116 @@ public class Algorithm {
         int i = rnd.nextInt(from.size());
         return from.toArray()[i];
     }
-    //    public void move(Cluster c){}
+
+    public Map<Integer, Precinct> readPrecinctJson(String stateName, Map<Integer,Precinct> precinctMap) {
+        Integer sc = 0;
+        Integer fc = 0;
+        Map<Integer,MyGeometry> precinctJsons = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            precinctJsons= mapper.readValue(ResourceUtils.getFile("classpath:"
+                    +stateName.toUpperCase() + "_geo.json"), new TypeReference<>(){});
+            System.out.println(precinctJsons);
+            System.out.println("Read success");
+
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        for (Map.Entry<Integer, MyGeometry> entry : precinctJsons.entrySet()) {
+            Integer precinctId = entry.getKey();
+            MyGeometry precinctJson = entry.getValue();
+            Precinct precinct = precinctMap.get(precinctId);
+            String type = precinctJson.getType();
+            if (type.equals("Polygon")) {
+                List<Coordinate> coordinates = new ArrayList<>();
+                for (List<List<Object>> lines : precinctJson.getCoordinates()) {
+                    for (List<Object> point : lines) {
+                        Coordinate coordinate = new Coordinate();
+                        try {
+                            Double x = (Double) point.get(0);
+                            coordinate.setX(x);
+                        }catch (Exception e){
+                            Integer x = (Integer) point.get(0);
+                            coordinate.setX(x);
+                        }
+                        try {
+                            Double y = (Double) point.get(1);
+                            coordinate.setY(y);
+                        }catch (Exception e){
+                            Integer y = (Integer) point.get(1);
+                            coordinate.setY(y);
+                        }
+                        coordinates.add(coordinate);
+                    }
+                }
+                Coordinate[] coordinateArray = new Coordinate[coordinates.size()];
+                for (int i=0; i<coordinateArray.length;i++) {
+                    coordinateArray[i] = coordinates.get(i);
+                }
+                try {
+                    CoordinateArraySequence coordinateArraySequence = new CoordinateArraySequence(coordinateArray);
+                    LinearRing linearRing = new LinearRing(coordinateArraySequence, new GeometryFactory());
+                    Polygon polygon = new Polygon(linearRing,null,new GeometryFactory());
+                    precinct.setGeometry(polygon);
+                    sc ++;
+                } catch (Exception e) {
+                    System.out.println(precinctId);
+                    precinct.setGeometry(null);
+                    fc ++;
+                }
+
+            }
+            else {
+                List<Polygon> polygons = new ArrayList<>();
+                for (List<List<Object>> ps : precinctJson.getCoordinates()) {
+                    List<Coordinate> coordinates = new ArrayList<>();
+                    for (List<Object> lines : ps) {
+                        for (Object point : (List<Object>) lines) {
+                            List<Object> p = (List<Object>) point;
+                            Coordinate coordinate = new Coordinate();
+                            try {
+                                Double x = (Double) p.get(0);
+                                coordinate.setX(x);
+                            }catch (Exception e){
+                                Integer x = (Integer) p.get(0);
+                                coordinate.setX(x);
+                            }
+                            try {
+                                Double y = (Double) p.get(1);
+                                coordinate.setY(y);
+                            }catch (Exception e){
+                                Integer y = (Integer) p.get(1);
+                                coordinate.setY(y);
+                            }
+                            coordinates.add(coordinate);
+                        }
+                    }
+                    Coordinate[] coordinateArray = new Coordinate[coordinates.size()];
+                    for (int i=0; i<coordinateArray.length;i++) {
+                        coordinateArray[i] = coordinates.get(i);
+                    }
+                    try {
+                        CoordinateArraySequence coordinateArraySequence = new CoordinateArraySequence(coordinateArray);
+                        LinearRing linearRing = new LinearRing(coordinateArraySequence, new GeometryFactory());
+                        Polygon polygon = new Polygon(linearRing,null,new GeometryFactory());
+                        polygons.add(polygon);
+                        sc ++;
+                    }catch (Exception e) {
+                        System.out.println(precinctId);
+                        fc ++;
+                    }
+
+                }
+                Polygon[] polygonArray = new Polygon[polygons.size()];
+                for (int i=0; i<polygonArray.length;i++) {
+                    polygonArray[i] = polygons.get(i);
+                }
+                MultiPolygon multiPolygon = new MultiPolygon(polygonArray, new GeometryFactory());
+                precinct.setGeometry(multiPolygon);
+            }
+        }
+        System.out.println("Success:" + sc);
+        System.out.println("Failure:" + fc);
+        return precinctMap;
+    }
 }

@@ -241,15 +241,25 @@ public class District
     }
 
     public MultiPolygon computeMulti() {
-        Polygon[] polygons = new Polygon[getPrecincts().size()];
-
-        Iterator<Precinct> piter = getPrecincts().iterator();
-        for(int ii = 0; ii < polygons.length; ii++) {
-            Geometry poly = piter.next().getGeometry();
+        List<Polygon> polygonList = new ArrayList<>();
+        for (Precinct precinct : getPrecincts()) {
+            Geometry poly = precinct.getGeometry();
+            if (poly == null)
+                continue;
             if (poly instanceof Polygon)
-                polygons[ii] = (Polygon) poly;
-            else
-                polygons[ii] = (Polygon) poly.convexHull();
+                polygonList.add((Polygon) poly);
+            else {
+
+                Integer numbers = poly.getNumGeometries();
+                for (int i = 0; i < numbers; i++) {
+                    Polygon polygon = (Polygon) poly.getGeometryN(i);
+                    polygonList.add(polygon);
+                }
+            }
+        }
+        Polygon[] polygons = new Polygon[polygonList.size()];
+        for (int i = 0; i < polygonList.size(); i++) {
+            polygons[i] = polygonList.get(i);
         }
         MultiPolygon mp = new MultiPolygon(polygons,new GeometryFactory());
         this.multiPolygon = mp;

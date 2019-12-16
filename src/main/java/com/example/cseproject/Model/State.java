@@ -11,10 +11,7 @@ import com.example.cseproject.interfaces.StateInterface;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @IdClass(StateId.class)
@@ -48,6 +45,9 @@ public class State
 
     @Transient
     private Map<Integer, Precinct> precinctsJson;
+
+    @Transient
+    private Queue<Result> results;
 
     public State() {
         //this.clusters=new HashSet<>();
@@ -140,6 +140,14 @@ public class State
 
     public void setDistricts(Map<Integer, District> districts) {
         this.districts = districts;
+    }
+
+    public Queue<Result> getResults() {
+        return results;
+    }
+
+    public void setResults(Queue<Result> results) {
+        this.results = results;
     }
 
     /* phase 0 */

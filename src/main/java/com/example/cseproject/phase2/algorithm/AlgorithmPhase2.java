@@ -2,6 +2,7 @@ package com.example.cseproject.phase2.algorithm;
 
 
 
+import com.example.cseproject.DataClasses.Result;
 import com.example.cseproject.Model.District;
 import com.example.cseproject.Model.Precinct;
 import com.example.cseproject.Model.State;
@@ -275,6 +276,21 @@ public class AlgorithmPhase2
         Move m = new Move<>(to, from, p);
         double initial_score = currentScores.get(to) + currentScores.get(from);
         m.execute();
+        Result result = new Result();
+
+        State s = to.getState();
+        Queue<Result> results = s.getResults();
+        Set<District> districts = s.getDistricts();
+        Map<Integer, Set<Integer>> districtPrecinctMap = new HashMap<>();
+        for (District district : districts) {
+            Set<Integer> precinctIDs = new HashSet<>();
+            for (Precinct dp : district.getPrecincts()) {
+                precinctIDs.add(dp.getId());
+            }
+            districtPrecinctMap.put(district.getId(),precinctIDs);
+        }
+        result.addResult("clusters", districtPrecinctMap);
+        results.add(result);
         if (!checkContiguity(p, from)) {
             m.undo();
             return null;
@@ -310,6 +326,21 @@ public class AlgorithmPhase2
         Move<Precinct, District> m = new Move<>(to, from, p);
         double initial_score = currentScores.get(to) + currentScores.get(from);
         m.execute();
+        Result result = new Result();
+
+        State s = to.getState();
+        Queue<Result> results = s.getResults();
+        Set<District> districts = s.getDistricts();
+        Map<Integer, Set<Integer>> districtPrecinctMap = new HashMap<>();
+        for (District d : districts) {
+            Set<Integer> precinctIDs = new HashSet<>();
+            for (Precinct dp : d.getPrecincts()) {
+                precinctIDs.add(dp.getId());
+            }
+            districtPrecinctMap.put(d.getId(),precinctIDs);
+        }
+        result.addResult("clusters", districtPrecinctMap);
+        results.add(result);
         double to_score = rateDistrict(to);
         double from_score = rateDistrict(from);
         currentScores.put(to, to_score);
